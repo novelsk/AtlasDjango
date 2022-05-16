@@ -1,0 +1,13 @@
+py -m venv venv
+project-name\Scripts\activate
+py -m pip install -r requirements.txt
+django-admin startproject website .
+docker-compose build
+docker-compose up
+docker-compose up -d --build
+docker-compose exec web python manage.py migrate --noinput
+docker volume ls
+docker volume inspect project_postgres_volume
+docker-compose down
+docker volume ls
+docker volume rm project_postgres_volume
