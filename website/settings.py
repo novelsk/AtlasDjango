@@ -140,4 +140,7 @@ STATIC_ROOT = 'atlas/static'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+# Custom
 AUTH_USER_MODEL = 'atlas.AtlasUser'
+LOGIN_REDIRECT_URL = "/"
