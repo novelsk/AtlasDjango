@@ -20,7 +20,7 @@ from django.views.decorators.cache import never_cache
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin', admin.site.urls),
     path('', include('atlas.urls')),
 ]
 

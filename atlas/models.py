@@ -1,10 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
-# from django.contrib.postgres import fields
+from django.contrib.postgres import fields
 
 
-class Obj1Cmn(models.Model):
+class Cmn(models.Model):
     idobj = models.IntegerField()
     amount = models.IntegerField()
     data = models.DateTimeField()
@@ -19,9 +19,10 @@ class Obj1Cmn(models.Model):
     ai8 = models.FloatField()
     ai9 = models.FloatField()
     ai10 = models.FloatField()
+    access_group = models.IntegerField(verbose_name='Группа доступа')
 
 
-class Obj1Ai(models.Model):
+class Ai(models.Model):
     idobj = models.IntegerField()
     idai = models.IntegerField()
     datain = models.DateTimeField()
@@ -38,11 +39,12 @@ class Obj1Ai(models.Model):
     dataout = models.DateTimeField()
     datacheck = models.DateTimeField()
     cmnt = models.CharField(max_length=50)
+    access_group = models.IntegerField(verbose_name='Группа доступа')
 
 
 class AtlasUser(AbstractUser):
-    cmn = models.ManyToManyField(Obj1Cmn)
-    ai = models.ManyToManyField(Obj1Ai)
+    objects_cmn_groups = fields.ArrayField(base_field=models.IntegerField(null=True), default=list, verbose_name='Группы доступа Сmn')
+    objects_ai_groups = fields.ArrayField(base_field=models.IntegerField(null=True), default=list, verbose_name='Группы доступа Ai')
 
     class Meta(AbstractUser.Meta):
         pass

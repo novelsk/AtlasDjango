@@ -4,8 +4,10 @@ from . import views
 app_name = 'atlas'
 
 urlpatterns = [
+    path('api/cmn', views.api_cmn),
     path('accounts/login', views.AtlasLoginView.as_view(), name='login'),
     path('accounts/logout', views.AtlasLogoutView.as_view(), name='logout'),
-    path('graph', views.graph, name='graph'),
+    path('table', views.table, name='table'),
+    path('dashboard', views.dashboard, name='dashboard'),
     path('', views.index, name='index'),
 ]
