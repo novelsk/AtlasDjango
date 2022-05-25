@@ -27,8 +27,11 @@
         <!-- [ Main Content ] start -->
         <div class="row">
             <!-- [ sample-page ] start -->
-            <canvas class="my-4 chartjs-render-monitor" id="chart" width="875" height="369" style="display: block; width: 875px; height: 369px;"></canvas>
-
+            <div class="col-sm-12">
+                <div class="card">
+                    <canvas class="my-4 chartjs-render-monitor" id="chart" width="875" height="369" style="display: block; width: 875px; height: 369px;"></canvas>
+                </div>
+            </div>
             <div class="col-sm-12">
                 <div class="card">
                     <div class="">
@@ -71,6 +74,7 @@
 {% endblock %}
 {% block script %}
     <script src="{% static 'Chart.min.js' %}"></script>
+    <script src="{% static 'table.js' %}"></script>
 
 {#    <script src="{% static 'assets/js/plugins/apexcharts.min.js' %}"></script>#}
 {#    <script src="{% static 'assets/js/pages/chart-apex.js' %}"></script>#}
