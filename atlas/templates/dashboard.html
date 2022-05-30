@@ -29,7 +29,15 @@
             <!-- [ sample-page ] start -->
             <div class="col-sm-12">
                 <div class="card">
-                    <canvas class="my-4 chartjs-render-monitor" id="chart" width="875" height="369" style="display: block; width: 875px; height: 369px;"></canvas>
+                    <canvas id="chart" class="60" style="display: block; width: 875px; height: 369px;"></canvas>
+                    <div class="card-body">
+                        <div class="btn-group" id="board-buttons" role="group">
+                            <button type="button" class="btn btn-secondary">60</button>
+                            <button type="button" class="btn btn-secondary">240</button>
+                            <button type="button" class="btn btn-secondary">600</button>
+                        </div>
+                    </div>
+                    </div>
                 </div>
             </div>
             <div class="col-sm-12">
@@ -37,8 +45,7 @@
                     <div class="">
                         <div class="card">
                             <div class="card-header">
-                                <h5>Hover Table</h5>
-                                <span class="d-block m-t-5">use class <code>table-hover</code> inside table element</span>
+                                <h4>Датчики</h4>
                             </div>
                             <div class="card-body table-border-style">
                             <div class="table-responsive">
@@ -69,13 +76,10 @@
             <!-- [ sample-page ] end -->
         </div>
         <!-- [ Main Content ] end -->
-    </div>
 </div>
+
 {% endblock %}
 {% block script %}
-    <script src="{% static 'Chart.min.js' %}"></script>
-    <script src="{% static 'table.js' %}"></script>
-
-{#    <script src="{% static 'assets/js/plugins/apexcharts.min.js' %}"></script>#}
-{#    <script src="{% static 'assets/js/pages/chart-apex.js' %}"></script>#}
+    <script src="{% static 'chart/dist/chart.js' %}"></script>
+    <script src="{% static 'chart/table.js' %}"></script>
 {% endblock %}

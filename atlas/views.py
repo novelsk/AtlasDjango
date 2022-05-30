@@ -43,14 +43,13 @@ class AtlasLogoutView(LogoutView):
 # api
 @login_required
 @api_view(['GET'])
-def api_cmn(request, group=None):
+def api_cmn(request, count=None):
     if request.method == 'GET':
         current_user = AtlasUser.objects.get(pk=request.user.pk)
-        if group is None:
+        if count is None:
             cmn_objects = Cmn.objects.filter(access_group=current_user.objects_ai_groups[0])[:60]  # настроить выбор группы
         else:
-            if group in current_user.objects_ai_groups:
-                cmn_objects = Cmn.objects.filter(access_group=group)[:60]
+            cmn_objects = Cmn.objects.filter(access_group=current_user.objects_ai_groups[0])[:count]
 
         ai_out = [[], [], [], [], [], [], [], [], [], []]
         for item in cmn_objects:
@@ -65,5 +64,3 @@ def api_cmn(request, group=None):
             ai_out[8].append(item.ai9)
             ai_out[9].append(item.ai10)
         return JsonResponse({'cmn_ais': ai_out}, safe=False)
-        # serializer = CmnSerializer(temp, many=True)
-        # return Response(serializer.data)
