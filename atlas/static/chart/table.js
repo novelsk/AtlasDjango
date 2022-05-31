@@ -53,18 +53,54 @@ function draw_chart(count='') {
 
 jQuery( document ).ready(function() {
     draw_chart(ctx.className);
+    table_upd();
 });
 
 
 let timerId = setInterval(function () {
     draw_chart(ctx.className);
+    table_upd();
 }, 60000);
 
 
 
-// let innerHtml = '';
-        // for (const item in data['cmn_ais']) {
-        //   innerHtml += '<tr><td>' + item[0] + '</td>';
-        //   innerHtml += '<td>' + item[1] + '</td></tr>';
-        // }
-        // table.innerHTML = innerHtml;
+function table_upd() {
+    let request = "../api/ai";
+
+    jQuery.get(request, function (data) {
+        let innerHtml = '';
+        for (let i = 0; i < data.length; i++) {
+            innerHtml += '<tr><td>' + data[i]['id'] + '</td>';
+            innerHtml += '<td>' + data[i]['idobj'] + '</td>';
+            innerHtml += '<td>' + data[i]['idai'] + '</td>';
+            innerHtml += '<td>' + data[i]['datain'] + '</td>';
+            innerHtml += '<td>' + data[i]['mode'] + '</td>';
+            innerHtml += '<td>' + data[i]['aimax'] + '</td>';
+            innerHtml += '<td>' + data[i]['aimean'] + '</td>';
+            innerHtml += '<td>' + data[i]['aimin'] + '</td>';
+            innerHtml += '<td>' + data[i]['statmin'] + '</td>';
+            innerHtml += '<td>' + data[i]['statmax'] + '</td>';
+            innerHtml += '<td>' + data[i]['mlmin'] + '</td>';
+            innerHtml += '<td>' + data[i]['mlmax'] + '</td>';
+            innerHtml += '<td>' + data[i]['err'] + '</td>';
+            innerHtml += '<td>' + data[i]['sts'] + '</td>';
+            innerHtml += '<td>' + data[i]['dataout'] + '</td>';
+            innerHtml += '<td>' + data[i]['datacheck'] + '</td>';
+            innerHtml += '<td>' + data[i]['cmnt'] + '</td>';
+            innerHtml += '<td><button type="button" class="btn btn-outline-secondary" onclick="change_sts(' +
+                data[i]['id'] + ')">квитировать</button></td></tr>';
+        }
+        table.innerHTML = innerHtml;
+    });
+}
+
+
+function change_sts(sts=-1) {
+    let request = "../api/ai";
+    if (sts !== -1) {
+        request = request + '/' + sts;
+        jQuery.get(request, function (data) {
+            table_upd();
+        });
+    }
+}

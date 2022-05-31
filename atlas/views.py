@@ -1,3 +1,4 @@
+from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.http import JsonResponse
@@ -6,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .forms import LoginForm
 from .models import Cmn, Ai, AtlasUser
-from .serializers import CmnSerializer
+from .serializers import AiSerializer
 
 
 def index(request):
@@ -21,6 +22,7 @@ def test(request):
 
 
 @login_required
+@never_cache
 def dashboard(request):
     return render(request, 'dashboard.html')
 
@@ -47,9 +49,9 @@ def api_cmn(request, count=None):
     if request.method == 'GET':
         current_user = AtlasUser.objects.get(pk=request.user.pk)
         if count is None:
-            cmn_objects = Cmn.objects.filter(access_group=current_user.objects_ai_groups[0])[:60]  # настроить выбор группы
+            cmn_objects = Cmn.objects.filter(access_group=current_user.objects_cmn_groups[0])[:60]  # настроить выбор группы
         else:
-            cmn_objects = Cmn.objects.filter(access_group=current_user.objects_ai_groups[0])[:count]
+            cmn_objects = Cmn.objects.filter(access_group=current_user.objects_cmn_groups[0])[:count]
 
         ai_out = [[], [], [], [], [], [], [], [], [], []]
         for item in cmn_objects:
@@ -64,3 +66,26 @@ def api_cmn(request, count=None):
             ai_out[8].append(item.ai9)
             ai_out[9].append(item.ai10)
         return JsonResponse({'cmn_ais': ai_out}, safe=False)
+
+
+@login_required
+@api_view(['GET'])
+def api_ai(request):
+    if request.method == 'GET':
+        current_user = AtlasUser.objects.get(pk=request.user.pk)
+        table_objects = Ai.objects.filter(access_group=current_user.objects_ai_groups[0], sts=1, err__gt=0).reverse()[:60]
+        serializer = AiSerializer(table_objects, many=True)
+        return Response(serializer.data)
+
+
+@login_required
+@api_view(['GET'])
+def api_ai_change_sts(request, pk=None):
+    if request.method == 'GET':
+        if pk is not None:
+            temp = Ai.objects.get(pk=pk)
+            temp.sts = 2
+            temp.save()
+            return JsonResponse({'': 'success'}, safe=False)
+        else:
+            return JsonResponse({'': 'failed'}, safe=False)
