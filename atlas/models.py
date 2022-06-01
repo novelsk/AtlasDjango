@@ -36,8 +36,8 @@ class Ai(models.Model):
     mlmax = models.FloatField()
     err = models.IntegerField()
     sts = models.IntegerField()
-    dataout = models.DateTimeField()
-    datacheck = models.DateTimeField()
+    dataout = models.DateTimeField(null=True)
+    datacheck = models.DateTimeField(null=True)
     cmnt = models.CharField(max_length=50)
     access_group = models.IntegerField(verbose_name='Группа доступа')
 

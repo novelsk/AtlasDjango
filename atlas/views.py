@@ -28,6 +28,13 @@ def dashboard(request):
 
 
 @login_required
+@never_cache
+def analytics(request):
+    return render(request, 'analytics.html')
+
+
+@login_required
+@never_cache
 def table(request):
     return render(request, 'table.html')
 
@@ -45,7 +52,7 @@ class AtlasLogoutView(LogoutView):
 # api
 @login_required
 @api_view(['GET'])
-def api_cmn(request, count=None):
+def api_cmn_board(request, count=None):
     if request.method == 'GET':
         current_user = AtlasUser.objects.get(pk=request.user.pk)
         if count is None:
@@ -66,6 +73,30 @@ def api_cmn(request, count=None):
             ai_out[8].append(item.ai9)
             ai_out[9].append(item.ai10)
         return JsonResponse({'cmn_ais': ai_out}, safe=False)
+
+
+@login_required
+@api_view(['GET'])
+def api_ai_board(request, count=None):
+    if request.method == 'GET':
+        current_user = AtlasUser.objects.get(pk=request.user.pk)
+        if count is None:
+            ai_objects = Ai.objects.filter(access_group=current_user.objects_ai_groups[0])[:60]  # настроить выбор группы
+        else:
+            ai_objects = Ai.objects.filter(access_group=current_user.objects_ai_groups[0])[:count]
+
+        ai_out = {'datain': [], 'mode': [], 'aimean': [], 'statmin': [],
+                  'statmax': [], 'mlmin': [], 'mlmax': [], 'err': []}
+        for item in ai_objects:
+            ai_out['datain'].append(item.datain)
+            ai_out['mode'].append(item.mode)
+            ai_out['aimean'].append(item.aimean)
+            ai_out['statmin'].append(item.statmin)
+            ai_out['statmax'].append(item.statmax)
+            ai_out['mlmin'].append(item.mlmin)
+            ai_out['mlmax'].append(item.mlmax)
+            ai_out['err'].append(item.err)
+        return JsonResponse({'ais': ai_out}, safe=False)
 
 
 @login_required
