@@ -4,6 +4,8 @@ from . import views
 app_name = 'atlas'
 
 urlpatterns = [
+    path('api/user/groups', views.api_user_groups),
+    path('api/archive', views.api_archive),
     path('api/ai', views.api_ai),
     path('api/ai/<int:pk>', views.api_ai_change_sts),
     path('api/ai_board/<int:count>', views.api_ai_board),
@@ -15,5 +17,6 @@ urlpatterns = [
     path('table', views.table, name='table'),
     path('analytics', views.analytics, name='analytics'),
     path('dashboard', views.dashboard, name='dashboard'),
+    path('archive', views.archive, name='archive'),
     path('', views.index, name='index'),
 ]

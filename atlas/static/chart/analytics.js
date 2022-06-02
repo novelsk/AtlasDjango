@@ -26,25 +26,27 @@ let mainChart = new Chart(ctx, {
 
 
 function draw_chart(count='') {
-    let request = "../api/cmn";
+    let request = "../api/ai_board";
     if (count !== '') {
         request = request + '/' + count;
     }
     jQuery.get(request, function (data) {
         mainChart.data.labels = [];
-        for (let i = 0; i < data['cmn_ais'][0].length; i++) {
+        for (let i = 0; i < data['mode'].length; i++) {
             mainChart.data.labels.push(i + 1);
         }
-        for (let i = 0; i < data['cmn_ais'].length; i++) {
-            mainChart.data.datasets[i] = {
-                label: 'Ai' + (i + 1),
-                data: data['cmn_ais'][i],
+        let temp = 0;
+        for (const key in data) {
+            mainChart.data.datasets[temp] = {
+                label: key,
+                data: data[key],
                 lineTension: 0,
                 backgroundColor: 'transparent',
-                borderColor: dataColors[i],
+                borderColor: dataColors[temp],
                 borderWidth: 2,
                 pointRadius: 0,
             }
+            temp++;
         }
         mainChart.update('none');
     });

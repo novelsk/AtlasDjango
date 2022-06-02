@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Analytics{% endblock %}
+{% block title %}Archive{% endblock %}
 
 
 {% block content %}
@@ -17,7 +17,7 @@
                         </div>
                         <ul class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{% url 'atlas:index' %}">Home</a></li>
-                            <li class="breadcrumb-item">Analytics</li>
+                            <li class="breadcrumb-item">Archive</li>
                         </ul>
                     </div>
                 </div>
@@ -29,30 +29,18 @@
             <!-- [ sample-page ] start -->
             <div class="col-sm-12">
                 <div class="card">
-                    <canvas id="chart" class="60" style="display: block; width: 875px; height: 369px;"></canvas>
-                    <div class="card-body">
-                        <div class="btn-group" id="board-buttons" role="group">
-                            <button type="button" class="btn btn-secondary">60</button>
-                            <button type="button" class="btn btn-secondary">240</button>
-                            <button type="button" class="btn btn-secondary">600</button>
-                        </div>
-                        <div class="btn-group" id="board-buttons" role="group">
-                            {% for item in user.objects_cmn_groups %}
-                                <button type="button" class="btn btn-secondary">{{ item }}</button>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    </div>
+
                 </div>
             </div>
-            <div class="col-sm-12">
-                <div class="card">
-                    <div class="">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>Датчики</h4>
-                            </div>
-                            <div class="card-body table-border-style">
+        </div>
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Датчики</h4>
+                        </div>
+                        <div class="card-body table-border-style">
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
@@ -83,17 +71,16 @@
                                 </table>
                             </div>
                         </div>
-                        </div>
                     </div>
                 </div>
             </div>
-            <!-- [ sample-page ] end -->
         </div>
-        <!-- [ Main Content ] end -->
+    </div>
+            <!-- [ sample-page ] end -->
 </div>
+        <!-- [ Main Content ] end -->
 
 {% endblock %}
 {% block script %}
-    <script src="{% static 'chart/dist/chart.js' %}"></script>
-    <script src="{% static 'chart/analytics.js' %}"></script>
+    <script src="{% static 'chart/archive.js' %}"></script>
 {% endblock %}
