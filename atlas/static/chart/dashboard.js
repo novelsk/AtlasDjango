@@ -8,6 +8,17 @@ button1.addEventListener("click", function () {draw_chart('60');ctx.className = 
 button2.addEventListener("click", function () {draw_chart('240');ctx.className = '240';});
 button3.addEventListener("click", function () {draw_chart('600');ctx.className = '600';});
 
+let num_group = null;
+const num_buttons = Array.from(document.getElementById("num-buttons").children);
+if (num_buttons.length === 1) {jQuery(num_buttons[0]).addClass('disabled');}
+num_buttons.forEach((item) => {
+    item.addEventListener('click', function () {
+        num_group = item.innerHTML;
+        num_buttons.forEach((temp) => {jQuery(temp).removeClass('disabled');});
+        jQuery(item).addClass('disabled');
+    });
+});
+
 
 let dataColors = ['#b84d4d', '#8f4db8', '#4f4db8', '#4d7fb8', '#4da4b8',
             '#4db891', '#4db86b', '#96b84d', '#b8a64d', '#b8864d', '#bd6d3e']
@@ -30,7 +41,7 @@ function draw_chart(count='') {
     if (count !== '') {
         request = request + '/' + count;
     }
-    jQuery.get(request, function (data) {
+    jQuery.get(request, {'num': num_group}, function (data) {
         mainChart.data.labels = [];
         for (let i = 0; i < data['cmn_ais'][0].length; i++) {
             mainChart.data.labels.push(i + 1);
