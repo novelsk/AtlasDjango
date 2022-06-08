@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Archive{% endblock %}
+
+
+{% block content %}
+<!-- [ Main Content ] start -->
+<div class="pc-container">
+    <div class="pcoded-content">
+        <!-- [ breadcrumb ] start -->
+        <div class="page-header">
+            <div class="page-block">
+                <div class="row align-items-center">
+                    <div class="col-md-12">
+                        <div class="page-header-title">
+                            <h5 class="m-b-10">Dashboard</h5>
+                        </div>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'atlas:index' %}">Home</a></li>
+                            <li class="breadcrumb-item">Archive</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- [ breadcrumb ] end -->
+        <!-- [ Main Content ] start -->
+        <div class="row">
+            <!-- [ sample-page ] start -->
+            <div class="col-sm-12">
+                <div class="card">
+
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Датчики</h4>
+                        </div>
+                        <div class="card-body table-border-style">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>№</th>
+                                            <th>idobj</th>
+                                            <th>idai</th>
+                                            <th>datain</th>
+                                            <th>mode</th>
+                                            <th>aimax</th>
+                                            <th>aimean</th>
+                                            <th>aimin</th>
+                                            <th>statmin</th>
+                                            <th>statmax</th>
+                                            <th>mlmin</th>
+                                            <th>mlmax</th>
+                                            <th>err</th>
+                                            <th>sts</th>
+                                            <th>dataout</th>
+                                            <th>datacheck</th>
+                                            <th>cmnt</th>
+                                            {# <th>access_group</th> #}
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tableBody">
+                                        <tr></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            <!-- [ sample-page ] end -->
+</div>
+        <!-- [ Main Content ] end -->
+
+{% endblock %}
+{% block script %}
+    <script src="{% static 'chart/archive.js' %}"></script>
+{% endblock %}

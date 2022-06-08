@@ -1,4 +1,4 @@
 app/atlas/static/assets
-app/venv
+/venv/
 /.idea/
 /db/
