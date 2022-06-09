@@ -1,3 +1,4 @@
+(function() {
 const table = document.getElementById("tableBody");
 
 function table_upd() {
@@ -30,3 +31,4 @@ function table_upd() {
 jQuery( document ).ready(function() {
     table_upd();
 });
+})();

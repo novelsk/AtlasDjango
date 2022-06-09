@@ -1,3 +1,4 @@
+(function() {
 const ctx = document.getElementById("chart");
 const table = document.getElementById("tableBody");
 const buttons = document.getElementById("board-buttons");
@@ -115,3 +116,4 @@ function change_sts(sts=-1) {
         });
     }
 }
+})();

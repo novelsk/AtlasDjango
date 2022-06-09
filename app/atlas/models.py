@@ -43,8 +43,14 @@ class Ai(models.Model):
 
 
 class AtlasUser(AbstractUser):
-    objects_cmn_groups = fields.ArrayField(base_field=models.IntegerField(null=True), default=list, verbose_name='Группы доступа Сmn')
-    objects_ai_groups = fields.ArrayField(base_field=models.IntegerField(null=True), default=list, verbose_name='Группы доступа Ai')
+    objects_cmn_groups = fields.ArrayField(base_field=models.IntegerField(null=True),
+                                           default=list, verbose_name='Группы доступа Сmn')
+    objects_ai_groups = fields.ArrayField(base_field=models.IntegerField(null=True),
+                                          default=list, verbose_name='Группы доступа Ai')
+    middle_name = models.CharField(max_length=50, default=str, verbose_name='Отчество', blank=True)
+    organization = models.CharField(max_length=50, default=str, verbose_name='Организация', blank=True)
+    division = models.CharField(max_length=50, default=str, verbose_name='Подразделение', blank=True)
+    post = models.CharField(max_length=50, default=str, verbose_name='Должность', blank=True)
 
     class Meta(AbstractUser.Meta):
         pass

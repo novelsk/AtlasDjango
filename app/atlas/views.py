@@ -1,45 +1,58 @@
-from django.views.decorators.cache import never_cache
+# from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .forms import LoginForm
+from .forms import LoginForm, UserForm
 from .models import Cmn, Ai, AtlasUser
 from .serializers import AiSerializer, UserGroups
 
 
+@login_required
 def index(request):
     return render(request, 'index.html')
 
 
 @login_required
-@never_cache
 def dashboard(request):
     return render(request, 'dashboard.html')
 
 
 @login_required
-@never_cache
 def analytics(request):
     return render(request, 'analytics.html')
 
 
 @login_required
-@never_cache
 def table(request):
     return render(request, 'table.html')
 
 
 @login_required
-@never_cache
 def archive(request):
     return render(request, 'archive.html')
 
 
+@login_required
+def account(request):
+    if request.method == 'POST':
+        form = UserForm(request.POST, instance=request.user)
+        context = {'form': form}
+        if form.is_valid():
+            form.save()
+            form.clean()
+            context['success'] = True
+        return render(request, 'account.html', context)
+    else:
+        form = UserForm(instance=request.user)
+        context = {'form': form}
+        return render(request, 'account.html', context)
+
+
 class AtlasLoginView(LoginView):
-    template_name = 'auth-signin.html'
+    template_name = 'login.html'
     authentication_form = LoginForm
 
 

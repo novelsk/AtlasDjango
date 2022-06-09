@@ -1,0 +1,127 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>{% block title %}Вход{% endblock %} - ATLAS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="DashboardKit is made using Bootstrap 5 design framework. Download the free admin template & use it for your project.">
+    <meta name="keywords" content="ATLAS, PREDICTIVE ANALYTICS SYSTEMS">
+    <meta name="author" content="DashboardKit, Roman Pokrovsky">
+
+    <link rel="icon" href="{% static 'icon/32x32.jpg' %}" type="image/x-icon">
+
+    <link rel="stylesheet" href="{% static 'assets/fonts/feather.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/fonts/fontawesome.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/fonts/material.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+</head>
+
+{% block content %}
+    <style>
+        input {
+            outline:none;
+            border: none;
+        }
+    </style>
+<div class="auth-wrapper">
+	<div class="auth-content">
+		<div class="card">
+			<div class="row align-items-center text-center">
+				<div class="col-md-12">
+					<div class="card-body">
+						{% if user.is_authenticated %}
+                            <h4 class="mb-3 f-w-400">Вы уже выполнили вход.</h4>
+                        {% else %}
+                            <h4 class="mb-3 f-w-400">Вход</h4>
+                            <form method="post">
+                                {% csrf_token %}
+                                <div>
+                                    {% for field in form %}
+                                        <div class="input-group mb-3">
+                                            {% if field.name == 'username' %}
+                                                <span class="input-group-text"><i data-feather="user"></i></span>
+                                                <div class="form-control">{{field}}</div>
+                                                {{ field.errors }}
+                                            {% else %}
+                                                <span class="input-group-text"><i data-feather="lock"></i></span>
+                                                <div class="form-control">{{field}}</div>
+                                                {{ field.errors }}
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                    {% if form.non_field_errors %}
+                                        <div class="alert alert-danger">{{form.non_field_errors}}</div>
+                                    {% endif %}
+                                </div>
+                                <input type="submit" class="btn btn-primary" value="Войти">
+                            </form>
+{#                            <form method="post">#}
+{#                            {% csrf_token %}#}
+{#                            {{ form.as_p }}#}
+{#                            <input type="submit" class="btn btn-primary" value="Войти">#}
+{#                            </form>#}
+                        {% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+    <!-- Warning Section start -->
+    <!-- Older IE warning message -->
+    <!--[if lt IE 11]>
+        <div class="ie-warning">
+            <h1>Warning!!</h1>
+            <p>You are using an outdated version of Internet Explorer, please upgrade
+               <br/>to any of the following web browsers to access this website.
+            </p>
+            <div class="iew-container">
+                <ul class="iew-download">
+                    <li>
+                        <a href="https://www.google.com/chrome/">
+                            <img src="{% static 'assets/images/browser/chrome.png' %}" alt="Chrome">
+                            <div>Chrome</div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.mozilla.org/en-US/firefox/new/">
+                            <img src="{% static 'assets/images/browser/firefox.png' %}" alt="Firefox">
+                            <div>Firefox</div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.opera.com">
+                            <img src="{% static 'assets/images/browser/opera.png' %}" alt="Opera">
+                            <div>Opera</div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.apple.com/safari/">
+                            <img src="{% static 'assets/images/browser/safari.png' %}" alt="Safari">
+                            <div>Safari</div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://windows.microsoft.com/en-us/internet-explorer/download-ie">
+                            <img src="{% static 'assets/images/browser/ie.png' %}" alt="">
+                            <div>IE (11 & above)</div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <p>Sorry for the inconvenience!</p>
+        </div>
+    <![endif]-->
+    <!-- Warning Section Ends -->
+    <!-- base block end -->
+    <script src="{% static 'assets/js/vendor-all.min.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/feather.min.js' %}"></script>
+    <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
+    {% block script %}
+    {% endblock %}
+</body>
+</html>
