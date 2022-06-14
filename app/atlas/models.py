@@ -1,10 +1,18 @@
+import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres import fields
 
 
+class Object(models.Model):
+    name = models.CharField(max_length=40, verbose_name='Объект')
+    info = models.CharField(max_length=100, verbose_name='Информация')
+    image = models.ImageField(blank=True, verbose_name='Cхема')
+
+
 class Cmn(models.Model):
+    object = models.ForeignKey(Object, on_delete=models.PROTECT, related_name='cmn', null=True)
     idobj = models.IntegerField()
     amount = models.IntegerField()
     data = models.DateTimeField()
@@ -23,6 +31,7 @@ class Cmn(models.Model):
 
 
 class Ai(models.Model):
+    object = models.ForeignKey(Object, on_delete=models.PROTECT, related_name='ai', null=True)
     idobj = models.IntegerField()
     idai = models.IntegerField()
     datain = models.DateTimeField()
@@ -40,6 +49,23 @@ class Ai(models.Model):
     datacheck = models.DateTimeField(null=True)
     cmnt = models.CharField(max_length=50)
     access_group = models.IntegerField(verbose_name='Группа доступа')
+
+
+class ObjectEvent(models.Model):
+    class Statuses(models.TextChoices):
+        PLAN = 'p', 'Запланирована'
+        WORK = 'w', 'В работе'
+        COMPLETE = 'c', 'Завершена'
+        __emplty__ = 'Статус работы'
+
+    idobj = models.ForeignKey(Object, on_delete=models.PROTECT, related_name='object', verbose_name='Объект')
+    status = models.CharField(max_length=1, choices=Statuses.choices, default=Statuses.PLAN, verbose_name='Статус')
+    date_of_creation = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата создания')
+    date_of_service_planned = models.DateTimeField(default=datetime.datetime.now(), blank=True,
+                                                   verbose_name='Запланировано')
+    plan = models.CharField(max_length=300, blank=True, verbose_name='План работ')
+    date_of_service_completed = models.DateTimeField(blank=True, db_index=True, verbose_name='Выполненно')
+    comment = models.CharField(max_length=300, blank=True, verbose_name='Комментарий проведеных работ')
 
 
 class AtlasUser(AbstractUser):

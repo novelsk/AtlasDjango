@@ -128,6 +128,9 @@ USE_TZ = True
 
 STATIC_URL = 'https://storage.yandexcloud.net/atlas-static/static/'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = 'media/'
+
 # STATICFILES_STORAGE = 'storage.yandexcloud.net/atlas-static'
 
 # Default primary key field type
@@ -142,7 +145,6 @@ LOGIN_REDIRECT_URL = "/"
 
 
 CORS_ALLOWED_ORIGINS = [
-    'http://0.0.0.0:8000',
     'http://84.201.187.58:8000',
     'https://storage.yandexcloud.net'
 ]
