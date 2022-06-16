@@ -15,11 +15,3 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = AtlasUser
         fields = ('last_name', 'first_name', 'middle_name', 'organization', 'division', 'post', 'email')
-
-
-class UserForm(forms.ModelForm):
-    organization = forms.CharField(widget=TextInput, disabled=True, label='Организация')
-
-    class Meta:
-        model = AtlasUser
-        fields = ('last_name', 'first_name', 'middle_name', 'organization', 'division', 'post', 'email')

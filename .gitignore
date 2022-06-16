@@ -1,4 +1,5 @@
 app/atlas/static/assets
+app/media
 /venv/
 /.idea/
 /db/
