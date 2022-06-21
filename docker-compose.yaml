@@ -4,7 +4,7 @@ services:
 
   db:
     container_name: postgres
-    image: cr.yandex/crp5kg6f7gau4u16u5it/psql14:latest
+    image: postgres:14.0-alpine
     restart: always
     volumes:
       - ./db:/var/lib/postgresql/data
@@ -16,7 +16,7 @@ services:
 
   web:
     container_name: website
-    image: cr.yandex/crp5kg6f7gau4u16u5it/atlas:latest
+    build: ./app
     restart: always
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
@@ -29,3 +29,19 @@ services:
       POSTGRES_DB: db01
     links:
       - db
+
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+        - "5672:5672"
+        - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: atlasrabbit
+    volumes:
+        - ./rabbit/data/:/var/lib/rabbitmq/
+        - ./rabbit/log/:/var/log/rabbitmq
+    links:
+      - web

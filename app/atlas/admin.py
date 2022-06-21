@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Company, Object, Sensor, SensorData, SensorMLSettings, SensorEvent, SensorError, \
+from .models import Company, Object, Sensor, SensorData, SensorMLSettings, ObjectEvent, SensorError, \
     AtlasUser, UserAccessGroups
 
 
@@ -19,12 +19,12 @@ class SensorAdmin(admin.ModelAdmin):
 
 
 class SensorDataAdmin(admin.ModelAdmin):
-    list_display = ('id_sensor', 'date', 'mode')
+    list_display = ('id_sensor', 'date', 'mode', 'status')
     list_display_links = ('id_sensor', )
 
 
 class SensorErrorAdmin(admin.ModelAdmin):
-    list_display = ('id_sensor', 'error', 'sts', 'error_start_date')
+    list_display = ('id_sensor', 'error', 'error_start_date')
     list_display_links = ('id_sensor',)
 
 
@@ -33,9 +33,9 @@ class SensorMLSettingsAdmin(admin.ModelAdmin):
     list_display_links = ('id_sensor', )
 
 
-class SensorEventAdmin(admin.ModelAdmin):
-    list_display = ('id_sensor', 'status', 'date_of_creation', 'date_of_service_planned')
-    list_display_links = ('id_sensor', 'status')
+class ObjectEventAdmin(admin.ModelAdmin):
+    list_display = ('id_object', 'status', 'date_of_creation', 'date_of_service_planned')
+    list_display_links = ('id_object', 'status')
 
 
 class AtlasUserAdmin(admin.ModelAdmin):
@@ -50,10 +50,10 @@ class UserAccessGroupsAdmin(admin.ModelAdmin):
 
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Object, ObjectAdmin)
+admin.site.register(ObjectEvent, ObjectEventAdmin)
 admin.site.register(Sensor, SensorAdmin)
 admin.site.register(SensorData, SensorDataAdmin)
 admin.site.register(SensorMLSettings, SensorMLSettingsAdmin)
-admin.site.register(SensorEvent, SensorEventAdmin)
 admin.site.register(SensorError, SensorErrorAdmin)
 admin.site.register(AtlasUser, AtlasUserAdmin)
 admin.site.register(UserAccessGroups, UserAccessGroupsAdmin)

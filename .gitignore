@@ -3,3 +3,4 @@ app/media
 /venv/
 /.idea/
 /db/
+rabbit/

@@ -18,7 +18,7 @@ class Company(models.Model):
 
 
 class Object(models.Model):
-    id_company = models.ForeignKey(Company, on_delete=models.PROTECT, related_name='company', verbose_name='Компания')
+    id_company = models.ForeignKey(Company, on_delete=models.PROTECT, related_name='object_company', verbose_name='Компания')
     name = models.CharField(max_length=40, verbose_name='Название')
     info = models.CharField(blank=True, max_length=100, verbose_name='Информация')
     image = models.ImageField(blank=True, verbose_name='Cхема')
@@ -33,7 +33,7 @@ class Object(models.Model):
 
 
 class Sensor(models.Model):
-    id_object = models.ForeignKey(Object, on_delete=models.PROTECT, related_name='object', verbose_name='Объект')
+    id_object = models.ForeignKey(Object, on_delete=models.PROTECT, related_name='sensor_object', verbose_name='Объект')
     name = models.CharField(max_length=40, verbose_name='Название')
     info = models.CharField(blank=True, max_length=100, verbose_name='Информация')
     image = models.ImageField(blank=True, verbose_name='Cхема')
@@ -49,6 +49,8 @@ class Sensor(models.Model):
 
 class SensorData(models.Model):
     id_sensor = models.ForeignKey(Object, on_delete=models.PROTECT, related_name='data_sensor', verbose_name='Датчик')
+    id_error_log = models.ForeignKey(Object, on_delete=models.PROTECT, blank=True,
+                                     related_name='data_error', verbose_name='Датчик')
     date = models.DateTimeField(blank=True, db_index=True, verbose_name='Дата обработки сигнала')
     mode = models.FloatField()
     ai_max = models.FloatField()
@@ -58,6 +60,7 @@ class SensorData(models.Model):
     stat_max = models.FloatField()
     ml_min = models.FloatField()
     ml_max = models.FloatField()
+    status = models.IntegerField(blank=True, db_index=True, verbose_name='Статус')
 
     def __str__(self):
         return self.id_sensor.name
@@ -72,7 +75,6 @@ class SensorError(models.Model):
     error = models.IntegerField(blank=True, db_index=True)
     error_start_date = models.DateTimeField(blank=True, verbose_name='Дата начала ошибки')
     error_end_date = models.DateTimeField(blank=True, verbose_name='Дата окончания ошибки')
-    sts = models.IntegerField(blank=True, db_index=True)
     info = models.CharField(blank=True, max_length=100, verbose_name='Описание')
 
     def __str__(self):
@@ -84,8 +86,20 @@ class SensorError(models.Model):
 
 
 class SensorMLSettings(models.Model):
-    id_sensor = models.ForeignKey(Object, on_delete=models.PROTECT, related_name='event_sensor', verbose_name='Датчик')
+    id_sensor = models.ForeignKey(Object, on_delete=models.PROTECT, blank=True,
+                                  related_name='event_sensor', verbose_name='Датчик')
     info = models.CharField(blank=True, max_length=100, verbose_name='Описание')
+    setting_type = models.IntegerField(blank=True, db_index=True, verbose_name='Тип')
+    setting_ll = models.FloatField(blank=True)
+    setting_l = models.FloatField(blank=True)
+    setting_h = models.FloatField(blank=True)
+    setting_hh = models.FloatField(blank=True)
+    point = models.IntegerField(blank=True, db_index=True, verbose_name='Точка')
+    tm_prd = models.IntegerField(blank=True, db_index=True, verbose_name='Тип')
+    setting_param_1 = models.FloatField(blank=True)
+    setting_param_2 = models.FloatField(blank=True)
+    setting_param_3 = models.FloatField(blank=True)
+    setting_param_4 = models.FloatField(blank=True)
 
     def __str__(self):
         return self.id_sensor.name
@@ -95,7 +109,7 @@ class SensorMLSettings(models.Model):
         verbose_name_plural = 'Настройки ML'
 
 
-class SensorEvent(models.Model):
+class ObjectEvent(models.Model):
     class Statuses(models.TextChoices):
         PLAN = 'p', 'Запланирована'
         WORK = 'w', 'В работе'
@@ -107,7 +121,7 @@ class SensorEvent(models.Model):
         'c': 'Завершен',
     }
 
-    id_sensor = models.ForeignKey(Object, on_delete=models.PROTECT, related_name='sensor', verbose_name='Датчик')
+    id_object = models.ForeignKey(Object, on_delete=models.PROTECT, related_name='event_object', verbose_name='Датчик')
     status = models.CharField(max_length=1, choices=Statuses.choices, default=Statuses.PLAN, verbose_name='Статус')
     date_of_creation = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата создания')
     date_of_service_planned = models.DateTimeField(default=timezone.now, blank=True,
@@ -117,7 +131,7 @@ class SensorEvent(models.Model):
     comment = models.CharField(max_length=300, blank=True, verbose_name='Комментарий проведеных работ')
 
     def __str__(self):
-        return str(self.id_sensor) + '. Статус - ' + self.status_json[self.status]
+        return str(self.id_object) + ' ---- ' + self.status_json[self.status]
 
     class Meta:
         verbose_name = 'Операция'
