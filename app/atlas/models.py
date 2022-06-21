@@ -47,10 +47,25 @@ class Sensor(models.Model):
         ordering = ['name']
 
 
+class SensorError(models.Model):
+    id_sensor = models.ForeignKey(Object, on_delete=models.PROTECT, related_name='error_sensor', verbose_name='Датчик')
+    error = models.IntegerField(blank=True, db_index=True)
+    error_start_date = models.DateTimeField(blank=True, verbose_name='Дата начала ошибки')
+    error_end_date = models.DateTimeField(blank=True, verbose_name='Дата окончания ошибки')
+    info = models.CharField(blank=True, max_length=100, verbose_name='Описание')
+
+    def __str__(self):
+        return self.id_sensor.name
+
+    class Meta:
+        verbose_name = 'Ошибка'
+        verbose_name_plural = 'Ошибки'
+
+
 class SensorData(models.Model):
     id_sensor = models.ForeignKey(Object, on_delete=models.PROTECT, related_name='data_sensor', verbose_name='Датчик')
-    id_error_log = models.ForeignKey(Object, on_delete=models.PROTECT, blank=True,
-                                     related_name='data_error', verbose_name='Датчик')
+    id_error_log = models.ForeignKey(SensorError, on_delete=models.PROTECT, null=True, db_index=True, blank=True,
+                                     related_name='data_error', verbose_name='Журнал ошибки')
     date = models.DateTimeField(blank=True, db_index=True, verbose_name='Дата обработки сигнала')
     mode = models.FloatField()
     ai_max = models.FloatField()
@@ -68,21 +83,6 @@ class SensorData(models.Model):
     class Meta:
         verbose_name = 'Данные'
         verbose_name_plural = 'Показатели датчиков'
-
-
-class SensorError(models.Model):
-    id_sensor = models.ForeignKey(Object, on_delete=models.PROTECT, related_name='error_sensor', verbose_name='Датчик')
-    error = models.IntegerField(blank=True, db_index=True)
-    error_start_date = models.DateTimeField(blank=True, verbose_name='Дата начала ошибки')
-    error_end_date = models.DateTimeField(blank=True, verbose_name='Дата окончания ошибки')
-    info = models.CharField(blank=True, max_length=100, verbose_name='Описание')
-
-    def __str__(self):
-        return self.id_sensor.name
-
-    class Meta:
-        verbose_name = 'Ошибка'
-        verbose_name_plural = 'Ошибки'
 
 
 class SensorMLSettings(models.Model):
