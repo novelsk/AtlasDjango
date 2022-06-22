@@ -4,7 +4,9 @@ from . import views
 app_name = 'atlas'
 
 urlpatterns = [
-    # path('api/ai/<int:pk>', views.api_ai_change_sts),
+    # path('api/ai/<int:pk>', views.api_ai_change_sts)
+    path('api/chart', views.api_chart),
+    path('rabbit_data', views.sensors_data),
     path('accounts/login/', views.AtlasLoginView.as_view(), name='login'),
     path('accounts/login', views.AtlasLoginView.as_view(), name='login'),
     path('accounts/logout', views.AtlasLogoutView.as_view(), name='logout'),

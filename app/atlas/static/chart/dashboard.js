@@ -38,11 +38,8 @@ let mainChart = new Chart(ctx, {
 
 
 function draw_chart(count='') {
-    let request = "../api/cmn";
-    if (count !== '') {
-        request = request + '/' + count;
-    }
-    jQuery.get(request, {'num': num_group}, function (data) {
+    let request = "../api/chart";
+    jQuery.get(request, {'': ''}, function (data) {
         mainChart.data.labels = [];
         for (let i = 0; i < data['cmn_ais'][0].length; i++) {
             mainChart.data.labels.push(i + 1);
@@ -105,15 +102,3 @@ function table_upd() {
         table.innerHTML = innerHtml;
     });
 }
-
-
-function change_sts(sts=-1) {
-    let request = "../api/ai";
-    if (sts !== -1) {
-        request = request + '/' + sts;
-        jQuery.get(request, function (data) {
-            table_upd();
-        });
-    }
-}
-})();

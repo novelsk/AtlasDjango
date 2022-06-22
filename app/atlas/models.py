@@ -18,7 +18,8 @@ class Company(models.Model):
 
 
 class Object(models.Model):
-    id_company = models.ForeignKey(Company, on_delete=models.PROTECT, related_name='object_company', verbose_name='Компания')
+    id_company = models.ForeignKey(Company, on_delete=models.PROTECT, related_name='object_company',
+                                   verbose_name='Компания')
     name = models.CharField(max_length=40, verbose_name='Название')
     info = models.CharField(blank=True, max_length=100, verbose_name='Информация')
     image = models.ImageField(blank=True, verbose_name='Cхема')
@@ -34,6 +35,7 @@ class Object(models.Model):
 
 class Sensor(models.Model):
     id_object = models.ForeignKey(Object, on_delete=models.PROTECT, related_name='sensor_object', verbose_name='Объект')
+    id_sensor_repr = models.IntegerField(blank=True, db_index=True, null=True, verbose_name='Номер датчика в объекте')
     name = models.CharField(max_length=40, verbose_name='Название')
     info = models.CharField(blank=True, max_length=100, verbose_name='Информация')
     image = models.ImageField(blank=True, verbose_name='Cхема')
@@ -48,11 +50,11 @@ class Sensor(models.Model):
 
 
 class SensorError(models.Model):
-    id_sensor = models.ForeignKey(Object, on_delete=models.PROTECT, related_name='error_sensor', verbose_name='Датчик')
+    id_sensor = models.ForeignKey(Sensor, on_delete=models.PROTECT, related_name='error_sensor', verbose_name='Датчик')
     error = models.IntegerField(blank=True, db_index=True)
     error_start_date = models.DateTimeField(blank=True, verbose_name='Дата начала ошибки')
-    error_end_date = models.DateTimeField(blank=True, verbose_name='Дата окончания ошибки')
-    info = models.CharField(blank=True, max_length=100, verbose_name='Описание')
+    error_end_date = models.DateTimeField(null=True, verbose_name='Дата окончания ошибки')
+    info = models.CharField(null=True, max_length=100, verbose_name='Описание')
 
     def __str__(self):
         return self.id_sensor.name
@@ -63,7 +65,7 @@ class SensorError(models.Model):
 
 
 class SensorData(models.Model):
-    id_sensor = models.ForeignKey(Object, on_delete=models.PROTECT, related_name='data_sensor', verbose_name='Датчик')
+    id_sensor = models.ForeignKey(Sensor, on_delete=models.PROTECT, related_name='data_sensor', verbose_name='Датчик')
     id_error_log = models.ForeignKey(SensorError, on_delete=models.PROTECT, null=True, db_index=True, blank=True,
                                      related_name='data_error', verbose_name='Журнал ошибки')
     date = models.DateTimeField(blank=True, db_index=True, verbose_name='Дата обработки сигнала')
@@ -86,7 +88,7 @@ class SensorData(models.Model):
 
 
 class SensorMLSettings(models.Model):
-    id_sensor = models.ForeignKey(Object, on_delete=models.PROTECT, blank=True,
+    id_sensor = models.ForeignKey(Sensor, on_delete=models.PROTECT, blank=True,
                                   related_name='event_sensor', verbose_name='Датчик')
     info = models.CharField(blank=True, max_length=100, verbose_name='Описание')
     setting_type = models.IntegerField(blank=True, db_index=True, verbose_name='Тип')
