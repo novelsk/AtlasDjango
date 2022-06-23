@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-v=fcw8hctkj=k1hcv@ejz%lg_g=_6rsz(ly8^s$^=axr**qqn=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = ['84.201.187.58']
+# ALLOWED_HOSTS = ['77.222.54.167']
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 
 
@@ -151,3 +151,8 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
+
+DJANGO_RESPONSE_URL = 'http://localhost:8000/rabbit_data'
+RABBIT_REQUEST_URL = 'amqp://user:atlasrabbit@77.222.54.167:5672/%2F?FirstStep'
+RABBIT_EXCHANGE = 'test_exchange'
+RABBIT_QUEUE = 'FirstStep'

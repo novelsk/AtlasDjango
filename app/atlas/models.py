@@ -65,8 +65,8 @@ class SensorError(models.Model):
 
 
 class SensorData(models.Model):
-    id_sensor = models.ForeignKey(Sensor, on_delete=models.PROTECT, related_name='data_sensor', verbose_name='Датчик')
-    id_error_log = models.ForeignKey(SensorError, on_delete=models.PROTECT, null=True, db_index=True, blank=True,
+    id_sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE, related_name='data_sensor', verbose_name='Датчик')
+    id_error_log = models.ForeignKey(SensorError, on_delete=models.SET_NULL, null=True, db_index=True, blank=True,
                                      related_name='data_error', verbose_name='Журнал ошибки')
     date = models.DateTimeField(blank=True, db_index=True, verbose_name='Дата обработки сигнала')
     mode = models.FloatField()

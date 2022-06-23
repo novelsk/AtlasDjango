@@ -38,7 +38,7 @@ def account(request):
         if form.is_valid():
             form.save()
             form.clean()
-            context['success'] = True
+            context['success'].append(True)
         return render(request, 'account.html', context)
     else:
         form = UserForm(instance=request.user)
@@ -62,13 +62,13 @@ def sensors_data(request):
     data = request.POST  # type: QueryDict
     context = {'': 'BAD'}
     if data.get('csrf') == 'a very secret key':
-        context[''] = 'csrf verification passed'
+        context[''].append('csrf verification passed')
         current_object = Object.objects.get(pk=data.get('id_object'))
         if current_object is not None:
-            context[''] = 'object founded'
+            context[''].append('object founded')
             current_sensor = Sensor.objects.get(id_object=current_object, id_sensor_repr=data.get('id_sensor'))
             if current_sensor is not None:
-                context[''] = 'sensor founded'
+                context[''].append('sensor founded')
                 sensor_data = SensorData.objects.create(
                     id_sensor=current_sensor, date=data.get('date'), mode=data.get('mode'),
                     ai_max=data.get('ai_max'), ai_min=data.get('ai_min'),
@@ -77,17 +77,25 @@ def sensors_data(request):
                     ml_max=data.get('ml_max'), status=data.get('status'),
                 )
                 previous_data = SensorData.objects.all().last()
-                error = data.get('error')
+                error = int(data.get('error'))
 
                 '''
                 Если есть ошибка то
                     Если у прошлых данных нет ошибки, то
                         Создается новый журнал ошибок, сохраняется
                         Новые данные записываются в журнал
-                    Иначе если у 
+                    Иначе если предыдущая ошибка равна текущей, то
+                        текущая ошибка записывается в существующий журнал
+                    Иначе
+                        Предыдущий журнал закрывается, время заверешния из предыдущей ошибки
+                        Создается новый журнал ошибок, сохраняется
+                        Новые данные записываются в журнал
                 '''
 
-                if error != 0:
+                if error == 0:
+                    if previous_data.id_error_log is not None:
+                        previous_data.id_error_log.error_end_date = previous_data.date
+                else:
                     if previous_data.id_error_log is None:
                         new_journal = SensorError.objects.create(
                             id_sensor=current_sensor, error=error, error_start_date=sensor_data.date)
@@ -101,28 +109,42 @@ def sensors_data(request):
                             id_sensor=current_sensor, error=error, error_start_date=sensor_data.date)
                         new_journal.save()
                         sensor_data.id_error_log = new_journal
-                else:
-                    if previous_data.id_error_log is not None:
-                        previous_data.id_error_log.error_end_date = previous_data.date
-
                 sensor_data.save()
-                context[''] = 'GOOD'
+                context[''].append('GOOD')
     return JsonResponse(context, safe=False)
 
 
 @api_view(['GET'])
 def api_chart(request):
     if request.method == 'GET':
-        current_user = AtlasUser.objects.get(pk=request.user.pk)
-        user_groups = current_user.useraccessgroups_set.all()
-        companys = Company.objects.none()  # type: QuerySet
-        test = {}
-        for i in user_groups:
-            test[i.pk] = i.name
-            companys.union(companys, i.companys)  # type: QuerySet
-        # for company in user_companys:
-        #     out[company.pk] = company.name
-        return JsonResponse({'': test}, safe=False)
+        sensor = Sensor.objects.first()
+
+        data_query = sensor.data_sensor.all()[:60]  # type: QuerySet
+        context = {
+            'mode': [], 'ai_max': [], 'ai_min': [],
+            'ai_mean': [], 'stat_min': [], 'stat_max': [],
+            'ml_min': [], 'ml_max': [], 'status': []}
+        for data in data_query:
+            context['mode'].append(data.mode)
+            context['ai_max'].append(data.ai_max)
+            context['ai_min'].append(data.ai_min)
+            context['ai_mean'].append(data.ai_mean)
+            context['stat_min'].append(data.stat_min)
+            context['stat_max'].append(data.stat_max)
+            context['ml_min'].append(data.ml_min)
+            context['ml_max'].append(data.ml_max)
+            context['status'].append(data.status)
+        return JsonResponse(context, safe=False)
+
+
+def user_company_query(request):
+    """Возврщает QuerySet, компаний которые доступны пользователю"""
+    current_user = AtlasUser.objects.get(pk=request.user.pk)
+    user_groups = current_user.useraccessgroups_set.all()
+    company_query = Company.objects.none()  # type: QuerySet
+    for i in user_groups:
+        company_query = company_query.union(i.companys.all())
+    return company_query
 
 
 # @api_view(['GET'])

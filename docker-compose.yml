@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.6'
 
 services:
   db:
@@ -33,8 +33,9 @@ services:
       - db
 
 #  rabbitmq:
-#    image: rabbitmq:3-management-alpine
-#    container_name: 'rabbitmq'
+#    image: rabbitmq:3.10-management-alpine
+#    container_name: rabbitmq
+#    hostname: atlas
 #    ports:
 #        - "5672:5672"
 #        - "15672:15672"
@@ -42,7 +43,7 @@ services:
 #      RABBITMQ_DEFAULT_USER: user
 #      RABBITMQ_DEFAULT_PASS: atlasrabbit
 #    volumes:
-#        - ./rabbit/data/:/var/lib/rabbitmq/
-#        - ./rabbit/log/:/var/log/rabbitmq
+#      - ./rabbit/data/:/var/lib/rabbitmq/
+#      - ./rabbit/log/:/var/log/rabbitmq
 #    links:
 #      - web

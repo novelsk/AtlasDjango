@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-v=fcw8hctkj=k1hcv@ejz%lg_g=_6rsz(ly8^s$^=axr**qqn=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['77.222.54.167', '*.yandexcloud.net']
+ALLOWED_HOSTS = ['77.222.54.167', '*.yandexcloud.net', 'localhost', '0.0.0.0']
 
 
 # Application definition
@@ -79,14 +79,13 @@ WSGI_APPLICATION = 'website.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-db_host = 'localhost' if os.name == 'nt' else 'db'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'db01',
         'USER': 'admin',
         'PASSWORD': 'atlas',
-        'HOST': db_host,
+        'HOST': 'db',
         'PORT': '5432',
     }
 }
@@ -145,7 +144,7 @@ LOGIN_REDIRECT_URL = "/"
 
 
 CORS_ALLOWED_ORIGINS = [
-    'http://84.201.187.58:8000',
+    'http://77.222.54.167:8000',
     'https://storage.yandexcloud.net'
 ]
 # CORS_URLS_REGEX = r"^/api/.*$"
@@ -156,3 +155,10 @@ CACHES = {
         'LOCATION': 'cache_table',
     }
 }
+
+# rabbit pika script settings
+
+DJANGO_RESPONSE_URL = 'http://0.0.0.0:8000/rabbit_data'
+RABBIT_REQUEST_URL = 'amqp://user:atlasrabbit@0.0.0.0:5672/%2F?Clone'
+RABBIT_EXCHANGE = 'release'
+RABBIT_QUEUE = 'Clone'

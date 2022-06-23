@@ -4,6 +4,9 @@ from json import loads
 from pika.exchange_type import ExchangeType
 from asyncio import sleep
 from requests.api import post
+from website.settings import DJANGO_RESPONSE_URL, RABBIT_REQUEST_URL, \
+    RABBIT_EXCHANGE, RABBIT_QUEUE
+
 
 
 LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
@@ -39,7 +42,7 @@ def on_message(chan, method_frame, header_frame, body):
         'status': input_info['Sts'],
         'error': input_info['Err']
     }
-    response = post(url='http://localhost:8000/rabbit_data', data=response_data)
+    response = post(url=DJANGO_RESPONSE_URL, data=response_data)
     LOGGER.info('Response status: {}, data: {}'.format(response.status_code, response.json()['']))
     chan.basic_ack(delivery_tag=method_frame.delivery_tag)
 
@@ -47,23 +50,24 @@ def on_message(chan, method_frame, header_frame, body):
 def main():
     """Main method."""
     sleep(10)
-    parameters = pika.URLParameters('amqp://user:atlasrabbit@77.222.54.167:5672/%2F?FirstStep')
+    parameters = pika.URLParameters(RABBIT_REQUEST_URL)
     connection = pika.BlockingConnection(parameters)
 
     channel = connection.channel()
     channel.exchange_declare(
-        exchange='test_exchange',
+        exchange=RABBIT_EXCHANGE,
         exchange_type=ExchangeType.direct,
         passive=False,
         durable=True,
         auto_delete=False)
-    channel.queue_bind(queue='FirstStep', exchange='test_exchange', routing_key='standard_key')
-    channel.basic_consume('FirstStep', on_message_callback=on_message)
+    channel.queue_bind(queue=RABBIT_QUEUE, exchange=RABBIT_EXCHANGE, routing_key='standard_key')
+    channel.basic_consume(RABBIT_QUEUE, on_message_callback=on_message)
     try:
         channel.start_consuming()
-    finally:
+        return 1
+    except KeyboardInterrupt:
         connection.close()
-        main()
+        return 0
 
 
 if __name__ == '__main__':
