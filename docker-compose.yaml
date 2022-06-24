@@ -12,6 +12,8 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: atlas
       POSTGRES_DB: db01
+    networks:
+      - main_bridge
 
 
   web:
@@ -27,8 +29,8 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: atlas
       POSTGRES_DB: db01
-    links:
-      - db
+    networks:
+      - main_bridge
 
 
   rabbitmq:
@@ -44,6 +46,10 @@ services:
     volumes:
       - ./rabbit/data/:/var/lib/rabbitmq/
       - ./rabbit/log/:/var/log/rabbitmq
-    links:
-      - web
+    networks:
+      - main_bridge
 
+
+networks:
+  main_bridge:
+    driver: bridge

@@ -16,6 +16,18 @@ def index(request):
 
 
 @login_required
+def base2(request):
+    company_query = user_company_query(request)
+    objects = Object.objects.none()
+    for i in company_query:
+        i = i  # type: Company
+        objects = objects.union(i.object_company.all())
+    objects = list(objects)
+    context = {'object_list': objects}
+    return render(request, 'base2.html', context)
+
+
+@login_required
 def dashboard(request):
     return render(request, 'dashboard.html')
 
@@ -62,13 +74,13 @@ def sensors_data(request):
     data = request.POST  # type: QueryDict
     context = {'': 'BAD'}
     if data.get('csrf') == 'a very secret key':
-        context[''].append('csrf verification passed')
         current_object = Object.objects.get(pk=data.get('id_object'))
+        context = {'': 'csrf checked'}
         if current_object is not None:
-            context[''].append('object founded')
             current_sensor = Sensor.objects.get(id_object=current_object, id_sensor_repr=data.get('id_sensor'))
+            context = {'': 'current_object is not None'}
             if current_sensor is not None:
-                context[''].append('sensor founded')
+                context = {'': 'if current_sensor is not None'}
                 sensor_data = SensorData.objects.create(
                     id_sensor=current_sensor, date=data.get('date'), mode=data.get('mode'),
                     ai_max=data.get('ai_max'), ai_min=data.get('ai_min'),
@@ -110,7 +122,7 @@ def sensors_data(request):
                         new_journal.save()
                         sensor_data.id_error_log = new_journal
                 sensor_data.save()
-                context[''].append('GOOD')
+                context[''] = 'GOOD'
     return JsonResponse(context, safe=False)
 
 
@@ -118,14 +130,13 @@ def sensors_data(request):
 def api_chart(request):
     if request.method == 'GET':
         sensor = Sensor.objects.first()
-
-        data_query = sensor.data_sensor.all()[:60]  # type: QuerySet
+        count = int(request.GET.get('count'))
+        data_query = sensor.data_sensor.order_by('-date')[:count]  # type: QuerySet
         context = {
-            'mode': [], 'ai_max': [], 'ai_min': [],
+            'ai_max': [], 'ai_min': [],
             'ai_mean': [], 'stat_min': [], 'stat_max': [],
-            'ml_min': [], 'ml_max': [], 'status': []}
+            'ml_min': [], 'ml_max': [], 'status': [], 'date': []}
         for data in data_query:
-            context['mode'].append(data.mode)
             context['ai_max'].append(data.ai_max)
             context['ai_min'].append(data.ai_min)
             context['ai_mean'].append(data.ai_mean)
@@ -134,9 +145,11 @@ def api_chart(request):
             context['ml_min'].append(data.ml_min)
             context['ml_max'].append(data.ml_max)
             context['status'].append(data.status)
+            context['date'].append(data.date.time())
         return JsonResponse(context, safe=False)
 
 
+# logic
 def user_company_query(request):
     """Возврщает QuerySet, компаний которые доступны пользователю"""
     current_user = AtlasUser.objects.get(pk=request.user.pk)
@@ -145,7 +158,6 @@ def user_company_query(request):
     for i in user_groups:
         company_query = company_query.union(i.companys.all())
     return company_query
-
 
 # @api_view(['GET'])
 # def api_ai_change_sts(request, pk=None):

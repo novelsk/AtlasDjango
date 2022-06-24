@@ -7,12 +7,13 @@ services:
     restart: always
     volumes:
       - ./db:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: atlas
       POSTGRES_DB: db01
+    networks:
+       - main_bridge
+
 
 
   web:
@@ -20,7 +21,6 @@ services:
     build: ./app
     restart: always
     command: python manage.py runserver 0.0.0.0:8000
-    # command:  sh -c "python manage.py runserver 0.0.0.0:8000 && python rabbit.py"
     volumes:
       - ./app:/usr/src/app/
     ports:
@@ -29,8 +29,9 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: atlas
       POSTGRES_DB: db01
-    links:
-      - db
+    networks:
+      - main_bridge
+
 
 #  rabbitmq:
 #    image: rabbitmq:3.10-management-alpine
@@ -47,3 +48,8 @@ services:
 #      - ./rabbit/log/:/var/log/rabbitmq
 #    links:
 #      - web
+
+
+networks:
+  main_bridge:
+    driver: bridge

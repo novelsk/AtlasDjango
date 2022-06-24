@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-v=fcw8hctkj=k1hcv@ejz%lg_g=_6rsz(ly8^s$^=axr**qqn=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['77.222.54.167', '*.yandexcloud.net', 'localhost', '0.0.0.0']
+ALLOWED_HOSTS = ['77.222.54.167', '*.yandexcloud.net', '0.0.0.0', '172.20.*', '']
 
 
 # Application definition
@@ -158,7 +158,7 @@ CACHES = {
 
 # rabbit pika script settings
 
-DJANGO_RESPONSE_URL = 'http://0.0.0.0:8000/rabbit_data'
-RABBIT_REQUEST_URL = 'amqp://user:atlasrabbit@0.0.0.0:5672/%2F?Clone'
+DJANGO_RESPONSE_URL = 'http://web/rabbit_data'
+RABBIT_REQUEST_URL = 'amqp://user:atlasrabbit@rabbitmq:5672/%2F'
 RABBIT_EXCHANGE = 'release'
 RABBIT_QUEUE = 'Clone'

@@ -26,7 +26,6 @@ SECRET_KEY = 'django-insecure-v=fcw8hctkj=k1hcv@ejz%lg_g=_6rsz(ly8^s$^=axr**qqn=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = ['77.222.54.167']
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 
 
@@ -80,14 +79,13 @@ WSGI_APPLICATION = 'website.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-db_host = 'localhost' if os.name == 'nt' else 'db'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'db01',
         'USER': 'admin',
         'PASSWORD': 'atlas',
-        'HOST': db_host,
+        'HOST': 'db',
         'PORT': '5432',
     }
 }
@@ -153,6 +151,6 @@ CACHES = {
 }
 
 DJANGO_RESPONSE_URL = 'http://localhost:8000/rabbit_data'
-RABBIT_REQUEST_URL = 'amqp://user:atlasrabbit@77.222.54.167:5672/%2F?FirstStep'
+RABBIT_REQUEST_URL = 'amqp://user:atlasrabbit@77.222.54.167:5672/%2F'
 RABBIT_EXCHANGE = 'test_exchange'
 RABBIT_QUEUE = 'FirstStep'
