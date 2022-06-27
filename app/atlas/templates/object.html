@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+
+
+{% block content %}
+<!-- [ Main Content ] start -->
+<div class="pc-container">
+	<div class="pcoded-content">
+    <div class="page-header">
+            <div class="page-block">
+                <div class="row align-items-center">
+                    <div class="col-md-12">
+                        <div class="page-header-title">
+                            <h5 class="m-b-10">Аналитика</h5>
+                        </div>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'atlas:index' %}">Home</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'atlas:company' object.id_company.id %}">{{ object.id_company }}</a></li>
+                            <li class="breadcrumb-item">{{ object.name }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+		<!-- [ Main Content ] start -->
+
+		<div class="row">
+			<!-- [ card ] start -->
+        <h5>Датчики</h5><hr>
+            {% for sensor in sensors_list %}
+			<div class="col-md-6 col-xl-4">
+				<div class="card">
+					<h5 class="card-header">{{ sensor.name}} {{ sensor.id_sensor_repr }}</h5>
+					<div class="card-body">
+						<h5 class="card-title">Здесь будет картинка датчика</h5>
+						<p class="card-text">{{ sensor.info }}</p>
+						<a href="{% url 'atlas:sensor' object_id=object.id sensor_id=sensor.id %}" class="btn btn-outline-info">Подробнее</a>
+					</div>
+				</div>
+			</div>
+            {% endfor %}
+        <h5>Журналы</h5><hr>
+            <div class="col-md-6 col-xl-4">
+				<div class="card text-white bg-success ">
+					<h5 class="card-header">Журнал технического обслуживания</h5>
+					<div class="card-body">
+						<h5 class="card-title">Здесь будет какой-нибудь текст</h5>
+						<p class="card-text">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</p>
+						<a href="#!" class="btn btn-shadow btn-success">Подробнее</a>
+					</div>
+				</div>
+			</div>
+            <div class="col-md-6 col-xl-4">
+				<div class="card text-white bg-warning ">
+					<h5 class="card-header">Журнал происшествий</h5>
+					<div class="card-body">
+						<h5 class="card-title">Здесь будет какой-нибудь текст</h5>
+						<p class="card-text">Можем выбрать цвет карточки</p>
+						<a href="#!" class="btn btn-shadow btn-warning">Подробнее</a>
+					</div>
+				</div>
+			</div>
+        <h5>Настройки</h5><hr>
+            <div class="col-md-6 col-xl-4">
+				<div class="card">
+					<h5 class="card-header">Machine learning</h5>
+					<div class="card-body">
+						<h5 class="card-title">Machine learning</h5>
+						<p class="card-text">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+                         Aenean commodo ligula eget dolor. Aenean massa.</p>
+						<a href="#!" class="btn btn-outline-info">Подробнее</a>
+					</div>
+				</div>
+			</div>
+			<!-- [ card ] end -->
+		</div>
+		<!-- [ Main Content ] end -->
+	</div>
+</div>
+
+{% endblock %}

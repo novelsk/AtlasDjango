@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+
+
+{% block content %}
+<!-- [ Main Content ] start -->
+<div class="pc-container">
+	<div class="pcoded-content">
+    <div class="page-header">
+            <div class="page-block">
+                <div class="row align-items-center">
+                    <div class="col-md-12">
+                        <div class="page-header-title">
+                            <h5 class="m-b-10">Объекты</h5>
+                        </div>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'atlas:index' %}">Home</a></li>
+                            <li class="breadcrumb-item">{{ company.name }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+		<!-- [ Main Content ] start -->
+
+		<div class="row">
+			<!-- [ card ] start -->
+        <h5>Объекты</h5><hr>
+            {% for object in object_list %}
+			<div class="col-md-6 col-xl-4">
+				<div class="card">
+					<h5 class="card-header">{{ object.name}}</h5>
+					<div class="card-body">
+						<h5 class="card-title">Здесь будет картинка объекта</h5>
+						<p class="card-text">{{ object.info }}</p>
+						<a href="{% url 'atlas:object' pk=object.id %}" class="btn btn-outline-info">Подробнее</a>
+					</div>
+				</div>
+			</div>
+            {% endfor %}
+			<!-- [ card ] end -->
+		</div>
+		<!-- [ Main Content ] end -->
+	</div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+
+
+{% block content %}
+<!-- [ Main Content ] start -->
+<div class="pc-container">
+    <div class="pcoded-content">
+        <!-- [ breadcrumb ] start -->
+        <div class="page-header">
+            <div class="page-block">
+                <div class="row align-items-center">
+                    <div class="col-md-12">
+                        <div class="page-header-title">
+                            <h5 class="m-b-10">Аналитика</h5>
+                        </div>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'atlas:index' %}">Home</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'atlas:company' object.id_company.id %}">{{ object.id_company }}</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'atlas:object' object.id %}">{{ object.name }}</a></li>
+                            <li class="breadcrumb-item">{{ sensor.name }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- [ breadcrumb ] end -->
+        <!-- [ Main Content ] start -->
+        <div class="row">
+            <!-- [ sample-page ] start -->
+            <div class="col-sm-12">
+                <div class="card">
+                    <canvas id="chart" class="60" style="display: block; width: 875px; height: 369px;"></canvas>
+                    <div class="card-body">
+                        <div class="btn-group" id="board-buttons" role="group">
+                            <button type="button" class="btn btn-primary">60</button>
+                            <button type="button" class="btn btn-primary">240</button>
+                            <button type="button" class="btn btn-primary">600</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>Последние инциденты</h4>
+                            </div>
+                            <div class="card-body table-border-style">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>№</th>
+                                            <th>idobj</th>
+                                            <th>idai</th>
+                                            <th>datain</th>
+                                            <th>mode</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="tableBody">
+                                        <tr></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- [ sample-page ] end -->
+    </div>
+        <!-- [ Main Content ] end -->
+</div>
+
+{% endblock %}
+{% block script %}
+    <script src="{% static 'chart/dist/chart.js' %}"></script>
+    <script src="{% static 'chart/sensor_chart.js' %}"></script>
+{% endblock %}

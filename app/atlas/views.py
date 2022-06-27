@@ -4,27 +4,14 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.db.models import QuerySet
 from django.http import JsonResponse, QueryDict
 from django.shortcuts import render
-from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .forms import LoginForm, UserForm
-from .models import SensorData, SensorError, Sensor, Object, AtlasUser, UserAccessGroups, Company
+from .models import SensorData, SensorError, Sensor, Object, UserAccessGroups, Company
 
 
 @login_required
 def index(request):
     return render(request, 'index.html')
-
-
-@login_required
-def base2(request):
-    company_query = user_company_query(request)
-    objects = Object.objects.none()
-    for i in company_query:
-        i = i  # type: Company
-        objects = objects.union(i.object_company.all())
-    objects = list(objects)
-    context = {'object_list': objects}
-    return render(request, 'base2.html', context)
 
 
 @login_required
@@ -40,6 +27,36 @@ def analytics(request):
 @login_required
 def archive(request):
     return render(request, 'archive.html')
+
+
+@login_required
+def company_objects(request, pk):
+    context = {}
+    company = Company.objects.get(pk=pk)
+    context['company'] = company
+    objects = Object.objects.filter(id_company=company)
+    context['object_list'] = list(objects)
+    return render(request, 'company.html', context)
+
+
+@login_required
+def object_sensors(request, pk):
+    context = {}
+    object_item = Object.objects.get(pk=pk)
+    context['object'] = object_item
+    sensors = Sensor.objects.filter(id_object=object_item).order_by('id_sensor_repr')
+    context['sensors_list'] = list(sensors)
+    return render(request, 'object.html', context)
+
+
+@login_required
+def sensor_chart(request, object_id, sensor_id):
+    context = {}
+    object_item = Object.objects.get(pk=object_id)
+    context['object'] = object_item
+    sensor = Sensor.objects.get(pk=sensor_id)
+    context['sensor'] = sensor
+    return render(request, 'chart.html', context)
 
 
 @login_required
@@ -71,6 +88,9 @@ class AtlasLogoutView(LogoutView):
 # api
 @api_view(['POST'])
 def sensors_data(request):
+    """
+    Функция только для создания модели данных Django
+    """
     data = request.POST  # type: QueryDict
     context = {'': 'BAD'}
     if data.get('csrf') == 'a very secret key':
@@ -127,52 +147,41 @@ def sensors_data(request):
 
 
 @api_view(['GET'])
-def api_chart(request):
+def api_chart(request, object_id, sensor_id=None):
     if request.method == 'GET':
-        sensor = Sensor.objects.first()
-        count = int(request.GET.get('count'))
-        data_query = sensor.data_sensor.order_by('-date')[:count]  # type: QuerySet
-        context = {
-            'ai_max': [], 'ai_min': [],
-            'ai_mean': [], 'stat_min': [], 'stat_max': [],
-            'ml_min': [], 'ml_max': [], 'status': [], 'date': []}
-        for data in data_query:
-            context['ai_max'].append(data.ai_max)
-            context['ai_min'].append(data.ai_min)
-            context['ai_mean'].append(data.ai_mean)
-            context['stat_min'].append(data.stat_min)
-            context['stat_max'].append(data.stat_max)
-            context['ml_min'].append(data.ml_min)
-            context['ml_max'].append(data.ml_max)
-            context['status'].append(data.status)
-            context['date'].append(data.date.time())
-        return JsonResponse(context, safe=False)
+        if sensor_id is None:
+            pass
+        else:
+            sensor = Sensor.objects.get(id_object__pk=object_id, pk=sensor_id)
+            count = int(request.GET.get('count'))
+            data_query = sensor.data_sensor.order_by('-date')[:count]  # type: QuerySet
+            context = {
+                'ai_max': [], 'ai_min': [],
+                'ai_mean': [], 'stat_min': [], 'stat_max': [],
+                'ml_min': [], 'ml_max': [], 'status': [], 'date': []}
+            for data in data_query:
+                context['ai_max'].append(data.ai_max)
+                context['ai_min'].append(data.ai_min)
+                context['ai_mean'].append(data.ai_mean)
+                context['stat_min'].append(data.stat_min)
+                context['stat_max'].append(data.stat_max)
+                context['ml_min'].append(data.ml_min)
+                context['ml_max'].append(data.ml_max)
+                context['status'].append(data.status)
+                context['date'].append(data.date.time())
+            return JsonResponse(context, safe=False)
 
 
-# logic
-def user_company_query(request):
-    """Возврщает QuerySet, компаний которые доступны пользователю"""
-    current_user = AtlasUser.objects.get(pk=request.user.pk)
-    user_groups = current_user.useraccessgroups_set.all()
-    company_query = Company.objects.none()  # type: QuerySet
-    for i in user_groups:
-        company_query = company_query.union(i.companys.all())
-    return company_query
-
-# @api_view(['GET'])
-# def api_ai_change_sts(request, pk=None):
-#     if request.method == 'GET':
-#         current_user = AtlasUser.objects.get(pk=request.user.pk)
-#         if pk is not None:
-#             temp = Ai.objects.get(pk=pk)
-#             if temp.access_group in current_user.objects_ai_groups:
-#                 temp.sts = 2
-#                 temp.save()
-#                 return JsonResponse({'': 'success'}, safe=False)
-#             else:
-#                 return JsonResponse({'': 'failed'}, safe=False)
-#         else:
-#             return JsonResponse({'': 'failed'}, safe=False)
+def user_access_company(request, company_id):
+    """
+    Возврщает QuerySet групп, доступных пользвоателю, по компании
+    """
+    company = Company.objects.get(pk=company_id)
+    groups = UserAccessGroups.objects.filter(users=request.user, companys=company)
+    if groups.count() != 0:
+        return groups
+    else:
+        return None
 
 
 # @api_view(['GET'])
@@ -186,15 +195,3 @@ def user_company_query(request):
 #                 temp.append(item)
 #         serializer = AiSerializer(temp, many=True)
 #         return Response(serializer.data)
-
-
-# def get_user_aigroup(request, user):
-#     group_num = request.GET.get('num')
-#     user_group = user.objects_ai_groups[0]
-#     if group_num is not None:
-#         try:
-#             if int(group_num) in user.objects_ai_groups:
-#                 user_group = group_num
-#         except ValueError:
-#             pass
-#     return user_group
