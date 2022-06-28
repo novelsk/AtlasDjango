@@ -88,20 +88,20 @@ class SensorData(models.Model):
 
 
 class SensorMLSettings(models.Model):
-    id_sensor = models.ForeignKey(Sensor, on_delete=models.PROTECT, blank=True,
+    id_sensor = models.ForeignKey(Sensor, on_delete=models.SET_NULL, null=True,
                                   related_name='event_sensor', verbose_name='Датчик')
-    info = models.CharField(blank=True, max_length=100, verbose_name='Описание')
-    setting_type = models.IntegerField(blank=True, db_index=True, verbose_name='Тип')
-    setting_ll = models.FloatField(blank=True)
-    setting_l = models.FloatField(blank=True)
-    setting_h = models.FloatField(blank=True)
-    setting_hh = models.FloatField(blank=True)
-    point = models.IntegerField(blank=True, db_index=True, verbose_name='Точка')
-    tm_prd = models.IntegerField(blank=True, db_index=True, verbose_name='Тип')
-    setting_param_1 = models.FloatField(blank=True)
-    setting_param_2 = models.FloatField(blank=True)
-    setting_param_3 = models.FloatField(blank=True)
-    setting_param_4 = models.FloatField(blank=True)
+    info = models.CharField(null=True, max_length=100, verbose_name='Описание')
+    setting_type = models.IntegerField(null=True, blank=True, db_index=True, verbose_name='Тип')
+    setting_ll = models.FloatField(null=True)
+    setting_l = models.FloatField(null=True)
+    setting_h = models.FloatField(null=True)
+    setting_hh = models.FloatField(null=True)
+    point = models.IntegerField(null=True, verbose_name='Точка')
+    tm_prd = models.IntegerField(null=True, verbose_name='Тип')
+    setting_param_1 = models.FloatField(null=True)
+    setting_param_2 = models.FloatField(null=True)
+    setting_param_3 = models.FloatField(null=True)
+    setting_param_4 = models.FloatField(null=True)
 
     def __str__(self):
         return self.id_sensor.name
@@ -141,10 +141,10 @@ class ObjectEvent(models.Model):
 
 
 class AtlasUser(AbstractUser):
-    middle_name = models.CharField(max_length=50, default=str, verbose_name='Отчество', blank=True)
-    organization = models.CharField(max_length=50, default=str, verbose_name='Организация', blank=True)
-    division = models.CharField(max_length=50, default=str, verbose_name='Подразделение', blank=True)
-    post = models.CharField(max_length=50, default=str, verbose_name='Должность', blank=True)
+    middle_name = models.CharField(max_length=50, verbose_name='Отчество', null=True, blank=True)
+    organization = models.CharField(max_length=50, verbose_name='Организация', null=True, blank=True)
+    division = models.CharField(max_length=50, verbose_name='Подразделение', null=True, blank=True)
+    post = models.CharField(max_length=50, verbose_name='Должность', null=True, blank=True)
 
     class Meta(AbstractUser.Meta):
         pass

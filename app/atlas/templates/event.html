@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+
+
+{% block content %}
+<!-- [ Main Content ] start -->
+<div class="pc-container">
+	<div class="pcoded-content">
+    <div class="page-header">
+            <div class="page-block">
+                <div class="row align-items-center">
+                    <div class="col-md-12">
+                        <div class="page-header-title">
+                            <h5 class="m-b-10">Аналитика</h5>
+                        </div>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'atlas:index' %}">Home</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'atlas:company' object.id_company.id %}">{{ object.id_company }}</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'atlas:object' object.id %}">{{ object.name }}</a></li>
+                            <li class="breadcrumb-item">Журнал технического обслуживания</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+		<!-- [ Main Content ] start -->
+
+		<div class="row">
+			<!-- [ card ] start -->
+        <h5>Записи</h5><hr>
+            <div class="col-md-4">
+				<div class="card align-items-center">
+					<h5 class="card-header">Новая запись</h5>
+					<div class="card-body">
+						<a href="" class="btn btn-outline-info">Создать</a>
+					</div>
+				</div>
+			</div>
+            {% for event in events_list %}
+			<div class="col-md-6 col-xl-4">
+				<div class="card">
+					<h5 class="card-header">{{ event.date_of_creation }} {{ event.status }}</h5>
+					<div class="card-body">
+						<h5 class="card-title">Здесь будет картинка датчика</h5>
+						<p class="card-text">{{ sensor.info }}</p>
+{#						<a href="{% url 'atlas:sensor' object_id=object.id sensor_id=sensor.id %}" class="btn btn-outline-info">Подробнее</a>#}
+					</div>
+				</div>
+			</div>
+            {% endfor %}
+			<!-- [ card ] end -->
+		</div>
+		<!-- [ Main Content ] end -->
+	</div>
+</div>
+
+{% endblock %}

@@ -5,6 +5,8 @@ app_name = 'atlas'
 
 urlpatterns = [
     path('company/<int:pk>', views.company_objects, name='company'),
+    path('object/<int:id_sensor>/events', views.object_events, name='events'),
+    path('object/<int:id_sensor>/settings/ml', views.settings_ml, name='settings_ml'),
     path('object/<int:object_id>/<int:sensor_id>', views.sensor_chart, name='sensor'),
     path('object/<int:pk>', views.object_sensors, name='object'),
     path('api/chart/object/<int:object_id>/<int:sensor_id>', views.api_chart),

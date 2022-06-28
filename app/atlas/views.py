@@ -1,12 +1,13 @@
 # from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import QuerySet
 from django.http import JsonResponse, QueryDict
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
-from .forms import LoginForm, UserForm
-from .models import SensorData, SensorError, Sensor, Object, UserAccessGroups, Company
+from .forms import LoginForm, UserForm, MLForm
+from .models import SensorData, SensorError, Sensor, Object, UserAccessGroups, Company, SensorMLSettings, ObjectEvent
 
 
 @login_required
@@ -60,6 +61,16 @@ def sensor_chart(request, object_id, sensor_id):
 
 
 @login_required
+def object_events(request, id_sensor):
+    context = {}
+    object_item = Object.objects.get(pk=id_sensor)
+    context['object'] = object_item
+    events = ObjectEvent.objects.filter(id_object=object_item).order_by('status')
+    context['events_list'] = list(events)
+    return render(request, 'event.html', context)
+
+
+@login_required
 def account(request):
     if request.method == 'POST':
         form = UserForm(request.POST, instance=request.user)
@@ -67,12 +78,39 @@ def account(request):
         if form.is_valid():
             form.save()
             form.clean()
-            context['success'].append(True)
+            context['success'] = True
         return render(request, 'account.html', context)
     else:
         form = UserForm(instance=request.user)
         context = {'form': form}
         return render(request, 'account.html', context)
+
+
+@login_required
+def settings_ml(request, id_sensor):
+    context = {}
+    sensor = Sensor.objects.get(pk=id_sensor)
+    context['sensor'] = sensor
+    if not user_access_sensor(request, id_sensor):
+        return redirect('atlas:sensor', sensor.id_object.id, sensor.id)
+
+    # ошибка бесконечного создания настроек
+    try:
+        settings = SensorMLSettings.objects.get(id_sensor=sensor)
+    except ObjectDoesNotExist:
+        settings = SensorMLSettings.objects.create(id_sensor=sensor).save()
+    if request.method == 'POST':
+        form = MLForm(request.POST, instance=settings)
+        context['form'] = form
+        if form.is_valid():
+            form.save()
+            form.clean()
+            context['success'] = True
+        return render(request, 'mlsettings.html', context)
+    else:
+        form = MLForm(instance=settings)
+        context['form'] = form
+        return render(request, 'mlsettings.html', context)
 
 
 class AtlasLoginView(LoginView):
@@ -172,16 +210,29 @@ def api_chart(request, object_id, sensor_id=None):
             return JsonResponse(context, safe=False)
 
 
-def user_access_company(request, company_id):
+def user_access_company(request, company):
     """
     Возврщает QuerySet групп, доступных пользвоателю, по компании
     """
-    company = Company.objects.get(pk=company_id)
     groups = UserAccessGroups.objects.filter(users=request.user, companys=company)
     if groups.count() != 0:
         return groups
     else:
         return None
+
+
+def user_access_sensor(request, sensor_id):
+    """
+    Проверяет наличие доступа к изменению датчика
+    """
+    company = Sensor.objects.get(pk=sensor_id).id_object.id_company
+    groups = user_access_company(request, company)
+    if groups is not None:
+        for i in groups:
+            i = i  # type: UserAccessGroups
+            if i.write:
+                return True
+    return False
 
 
 # @api_view(['GET'])
