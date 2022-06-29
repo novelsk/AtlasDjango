@@ -1,7 +1,9 @@
+from django.utils import timezone
+
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from django.forms.widgets import PasswordInput, TextInput
-from .models import AtlasUser, SensorMLSettings
+from django.forms.widgets import PasswordInput, TextInput, Select, SplitDateTimeWidget, HiddenInput
+from .models import AtlasUser, SensorMLSettings, ObjectEvent, Object
 
 
 class LoginForm(AuthenticationForm):
@@ -24,3 +26,19 @@ class MLForm(forms.ModelForm):
         model = SensorMLSettings
         fields = ('info', 'setting_type', 'setting_ll', 'setting_l', 'setting_h', 'setting_hh', 'point', 'tm_prd',
                   'setting_param_1', 'setting_param_2', 'setting_param_3', 'setting_param_4')
+
+
+class ObjectEventForm(forms.ModelForm):
+    id_object = forms.ModelChoiceField(queryset=Object.objects.all(), widget=HiddenInput)
+    status = forms.ChoiceField(choices=ObjectEvent.Statuses.choices, widget=Select(attrs={'class': 'form-control'}),
+                               label='Статус')
+    date_of_service_planned = forms.SplitDateTimeField(widget=SplitDateTimeWidget(attrs={'class': 'form-control'}),
+                                                       required=True, initial=timezone.now(), label='Запланировано')
+    plan = forms.CharField(min_length=5, max_length=300, widget=TextInput(attrs={'class': 'form-control'}),
+                           required=True, label='План работ')
+
+    error_css_class = 'is-invalid'
+
+    class Meta:
+        model = ObjectEvent
+        fields = '__all__'

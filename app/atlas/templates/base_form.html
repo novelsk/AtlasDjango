@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Настройки ML{% endblock %}
+{% block title %}Account{% endblock %}
 
 
 {% block content %}
@@ -12,16 +12,9 @@
             <div class="page-block">
                 <div class="row align-items-center">
                     <div class="col-md-12">
-                        <div class="page-header-title">
-                            <h5 class="m-b-10">Machine learning</h5>
-                        </div>
-                        <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{% url 'atlas:index' %}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'atlas:company' sensor.id_object.id_company.id %}">{{ sensor.id_object.id_company }}</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'atlas:object' sensor.id_object.id %}">{{ sensor.id_object }}</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'atlas:sensor' sensor.id_object.id sensor.id %}">{{ sensor.name }}</a></li>
-                            <li class="breadcrumb-item">Настройки</li>
-                        </ul>
+                        {% block nav %}
+
+                        {% endblock %}
                     </div>
                 </div>
             </div>
@@ -33,20 +26,32 @@
             <div class="col-lg-6">
                 <div class="card align-items-center align-self-center">
                     <div class="card-header">
-                        <h5>Настройки</h5>
+                        <h5>{% block form_label %}{% endblock %}</h5>
                     </div>
                     <div class="card-body col-sm-7">
                         <form method="post">
                             {% csrf_token %}
                             {% for field in form %}
+                                {% if field.is_hidden %}
+                                    {{ field }}
+                                {% else %}
                                 <div class="input-group mb-2">
                                     <label class="col-sm-4 col-form-label">{{ field.label }}</label>
                                     <div class="col-sm-8">{{ field }}</div>
-                                    {{ field.errors }}
+                                    {% if field.errors %}
+                                        {% for error in field.errors %}
+                                        <p class="alert alert-success" role="alert">{{ error }}</p>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
+                                {% endif %}
                             {% endfor %}
                             {% if success %}
-                            <p class="alert alert-success" role="alert">Данные успешно обновленны</p>
+                                <p class="alert alert-success" role="alert">Данные успешно обновленны</p>
+                            {% elif form.non_field_errors %}
+                                {% for error in form.non_field_errors %}
+                                    <p class="alert alert-success" role="alert">{{ error }}</p>
+                                {% endfor %}
                             {% endif %}
                             <p class="float-md-right"><input type="submit" value="Сохранить" class="btn btn-primary"></p>
                         </form>

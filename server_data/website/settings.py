@@ -159,7 +159,7 @@ CACHES = {
 
 # rabbit pika script settings
 
-DJANGO_RESPONSE_URL = 'http://web/rabbit_data'
+DJANGO_RESPONSE_URL = 'http://0.0.0.0:8000/rabbit_data'
 RABBIT_REQUEST_URL = 'amqp://user:atlasrabbit@rabbitmq:5672/%2F'
 RABBIT_EXCHANGE = 'release'
 RABBIT_QUEUE = 'Clone'

@@ -1,33 +1,23 @@
-# from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
 from django.db.models import QuerySet
 from django.http import JsonResponse, QueryDict
 from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
-from .forms import LoginForm, UserForm, MLForm
+from .forms import LoginForm, UserForm, MLForm, ObjectEventForm
 from .models import SensorData, SensorError, Sensor, Object, UserAccessGroups, Company, SensorMLSettings, ObjectEvent
+
+
+@login_required
+def test(request):
+    return render(request, 'base_form.html')
 
 
 @login_required
 def index(request):
     return render(request, 'index.html')
-
-
-@login_required
-def dashboard(request):
-    return render(request, 'dashboard.html')
-
-
-@login_required
-def analytics(request):
-    return render(request, 'analytics.html')
-
-
-@login_required
-def archive(request):
-    return render(request, 'archive.html')
 
 
 @login_required
@@ -61,9 +51,9 @@ def sensor_chart(request, object_id, sensor_id):
 
 
 @login_required
-def object_events(request, id_sensor):
+def object_events(request, object_id):
     context = {}
-    object_item = Object.objects.get(pk=id_sensor)
+    object_item = Object.objects.get(pk=object_id)
     context['object'] = object_item
     events = ObjectEvent.objects.filter(id_object=object_item).order_by('status')
     context['events_list'] = list(events)
@@ -87,11 +77,11 @@ def account(request):
 
 
 @login_required
-def settings_ml(request, id_sensor):
+def settings_ml(request, sensor_id):
     context = {}
-    sensor = Sensor.objects.get(pk=id_sensor)
+    sensor = Sensor.objects.get(pk=sensor_id)
     context['sensor'] = sensor
-    if not user_access_sensor(request, id_sensor):
+    if not user_access_sensor(request, sensor_id):
         return redirect('atlas:sensor', sensor.id_object.id, sensor.id)
 
     # ошибка бесконечного создания настроек
@@ -111,6 +101,25 @@ def settings_ml(request, id_sensor):
         form = MLForm(instance=settings)
         context['form'] = form
         return render(request, 'mlsettings.html', context)
+
+
+@login_required
+def event_new(request, object_id):
+    context = {}
+    object_item = Object.objects.get(pk=object_id)
+    context['object'] = object_item
+
+    if request.method == 'POST':
+        form = ObjectEventForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('atlas:events', object_id)
+        context['form'] = form
+        return render(request, 'event_new.html', context)
+    else:
+        form = ObjectEventForm(initial={'id_object': object_item})
+        context['form'] = form
+        return render(request, 'event_new.html', context)
 
 
 class AtlasLoginView(LoginView):

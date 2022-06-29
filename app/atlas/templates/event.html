@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Dashboard{% endblock %}
+{% block title %}Журнал{% endblock %}
 
 
 {% block content %}
@@ -29,26 +29,38 @@
 
 		<div class="row">
 			<!-- [ card ] start -->
-        <h5>Записи</h5><hr>
-            <div class="col-md-4">
-				<div class="card align-items-center">
-					<h5 class="card-header">Новая запись</h5>
-					<div class="card-body">
-						<a href="" class="btn btn-outline-info">Создать</a>
-					</div>
-				</div>
-			</div>
+            <div class="col-sm-4">
+                <div class="card align-items-center">
+                    <h5 class="card-header">Новая запись</h5>
+                    <div class="card-body">
+                        <a href="{% url 'atlas:event_new' object.id %}" class="btn btn-outline-info">Создать</a>
+                    </div>
+                </div>
+            </div>
+            <h5>Записи</h5>
+            <hr>
             {% for event in events_list %}
-			<div class="col-md-6 col-xl-4">
-				<div class="card">
-					<h5 class="card-header">{{ event.date_of_creation }} {{ event.status }}</h5>
-					<div class="card-body">
-						<h5 class="card-title">Здесь будет картинка датчика</h5>
-						<p class="card-text">{{ sensor.info }}</p>
-{#						<a href="{% url 'atlas:sensor' object_id=object.id sensor_id=sensor.id %}" class="btn btn-outline-info">Подробнее</a>#}
-					</div>
-				</div>
-			</div>
+                <div class="col-md-6 col-xl-4">
+                    <div class="card">
+                        <h5 class="card-header">{{ event }}</h5>
+                        <div class="card-body">
+                            {#						<h5 class="card-title">Здесь будет картинка датчика</h5>#}
+                            <p class="card-text">Дата создания<br>{{ event.date_of_creation }}</p>
+                            {% if event.status == 'c' %}
+                                <p class="card-text">Выполненно<br>{{ event.date_of_service_completed }}</p>
+                                <p class="card-text">Коментарий<br>{{ event.comment }}</p>
+                            {% elif event.status == 'p' %}
+                                <p class="card-text">Дата запланированных работ<br>{{ event.date_of_service_planned }}
+                                </p>
+                                <p class="card-text">План работ<br>{{ event.plan }}</p>
+                            {% elif event.status == 'w' %}
+                                <p class="card-text">В работе<br>{{ event.date_of_service_planned }}</p>
+                                <p class="card-text">План работ<br>{{ event.plan }}</p>
+                            {% endif %}
+                            {#						<a href="{% url 'atlas:sensor' object_id=object.id sensor_id=sensor.id %}" class="btn btn-outline-info">Подробнее</a>#}
+                        </div>
+                    </div>
+                </div>
             {% endfor %}
 			<!-- [ card ] end -->
 		</div>

@@ -123,17 +123,17 @@ class ObjectEvent(models.Model):
         'c': 'Завершен',
     }
 
-    id_object = models.ForeignKey(Object, on_delete=models.PROTECT, related_name='event_object', verbose_name='Датчик')
+    id_object = models.ForeignKey(Object, on_delete=models.CASCADE, related_name='event_object', verbose_name='Датчик')
     status = models.CharField(max_length=1, choices=Statuses.choices, default=Statuses.PLAN, verbose_name='Статус')
     date_of_creation = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата создания')
     date_of_service_planned = models.DateTimeField(default=timezone.now, blank=True,
                                                    verbose_name='Запланировано')
-    plan = models.CharField(max_length=300, blank=True, verbose_name='План работ')
-    date_of_service_completed = models.DateTimeField(blank=True, db_index=True, verbose_name='Выполненно')
+    plan = models.CharField(max_length=300, blank=False, verbose_name='План работ')
+    date_of_service_completed = models.DateTimeField(null=True, blank=True, db_index=True, verbose_name='Выполненно')
     comment = models.CharField(max_length=300, blank=True, verbose_name='Комментарий проведеных работ')
 
     def __str__(self):
-        return str(self.id_object) + ' ---- ' + self.status_json[self.status]
+        return self.status_json[self.status]
 
     class Meta:
         verbose_name = 'Операция'

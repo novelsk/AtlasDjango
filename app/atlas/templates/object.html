@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Dashboard{% endblock %}
+{% block title %}{{ object.name }}{% endblock %}
 
 
 {% block content %}
@@ -48,7 +48,7 @@
 					<div class="card-body">
 						<h5 class="card-title">Здесь будет какой-нибудь текст</h5>
 						<p class="card-text">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</p>
-						<a href="#!" class="btn btn-shadow btn-success">Подробнее</a>
+						<a href="{% url 'atlas:events' object_id=object.id %}" class="btn btn-shadow btn-success">Подробнее</a>
 					</div>
 				</div>
 			</div>
@@ -58,7 +58,7 @@
 					<div class="card-body">
 						<h5 class="card-title">Здесь будет какой-нибудь текст</h5>
 						<p class="card-text">Можем выбрать цвет карточки</p>
-						<a href="#!" class="btn btn-shadow btn-warning">Подробнее</a>
+						<a href="" class="btn btn-shadow btn-warning">Подробнее</a>
 					</div>
 				</div>
 			</div>
