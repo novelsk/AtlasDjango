@@ -1,21 +1,19 @@
 {% extends 'base_form.html' %}
 {% load static %}
+
+
 {% block title %}Новая запись{% endblock %}
-
-
-
 {% block nav %}
     <div class="page-header-title">
         <h5 class="m-b-10">Журнал работ</h5>
     </div>
     <ul class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'atlas:index' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'atlas:index' %}">Главная</a></li>
         <li class="breadcrumb-item"><a href="{% url 'atlas:company' object.id_company.id %}">{{ object.id_company }}</a></li>
         <li class="breadcrumb-item"><a href="{% url 'atlas:object' object.id %}">{{ object.name }}</a></li>
         <li class="breadcrumb-item"><a href="{% url 'atlas:events' object.id %}">Журнал работ</a></li>
         <li class="breadcrumb-item">Новая запись</li>
     </ul>
 {% endblock %}
-
 {% block form_label %}Новая запись{% endblock %}
 

@@ -11,8 +11,8 @@ urlpatterns = [
     path('object/<int:object_id>/<int:sensor_id>', views.sensor_chart, name='sensor'),
     path('object/<int:pk>', views.object_sensors, name='object'),
     path('api/chart/object/<int:object_id>/<int:sensor_id>', views.api_chart),
+    path('api/chart/object/<int:object_id>', views.api_object_chart),
     path('rabbit_data', views.sensors_data),
-    # old paths
     path('accounts/login/', views.AtlasLoginView.as_view(), name='login'),
     path('accounts/login', views.AtlasLoginView.as_view(), name='login'),
     path('accounts/logout', views.AtlasLogoutView.as_view(), name='logout'),

@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.exceptions import ObjectDoesNotExist
-from django.utils import timezone
 from django.db.models import QuerySet
 from django.http import JsonResponse, QueryDict
 from django.shortcuts import render, redirect
@@ -47,6 +46,7 @@ def sensor_chart(request, object_id, sensor_id):
     context['object'] = object_item
     sensor = Sensor.objects.get(pk=sensor_id)
     context['sensor'] = sensor
+    context['errors'] = sensor.error_sensor.count()
     return render(request, 'chart.html', context)
 
 
@@ -203,10 +203,11 @@ def api_chart(request, object_id, sensor_id=None):
             count = int(request.GET.get('count'))
             data_query = sensor.data_sensor.order_by('-date')[:count]  # type: QuerySet
             context = {
-                'ai_max': [], 'ai_min': [],
+                'ai_max': [], 'ai_min': [], 'mode': [],
                 'ai_mean': [], 'stat_min': [], 'stat_max': [],
-                'ml_min': [], 'ml_max': [], 'status': [], 'date': []}
+                'ml_min': [], 'ml_max': [], 'date': []}
             for data in data_query:
+                # data = data  # type: SensorData
                 context['ai_max'].append(data.ai_max)
                 context['ai_min'].append(data.ai_min)
                 context['ai_mean'].append(data.ai_mean)
@@ -214,9 +215,35 @@ def api_chart(request, object_id, sensor_id=None):
                 context['stat_max'].append(data.stat_max)
                 context['ml_min'].append(data.ml_min)
                 context['ml_max'].append(data.ml_max)
-                context['status'].append(data.status)
-                context['date'].append(data.date.time())
+                # context['status'].append(data.status)
+                context['mode'].append(data.mode)
+                context['date'].append(data.date.astimezone().time())
+            context['ai_max'] = context['ai_max'][::-1]
+            context['ai_min'] = context['ai_min'][::-1]
+            context['ai_mean'] = context['ai_mean'][::-1]
+            context['stat_min'] = context['stat_min'][::-1]
+            context['stat_max'] = context['stat_max'][::-1]
+            context['ml_min'] = context['ml_min'][::-1]
+            context['ml_max'] = context['ml_max'][::-1]
+            # context['status'] = context['status'][::-1]
+            context['mode'] = context['mode'][::-1]
+            context['date'] = context['date'][::-1]
             return JsonResponse(context, safe=False)
+
+
+@api_view(['GET'])
+def api_object_chart(request, object_id):
+    sensors = Sensor.objects.filter(id_object__pk=object_id)
+    count = int(request.GET.get('count'))
+    context = {'data': []}
+    for i in sensors:
+        # i = i  # type: Sensor
+        temp = (i.data_sensor.order_by('-date')[:count]).values_list('ai_mean', flat=True)  # type: QuerySet
+        context['data'].append(list(temp))
+    labels = (sensors.first().data_sensor.order_by('-date')[:count]).values_list('date', flat=True)
+
+    context['labels'] = list(labels)
+    return JsonResponse(context, safe=False)
 
 
 def user_access_company(request, company):

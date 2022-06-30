@@ -15,7 +15,7 @@
                             <h5 class="m-b-10">Аналитика</h5>
                         </div>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{% url 'atlas:index' %}">Home</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'atlas:index' %}">Главная</a></li>
                             <li class="breadcrumb-item"><a href="{% url 'atlas:company' object.id_company.id %}">{{ object.id_company }}</a></li>
                             <li class="breadcrumb-item">{{ object.name }}</li>
                         </ul>
@@ -28,19 +28,42 @@
 
 		<div class="row">
 			<!-- [ card ] start -->
+        <h5>Показатели датчиков</h5><hr>
+        <div class="card">
+            <div class="card-body">
+                <canvas id="chart" data-count="60" style="display: block; width: 875px; height: 369px;"></canvas>
+                <div class="row row-cols-auto">
+                    <div class="col">
+                        <p class="lead">Период</p>
+                    </div>
+                    <div class="col">
+                        <div class="btn-group" id="board-buttons" role="group">
+                            <button type="button" class="btn btn-outline-primary" data-count="60">1 час</button>
+                            <button type="button" class="btn btn-outline-primary" data-count="240">4 часа</button>
+                            <button type="button" class="btn btn-outline-primary" data-count="600">10 часов</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <h5>Датчики</h5><hr>
-            {% for sensor in sensors_list %}
-			<div class="col-md-6 col-xl-4">
-				<div class="card">
-					<h5 class="card-header">{{ sensor.name}} {{ sensor.id_sensor_repr }}</h5>
-					<div class="card-body">
-						<h5 class="card-title">Здесь будет картинка датчика</h5>
-						<p class="card-text">{{ sensor.info }}</p>
-						<a href="{% url 'atlas:sensor' object_id=object.id sensor_id=sensor.id %}" class="btn btn-outline-info">Подробнее</a>
-					</div>
-				</div>
-			</div>
-            {% endfor %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <tbody id="tableBody">
+                            {% for sensor in sensors_list %}
+                                <tr>
+                                    <td>{{ sensor.name }}</td>
+                                    <td>{{ sensor.data_sensor.last.date }}</td>
+                                    <td><a href="{% url 'atlas:sensor' object_id=object.id sensor_id=sensor.id %}" class="btn btn-outline-info">Подробнее</a></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         <h5>Журналы</h5><hr>
             <div class="col-md-6 col-xl-4">
 				<div class="card text-white bg-success ">
@@ -62,22 +85,14 @@
 					</div>
 				</div>
 			</div>
-{#        <h5>Настройки</h5><hr>#}
-{#            <div class="col-md-6 col-xl-4">#}
-{#				<div class="card">#}
-{#					<h5 class="card-header">Machine learning</h5>#}
-{#					<div class="card-body">#}
-{#						<h5 class="card-title">Machine learning</h5>#}
-{#						<p class="card-text">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.#}
-{#                         Aenean commodo ligula eget dolor. Aenean massa.</p>#}
-{#						<a href="#!" class="btn btn-outline-info">Подробнее</a>#}
-{#					</div>#}
-{#				</div>#}
-{#			</div>#}
 			<!-- [ card ] end -->
 		</div>
 		<!-- [ Main Content ] end -->
 	</div>
 </div>
 
+{% endblock %}
+{% block script %}
+    <script src="{% static 'chart/dist/chart.js' %}"></script>
+    <script src="{% static 'chart/object_chart.js' %}"></script>
 {% endblock %}
