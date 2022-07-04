@@ -28,13 +28,35 @@
             <!-- [ sample-page ] start -->
             <div class="col-sm-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h5>Добрый день</h5>
-                    </div>
                     <div class="card-body">
-                        <p>
-                            Здесь будет текст
-                        </p>
+                    {% if objects_count == 0 %}
+                        <h5>У вас нет доступа ни к одной компании</h5>
+                        <div class="clearfix"></div>
+                        <h6>Обратитесь к администратору</h6>
+                    {% else %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <td>Название компании</td>
+                                    <td>Название объекта</td>
+                                    <td>Состояние</td>
+                                    <td></td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for object in base_object_list %}
+                                    <tr>
+                                        <td>{{ object.id_company }}</td>
+                                        <td>{{ object.name }}</td>
+                                        <td><span class="badge alert-success">GOOD</span></td>
+                                        <td><a href="{% url 'atlas:object' object.id %}" class="btn btn-outline-info">Подробнее</a></td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
                     </div>
                 </div>
             </div>

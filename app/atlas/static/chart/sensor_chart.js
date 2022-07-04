@@ -12,6 +12,13 @@ chart_buttons.forEach((item) => {
     });
 });
 
+const custom_points = document.getElementById("custom_points");
+const points = custom_points.children[0].firstChild;
+const accept_points_button = custom_points.children[1];
+accept_points_button.addEventListener('click', function () {
+    draw_chart(points.value);
+});
+
 
 const dataColorsOld = ['#b84d4d', '#8f4db8', '#4f4db8', '#4d7fb8', '#4da4b8',
     '#4db891', '#4db86b', '#96b84d', '#b8a64d', '#b8864d', '#bd6d3e']

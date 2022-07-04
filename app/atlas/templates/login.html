@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <title>{% block title %}Вход{% endblock %} - ATLAS</title>
+    <title>{% block title %}Авторизация{% endblock %} - ATLAS</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -31,6 +31,7 @@
 			<div class="row align-items-center text-center">
 				<div class="col-md-12">
 					<div class="card-body">
+                    <img src="{% static 'icon/Atl.png' %}" alt="" class="logo logo-lg">
 						{% if user.is_authenticated %}
                             <h4 class="mb-3 f-w-400">Вы уже выполнили вход.</h4>
                         {% else %}
@@ -42,11 +43,11 @@
                                         <div class="input-group mb-3">
                                             {% if field.name == 'username' %}
                                                 <span class="input-group-text"><i data-feather="user"></i></span>
-                                                <div class="form-control">{{field}}</div>
+                                                {{field}}
                                                 {{ field.errors }}
                                             {% else %}
                                                 <span class="input-group-text"><i data-feather="lock"></i></span>
-                                                <div class="form-control">{{field}}</div>
+                                                {{field}}
                                                 {{ field.errors }}
                                             {% endif %}
                                         </div>
@@ -57,11 +58,6 @@
                                 </div>
                                 <input type="submit" class="btn btn-primary" value="Войти">
                             </form>
-{#                            <form method="post">#}
-{#                            {% csrf_token %}#}
-{#                            {{ form.as_p }}#}
-{#                            <input type="submit" class="btn btn-primary" value="Войти">#}
-{#                            </form>#}
                         {% endif %}
 					</div>
 				</div>

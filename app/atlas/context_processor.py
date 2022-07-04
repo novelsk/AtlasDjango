@@ -7,12 +7,11 @@ from .models import AtlasUser, Company, Object
 def base(request):
     if request.user.is_authenticated:
         company_query = user_company_query(request)
-        objects = Object.objects.none()
+        objects = Object.objects.none()  # type: QuerySet
         if company_query is not None:
             for i in company_query:
                 objects = objects.union(i.object_company.all())
-        objects = list(objects)
-        context = {'base_object_list': objects}
+        context = {'base_object_list': list(objects), 'objects_count': objects.count()}
         return context
     else:
         return {}

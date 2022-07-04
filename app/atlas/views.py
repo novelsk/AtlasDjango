@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
 from .forms import LoginForm, UserForm, MLForm, ObjectEventForm
 from .models import SensorData, SensorError, Sensor, Object, UserAccessGroups, Company, SensorMLSettings, ObjectEvent
+from .context_processor import user_company_query
 
 
 @login_required
@@ -36,6 +37,8 @@ def object_sensors(request, pk):
     context['object'] = object_item
     sensors = Sensor.objects.filter(id_object=object_item).order_by('id_sensor_repr')
     context['sensors_list'] = list(sensors)
+    errors = SensorError.objects.filter(id_sensor__id_object=object_item).order_by('error_start_date')
+    context['errors_list'] = list(errors)
     return render(request, 'object.html', context)
 
 
@@ -46,7 +49,9 @@ def sensor_chart(request, object_id, sensor_id):
     context['object'] = object_item
     sensor = Sensor.objects.get(pk=sensor_id)
     context['sensor'] = sensor
-    context['errors'] = sensor.error_sensor.count()
+    errors = SensorError.objects.filter(id_sensor=sensor).order_by('error_start_date')
+    context['errors_list'] = list(errors)
+    context['errors'] = errors.count()
     return render(request, 'chart.html', context)
 
 
@@ -235,14 +240,14 @@ def api_chart(request, object_id, sensor_id=None):
 def api_object_chart(request, object_id):
     sensors = Sensor.objects.filter(id_object__pk=object_id)
     count = int(request.GET.get('count'))
-    context = {'data': []}
+    context = {'data': [], 'sensors': []}
     for i in sensors:
         # i = i  # type: Sensor
         temp = (i.data_sensor.order_by('-date')[:count]).values_list('ai_mean', flat=True)  # type: QuerySet
         context['data'].append(list(temp))
+        context['sensors'].append(i.name)
     labels = (sensors.first().data_sensor.order_by('-date')[:count]).values_list('date', flat=True)
-
-    context['labels'] = list(labels)
+    context['labels'] = list(map(lambda x: str(x.astimezone().time()), labels))
     return JsonResponse(context, safe=False)
 
 

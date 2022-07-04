@@ -7,8 +7,8 @@ from .models import AtlasUser, SensorMLSettings, ObjectEvent, Object
 
 
 class LoginForm(AuthenticationForm):
-    username = forms.CharField(widget=TextInput(attrs={'placeholder': 'Login'}))
-    password = forms.CharField(widget=PasswordInput(attrs={'placeholder': 'Password'}))
+    username = forms.CharField(widget=TextInput(attrs={'placeholder': 'Логин', 'class': 'form-control'}))
+    password = forms.CharField(widget=PasswordInput(attrs={'placeholder': 'Пароль', 'class': 'form-control'}))
 
 
 class UserForm(forms.ModelForm):
