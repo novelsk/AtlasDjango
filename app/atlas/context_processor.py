@@ -1,6 +1,6 @@
 from django.db.models import QuerySet
-
-from .models import AtlasUser, Company, Object
+from .models import Object
+from .logical import user_company_query
 
 
 # https://docs.djangoproject.com/en/1.10/_modules/django/template/context/
@@ -15,16 +15,3 @@ def base(request):
         return context
     else:
         return {}
-
-
-def user_company_query(request):
-    """Возврщает QuerySet компаний, компаний которые доступны пользователю"""
-    current_user = AtlasUser.objects.get(pk=request.user.pk)
-    user_groups = current_user.useraccessgroups_set.all()
-    company_query = Company.objects.none()  # type: QuerySet
-    for i in user_groups:
-        company_query = company_query.union(i.companys.all())
-    if company_query.count() != 0:
-        return company_query
-    else:
-        return None

@@ -14,6 +14,8 @@ from pathlib import Path
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+import django.core.mail.backends.filebased
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -155,3 +157,11 @@ DJANGO_RESPONSE_URL = 'http://localhost:8000/rabbit_data'
 RABBIT_REQUEST_URL = 'amqp://user:atlasrabbit@77.222.54.167:5672/%2F'
 RABBIT_EXCHANGE = 'test_exchange'
 RABBIT_QUEUE = 'FirstStep'
+
+EMAIL_BACKEND = django.core.mail.backends.filebased.EmailBackend
+SERVER_EMAIL = 'atlas@website.ru'
+ADMIN = [
+    ('Test', 'some@website.ru')
+]
+EMAIL_SUBJECT_PREFIX = 'ADMIN'
+

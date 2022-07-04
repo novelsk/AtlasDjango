@@ -6,8 +6,9 @@ from django.http import JsonResponse, QueryDict
 from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
 from .forms import LoginForm, UserForm, MLForm, ObjectEventForm
-from .models import SensorData, SensorError, Sensor, Object, UserAccessGroups, Company, SensorMLSettings, ObjectEvent
-from .context_processor import user_company_query
+from .models import SensorData, SensorError, Sensor, Object, Company, SensorMLSettings, ObjectEvent
+from .logical import user_access_sensor
+from .mail import on_error
 
 
 @login_required
@@ -146,24 +147,21 @@ def sensors_data(request):
     data = request.POST  # type: QueryDict
     context = {'': 'BAD'}
     if data.get('csrf') == 'a very secret key':
-        current_object = Object.objects.get(pk=data.get('id_object'))
         context = {'': 'csrf checked'}
-        if current_object is not None:
-            current_sensor = Sensor.objects.get(id_object=current_object, id_sensor_repr=data.get('id_sensor'))
-            context = {'': 'current_object is not None'}
-            if current_sensor is not None:
-                context = {'': 'if current_sensor is not None'}
-                sensor_data = SensorData.objects.create(
-                    id_sensor=current_sensor, date=data.get('date'), mode=data.get('mode'),
-                    ai_max=data.get('ai_max'), ai_min=data.get('ai_min'),
-                    ai_mean=data.get('ai_mean'), stat_min=data.get('stat_min'),
-                    stat_max=data.get('stat_max'), ml_min=data.get('ml_min'),
-                    ml_max=data.get('ml_max'), status=data.get('status'),
-                )
-                previous_data = SensorData.objects.all().last()
-                error = int(data.get('error'))
+        current_sensor = Sensor.objects.get(id_object_id=data.get('id_object'), id_sensor_repr=data.get('id_sensor'))
+        if current_sensor is not None:
+            context = {'': 'if current_sensor is not None'}
+            sensor_data = SensorData.objects.create(
+                id_sensor=current_sensor, date=data.get('date'), mode=data.get('mode'),
+                ai_max=data.get('ai_max'), ai_min=data.get('ai_min'),
+                ai_mean=data.get('ai_mean'), stat_min=data.get('stat_min'),
+                stat_max=data.get('stat_max'), ml_min=data.get('ml_min'),
+                ml_max=data.get('ml_max'), status=data.get('status'),
+            )
+            previous_data = SensorData.objects.last()
+            error = int(data.get('error'))
 
-                '''
+            '''
                 Если есть ошибка то
                     Если у прошлых данных нет ошибки, то
                         Создается новый журнал ошибок, сохраняется
@@ -176,64 +174,53 @@ def sensors_data(request):
                         Новые данные записываются в журнал
                 '''
 
-                if error == 0:
-                    if previous_data.id_error_log is not None:
-                        previous_data.id_error_log.error_end_date = previous_data.date
+            error_mail = False
+            if error == 0:
+                if previous_data.id_error_log is not None:
+                    previous_data.id_error_log.error_end_date = previous_data.date
+            else:
+                error_mail = True
+                if previous_data.id_error_log is None:
+                    new_journal = SensorError.objects.create(
+                        id_sensor=current_sensor, error=error, error_start_date=sensor_data.date)
+                    new_journal.save()
+                    sensor_data.id_error_log = new_journal
+                elif previous_data.id_error_log.error == error:
+                    sensor_data.id_error_log = previous_data.id_error_log
                 else:
-                    if previous_data.id_error_log is None:
-                        new_journal = SensorError.objects.create(
-                            id_sensor=current_sensor, error=error, error_start_date=sensor_data.date)
-                        new_journal.save()
-                        sensor_data.id_error_log = new_journal
-                    elif previous_data.id_error_log.error == error:
-                        sensor_data.id_error_log = previous_data.id_error_log
-                    else:
-                        previous_data.id_error_log.error_end_date = previous_data.date
-                        new_journal = SensorError.objects.create(
-                            id_sensor=current_sensor, error=error, error_start_date=sensor_data.date)
-                        new_journal.save()
-                        sensor_data.id_error_log = new_journal
-                sensor_data.save()
-                context[''] = 'GOOD'
+                    previous_data.id_error_log.error_end_date = previous_data.date
+                    new_journal = SensorError.objects.create(
+                        id_sensor=current_sensor, error=error, error_start_date=sensor_data.date)
+                    new_journal.save()
+                    sensor_data.id_error_log = new_journal
+            sensor_data.save()
+            context[''] = 'GOOD'
+            # if error_mail:
+            #     on_error(sensor_data)
     return JsonResponse(context, safe=False)
 
 
 @api_view(['GET'])
-def api_chart(request, object_id, sensor_id=None):
+def api_chart(request, object_id, sensor_id):
     if request.method == 'GET':
-        if sensor_id is None:
-            pass
-        else:
-            sensor = Sensor.objects.get(id_object__pk=object_id, pk=sensor_id)
-            count = int(request.GET.get('count'))
-            data_query = sensor.data_sensor.order_by('-date')[:count]  # type: QuerySet
-            context = {
-                'ai_max': [], 'ai_min': [], 'mode': [],
-                'ai_mean': [], 'stat_min': [], 'stat_max': [],
-                'ml_min': [], 'ml_max': [], 'date': []}
-            for data in data_query:
-                # data = data  # type: SensorData
-                context['ai_max'].append(data.ai_max)
-                context['ai_min'].append(data.ai_min)
-                context['ai_mean'].append(data.ai_mean)
-                context['stat_min'].append(data.stat_min)
-                context['stat_max'].append(data.stat_max)
-                context['ml_min'].append(data.ml_min)
-                context['ml_max'].append(data.ml_max)
-                # context['status'].append(data.status)
-                context['mode'].append(data.mode)
-                context['date'].append(data.date.astimezone().time())
-            context['ai_max'] = context['ai_max'][::-1]
-            context['ai_min'] = context['ai_min'][::-1]
-            context['ai_mean'] = context['ai_mean'][::-1]
-            context['stat_min'] = context['stat_min'][::-1]
-            context['stat_max'] = context['stat_max'][::-1]
-            context['ml_min'] = context['ml_min'][::-1]
-            context['ml_max'] = context['ml_max'][::-1]
-            # context['status'] = context['status'][::-1]
-            context['mode'] = context['mode'][::-1]
-            context['date'] = context['date'][::-1]
-            return JsonResponse(context, safe=False)
+        sensor = Sensor.objects.get(id_object__pk=object_id, pk=sensor_id)
+        data_query = sensor.data_sensor.order_by('-date')[:int(request.GET.get('count')):-1]  # type: QuerySet
+        context = {
+            'ai_max': [], 'ai_min': [], 'mode': [],
+            'ai_mean': [], 'stat_min': [], 'stat_max': [],
+            'ml_min': [], 'ml_max': [], 'date': []}
+        for data in data_query:
+            # data = data  # type: SensorData
+            context['ai_max'].append(data.ai_max)
+            context['ai_min'].append(data.ai_min)
+            context['ai_mean'].append(data.ai_mean)
+            context['stat_min'].append(data.stat_min)
+            context['stat_max'].append(data.stat_max)
+            context['ml_min'].append(data.ml_min)
+            context['ml_max'].append(data.ml_max)
+            context['mode'].append(data.mode)
+            context['date'].append(data.date.astimezone().time())
+        return JsonResponse(context, safe=False)
 
 
 @api_view(['GET'])
@@ -244,46 +231,9 @@ def api_object_chart(request, object_id):
     for i in sensors:
         # i = i  # type: Sensor
         temp = (i.data_sensor.order_by('-date')[:count]).values_list('ai_mean', flat=True)  # type: QuerySet
-        context['data'].append(list(temp))
+        context['data'].append(list(temp)[::-1])
         context['sensors'].append(i.name)
     labels = (sensors.first().data_sensor.order_by('-date')[:count]).values_list('date', flat=True)
     context['labels'] = list(map(lambda x: str(x.astimezone().time()), labels))
+    context['labels'].reverse()
     return JsonResponse(context, safe=False)
-
-
-def user_access_company(request, company):
-    """
-    Возврщает QuerySet групп, доступных пользвоателю, по компании
-    """
-    groups = UserAccessGroups.objects.filter(users=request.user, companys=company)
-    if groups.count() != 0:
-        return groups
-    else:
-        return None
-
-
-def user_access_sensor(request, sensor_id):
-    """
-    Проверяет наличие доступа к изменению датчика
-    """
-    company = Sensor.objects.get(pk=sensor_id).id_object.id_company
-    groups = user_access_company(request, company)
-    if groups is not None:
-        for i in groups:
-            i = i  # type: UserAccessGroups
-            if i.write:
-                return True
-    return False
-
-
-# @api_view(['GET'])
-# def api_archive(request):
-#     if request.method == 'GET':
-#         current_user = AtlasUser.objects.get(pk=request.user.pk)
-#         table_objects = Ai.objects.filter(err__gt=0)
-#         temp = []
-#         for item in table_objects:
-#             if item.access_group in current_user.objects_ai_groups:
-#                 temp.append(item)
-#         serializer = AiSerializer(temp, many=True)
-#         return Response(serializer.data)

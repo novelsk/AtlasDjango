@@ -44,6 +44,8 @@ const dataLabels = {
     'ml_max': 'ML(н.ур-нь)',
     'mode': 'режим работы',
 }
+let datasetCount = 0;
+let datasetState = [];
 let mainChart = new Chart(ctx, {
     type: 'line',
     data: {
@@ -60,22 +62,12 @@ let mainChart = new Chart(ctx, {
 
 function draw_chart(count = '') {
     let request = window.location.origin + "/api/chart" + window.location.pathname;
+    for (let i = 0; i < datasetCount; i++) {datasetState[i] = mainChart.getDatasetMeta(i).hidden;}
     jQuery.get(request, {'count': count}, function (data) {
         mainChart.data.labels = data['date'];
         delete data['date'];
         let num_col = 0;
         for (const dataKey in data) {
-            // if (data[dataKey][0] !== 0) {
-            //     mainChart.data.datasets[num_col] = {
-            //         label: dataLabels[dataKey],
-            //         data: data[dataKey],
-            //         lineTension: 0,
-            //         backgroundColor: 'transparent',
-            //         borderColor: dataColors[dataKey],
-            //         borderWidth: 1,
-            //         pointRadius: 0,
-            //     }
-            //}
             mainChart.data.datasets[num_col] = {
                     label: dataLabels[dataKey],
                     data: data[dataKey],
@@ -85,35 +77,20 @@ function draw_chart(count = '') {
                     borderWidth: 2,
                     pointRadius: 0,
                 }
+            mainChart.setDatasetVisibility(num_col, !datasetState[num_col]);
             num_col++;
         }
         mainChart.update('none');
+        datasetCount = num_col;
     });
 }
 
 
 jQuery(document).ready(function () {
     draw_chart(ctx.getAttribute( 'data-count'));
-    // table_upd();
 });
 
 
 let timerId = setInterval(function () {
     draw_chart(ctx.getAttribute( 'data-count'));
-    // table_upd();
 }, 60000);
-
-
-function table_upd() {
-    let request = "../api/ai";
-    jQuery.get(request, function (data) {
-        let innerHtml = '';
-        for (let i = 0; i < data.length; i++) {
-            innerHtml += '<tr><td>' + data[i]['datain'] + '</td>';
-            innerHtml += '<td>' + data[i]['cmnt'] + '</td>';
-            innerHtml += '<td><button type="button" class="btn btn-outline-secondary" onclick="change_sts(' +
-                data[i]['id'] + ')">квитировать</button></td></tr>';
-        }
-        table.innerHTML = innerHtml;
-    });
-}

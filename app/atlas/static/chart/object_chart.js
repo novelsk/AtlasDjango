@@ -22,6 +22,8 @@ accept_points_button.addEventListener('click', function () {
 
 const dataColorsOld = ['#b84d4d', '#8f4db8', '#4f4db8', '#4d7fb8', '#4da4b8',
     '#4db891', '#4db86b', '#96b84d', '#b8a64d', '#b8864d', '#bd6d3e']
+let datasetCount = 0;
+let datasetState = [];
 let mainChart = new Chart(ctx, {
     type: 'line',
     data: {
@@ -38,6 +40,7 @@ let mainChart = new Chart(ctx, {
 
 function draw_chart(count = '') {
     let request = window.location.origin + "/api/chart" + window.location.pathname;
+    for (let i = 0; i < datasetCount; i++) {datasetState[i] = mainChart.getDatasetMeta(i).hidden;}
     jQuery.get(request, {'count': count}, function (data) {
         mainChart.data.labels = data['labels'];
         delete data['labels'];
@@ -51,8 +54,10 @@ function draw_chart(count = '') {
                     borderWidth: 2,
                     pointRadius: 0,
                 }
+            mainChart.setDatasetVisibility(i, !datasetState[i]);
         }
         mainChart.update('none');
+        datasetCount = data['data'].length;
     });
 }
 

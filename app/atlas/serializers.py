@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from .models import ObjectEvent
+from .models import SensorData
 
 
-class ObjectEventSerializer(serializers.ModelSerializer):
+class SensorDataSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ObjectEvent
-        fields = '__all__'
+        model = SensorData
+        fields = ('ai_max', 'ai_min', 'ai_mean', 'stat_min', 'stat_max', 'ml_min', 'ml_max', 'mode', 'date')
