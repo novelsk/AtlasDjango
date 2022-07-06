@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Account{% endblock %}
+{% block title %}base_form.html{% endblock %}
+{% block stylesheet %}
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+{% endblock %}
 
 
 {% block content %}
@@ -28,7 +31,7 @@
                     <div class="card-header">
                         <h5>{% block form_label %}{% endblock %}</h5>
                     </div>
-                    <div class="card-body col-sm-7">
+                    <div class="card-body col-md-10">
                         <form method="post">
                             {% csrf_token %}
                             {% for field in form %}
@@ -36,8 +39,8 @@
                                     {{ field }}
                                 {% else %}
                                 <div class="input-group mb-2">
-                                    <label class="col-sm-4 col-form-label">{{ field.label }}</label>
-                                    <div class="col-sm-8">{{ field }}</div>
+                                    <label class="col-sm-5 col-form-label">{{ field.label }}</label>
+                                    <div class="col">{{ field }}</div>
                                     {% if field.errors %}
                                         {% for error in field.errors %}
                                         <p class="alert alert-success" role="alert">{{ error }}</p>

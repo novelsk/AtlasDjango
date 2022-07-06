@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="{% static 'assets/fonts/fontawesome.css' %}">
     <link rel="stylesheet" href="{% static 'assets/fonts/material.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    {% block stylesheet %}
+    {% endblock %}
 </head>
 <body>
 	<!-- [ Pre-loader ] start -->
@@ -76,7 +78,7 @@
 						<a class="pc-link"><span class="pc-micon"><i class="material-icons-two-tone">business</i></span><span class="pc-mtext">{{ company }}</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                         {% for object in objects_list %}
                         <ul class="pc-submenu">
-                            <li class="pc-item"><a class="pc-link" href="{% url 'atlas:object' object.pk %}">{{ object }}</a></li>
+                            <li class="pc-item"><a class="pc-link" href="{% url 'atlas:object' object.pk %}">{{ object }} <span class="badge bg-secondary">{{ object.event_not_done }}</span></a></li>
                         </ul>
                         {% endfor %}
                     </li>

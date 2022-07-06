@@ -24,6 +24,13 @@ class Object(models.Model):
     info = models.CharField(blank=True, max_length=100, verbose_name='Информация')
     image = models.ImageField(blank=True, verbose_name='Cхема')
 
+    def event_not_done(self):
+        count = 0
+        for event in self.event_object.all():
+            if timezone.now() > event.date_of_service_planned and event.status != 'c':
+                count += 1
+        return count
+
     def __str__(self):
         return self.name
 
@@ -128,9 +135,15 @@ class ObjectEvent(models.Model):
     date_of_creation = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата создания')
     date_of_service_planned = models.DateTimeField(default=timezone.now, blank=True,
                                                    verbose_name='Запланировано')
+    operating_time = models.DurationField(null=True, blank=True, verbose_name='Наработка, час')
     plan = models.CharField(max_length=300, blank=False, verbose_name='План работ')
     date_of_service_completed = models.DateTimeField(null=True, blank=True, db_index=True, verbose_name='Выполненно')
     comment = models.CharField(max_length=300, blank=True, verbose_name='Комментарий проведеных работ')
+
+    def not_done(self):
+        if timezone.now() > self.date_of_service_planned and self.status != 'c':
+            return True
+        return False
 
     def __str__(self):
         return self.status_json[self.status]
@@ -145,6 +158,7 @@ class AtlasUser(AbstractUser):
     organization = models.CharField(max_length=50, verbose_name='Организация', null=True, blank=True)
     division = models.CharField(max_length=50, verbose_name='Подразделение', null=True, blank=True)
     post = models.CharField(max_length=50, verbose_name='Должность', null=True, blank=True)
+    notifications = models.BooleanField(verbose_name='Уведомления', default=False, blank=True)
 
     class Meta(AbstractUser.Meta):
         pass

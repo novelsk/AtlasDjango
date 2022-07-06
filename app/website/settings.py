@@ -158,10 +158,9 @@ RABBIT_REQUEST_URL = 'amqp://user:atlasrabbit@77.222.54.167:5672/%2F'
 RABBIT_EXCHANGE = 'test_exchange'
 RABBIT_QUEUE = 'FirstStep'
 
-EMAIL_BACKEND = django.core.mail.backends.filebased.EmailBackend
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 SERVER_EMAIL = 'atlas@website.ru'
 ADMIN = [
     ('Test', 'some@website.ru')
 ]
 EMAIL_SUBJECT_PREFIX = 'ADMIN'
-

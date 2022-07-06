@@ -5,7 +5,7 @@ from django.db.models import QuerySet
 from django.http import JsonResponse, QueryDict
 from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
-from .forms import LoginForm, UserForm, MLForm, ObjectEventForm
+from .forms import LoginForm, UserForm, MLForm, ObjectEventForm, ObjectEventFormEdit
 from .models import SensorData, SensorError, Sensor, Object, Company, SensorMLSettings, ObjectEvent
 from .logical import user_access_sensor
 from .mail import on_error
@@ -13,7 +13,9 @@ from .mail import on_error
 
 @login_required
 def test(request):
-    return render(request, 'base_form.html')
+    temp = Object.objects.all()
+    context = {'obj': list(temp)}
+    return render(request, 'test.html', context)
 
 
 @login_required
@@ -126,6 +128,26 @@ def event_new(request, object_id):
         form = ObjectEventForm(initial={'id_object': object_item})
         context['form'] = form
         return render(request, 'event_new.html', context)
+
+
+@login_required
+def event_edit(request, event_id):
+    context = {}
+    event = ObjectEvent.objects.get(pk=event_id)
+    context['event'] = event
+
+    if request.method == 'POST':
+        form = ObjectEventFormEdit(request.POST, instance=event)
+        context['form'] = form
+        if form.is_valid():
+            form.save()
+            form.clean()
+            context['success'] = True
+        return render(request, 'event_edit.html', context)
+    else:
+        form = ObjectEventFormEdit(instance=event)
+        context['form'] = form
+        return render(request, 'event_edit.html', context)
 
 
 class AtlasLoginView(LoginView):
