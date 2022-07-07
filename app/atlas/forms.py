@@ -2,7 +2,7 @@ from django.utils import timezone
 
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from django.forms.widgets import PasswordInput, TextInput, Select, SplitDateTimeWidget, HiddenInput, CheckboxInput,\
+from django.forms.widgets import PasswordInput, TextInput, Select, DateTimeInput, HiddenInput, CheckboxInput,\
     TimeInput
 from .models import AtlasUser, SensorMLSettings, ObjectEvent, Object
 
@@ -15,7 +15,7 @@ class LoginForm(AuthenticationForm):
 class UserForm(forms.ModelForm):
     organization = forms.CharField(widget=TextInput, disabled=True, required=False, label='Организация')
     notifications = forms.BooleanField(widget=CheckboxInput(attrs={'class': 'form-check-input'}),
-                                       label='Присылать уведомления')
+                                       required=False, label='Присылать уведомления')
 
     class Meta:
         model = AtlasUser
@@ -36,13 +36,14 @@ class ObjectEventForm(forms.ModelForm):
     id_object = forms.ModelChoiceField(queryset=Object.objects.all(), widget=HiddenInput)
     status = forms.ChoiceField(choices=ObjectEvent.Statuses.choices, widget=Select(attrs={'class': 'form-control'}),
                                label='Статус')
-    date_of_service_planned = forms.SplitDateTimeField(widget=SplitDateTimeWidget(
+
+    date_of_service_planned = forms.DateTimeField(widget=DateTimeInput(
         attrs={'class': 'form-control choices'}), required=True, initial=timezone.now(), label='Запланировано')
+
     plan = forms.CharField(min_length=5, max_length=300, widget=TextInput(attrs={'class': 'form-control'}),
                            required=True, label='План работ')
-    operating_time = forms.DurationField(widget=TimeInput(attrs={'class': 'form-control'}), required=False,
-                                         initial=timezone.timedelta(hours=1), label='Наработка, час')
-    date_of_service_completed = forms.SplitDateTimeField(widget=SplitDateTimeWidget(
+
+    date_of_service_completed = forms.DateTimeField(widget=DateTimeInput(
         attrs={'class': 'form-control choices'}), required=False, label='Выполненно')
 
     error_css_class = 'is-invalid'

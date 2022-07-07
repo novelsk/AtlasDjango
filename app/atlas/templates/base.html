@@ -6,12 +6,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="description" content="DashboardKit is made using Bootstrap 5 design framework. Download the free admin template & use it for your project.">
+    <meta name="description" content="">
     <meta name="keywords" content="ATLAS, PREDICTIVE ANALYTICS SYSTEMS">
-    <meta name="author" content="DashboardKit, Roman Pokrovsky">
+    <meta name="author" content="Roman Pokrovsky, t.me/novel_sk">
 
     <link rel="icon" href="{% static 'icon/32x32.jpg' %}" type="image/x-icon">
-
     <link rel="stylesheet" href="{% static 'assets/fonts/feather.css' %}">
     <link rel="stylesheet" href="{% static 'assets/fonts/fontawesome.css' %}">
     <link rel="stylesheet" href="{% static 'assets/fonts/material.css' %}">
@@ -66,7 +65,14 @@
 						<label>Меню</label>
 					</li>
 					<li class="pc-item">
-						<a href="{% url 'atlas:index' %}" class="pc-link "><span class="pc-micon"><i class="material-icons-two-tone">dashboard</i></span><span class="pc-mtext">Домашняя</span></a>
+						<a href="{% url 'atlas:index' %}" class="pc-link"><span class="pc-micon"><i class="material-icons-two-tone">dashboard</i></span><span class="pc-mtext">Домашняя</span></a>
+					</li>
+                    <li class="pc-item pc-hasmenu">
+						<a class="pc-link "><span class="pc-micon"><i data-feather="user"></i></span><span class="pc-mtext">Аккаунт</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+						<ul class="pc-submenu" style="">
+							<a href="{% url 'atlas:account' %}" class="pc-link"><span class="pc-micon"><i class="material-icons-two-tone">view_headline</i></span><span class="pc-mtext">Информацмя</span></a>
+							<a href="{% url 'atlas:logout' %}" class="pc-link"><span class="pc-micon"><i data-feather="log-out"></i></span><span class="pc-mtext">Выйти</span></a>
+						</ul>
 					</li>
 					<li class="pc-item pc-caption">
 						<label>Компании</label>
@@ -78,7 +84,11 @@
 						<a class="pc-link"><span class="pc-micon"><i class="material-icons-two-tone">business</i></span><span class="pc-mtext">{{ company }}</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                         {% for object in objects_list %}
                         <ul class="pc-submenu">
-                            <li class="pc-item"><a class="pc-link" href="{% url 'atlas:object' object.pk %}">{{ object }} <span class="badge bg-secondary">{{ object.event_not_done }}</span></a></li>
+                            <li class="pc-item"><a class="pc-link" href="{% url 'atlas:object' object.pk %}">{{ object }}
+                                {% if object.event_not_done != 0 %}
+                                <span class="badge bg-secondary">{{ object.event_not_done }}</span>
+                                {% endif %}
+                            </a></li>
                         </ul>
                         {% endfor %}
                     </li>
@@ -93,16 +103,16 @@
 		<div class="header-wrapper">
 			<div class="ml-auto">
 				<ul class="list-unstyled">
-					<li class="dropdown pc-h-item">
-						<div class="dropdown-menu dropdown-menu-right pc-h-dropdown drp-search">
-							<form class="px-3">
-								<div class="form-group mb-0 d-flex align-items-center">
-									<i data-feather="search"></i>
+{#					<li class="dropdown pc-h-item">#}
+{#						<div class="dropdown-menu dropdown-menu-right pc-h-dropdown drp-search">#}
+{#							<form class="px-3">#}
+{#								<div class="form-group mb-0 d-flex align-items-center">#}
+{#									<i data-feather="search"></i>#}
 {#									<input type="search" class="form-control border-0 shadow-none" placeholder="Search here. . .">#}
-								</div>
-							</form>
-						</div>
-					</li>
+{#								</div>#}
+{#							</form>#}
+{#						</div>#}
+{#					</li>#}
                     {% if user.is_authenticated %}
 					<li class="dropdown pc-h-item">
 						<a class="pc-head-link dropdown-toggle arrow-none mr-0" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">

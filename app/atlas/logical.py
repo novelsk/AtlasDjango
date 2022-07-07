@@ -1,3 +1,5 @@
+from django.db.models import QuerySet
+
 from .models import AtlasUser, Company, UserAccessGroups, Sensor
 
 
@@ -16,6 +18,22 @@ def user_company_query(request):
         return None
 
 
+def user_company_view(request):
+    """
+    Возврщает назвавние компании пользователя или другой удовл. результат
+    """
+    companys = user_company_query(request)  # type: QuerySet
+    if companys is not None:
+        if companys.count() > 1:
+            out_text = ''
+            for company in companys:
+                company = company  # type: Company
+                out_text += company.name + ', '
+            return out_text.rstrip(', ')[:50]
+        return companys.first().name
+    return 'Нет ни в одной организации'
+
+
 def user_access_company(request, company):
     """
     Возврщает QuerySet групп, доступных пользвоателю, по компании
@@ -29,7 +47,7 @@ def user_access_company(request, company):
 
 def user_access_sensor(request, sensor_id):
     """
-    Проверяет наличие доступа к изменению датчика
+    Проверяет наличие доступа к изменению настроек датчика
     """
     company = Sensor.objects.get(pk=sensor_id).id_object.id_company
     groups = user_access_company(request, company)

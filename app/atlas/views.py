@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
 from .forms import LoginForm, UserForm, MLForm, ObjectEventForm, ObjectEventFormEdit
 from .models import SensorData, SensorError, Sensor, Object, Company, SensorMLSettings, ObjectEvent
-from .logical import user_access_sensor
+from .logical import user_access_sensor, user_company_view
 from .mail import on_error
 
 
@@ -71,7 +71,7 @@ def object_events(request, object_id):
 @login_required
 def account(request):
     if request.method == 'POST':
-        form = UserForm(request.POST, instance=request.user)
+        form = UserForm(request.POST, instance=request.user, initial={'organization': user_company_view(request)})
         context = {'form': form}
         if form.is_valid():
             form.save()
@@ -79,7 +79,7 @@ def account(request):
             context['success'] = True
         return render(request, 'account.html', context)
     else:
-        form = UserForm(instance=request.user)
+        form = UserForm(instance=request.user, initial={'organization': user_company_view(request)})
         context = {'form': form}
         return render(request, 'account.html', context)
 

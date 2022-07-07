@@ -53,7 +53,11 @@
                     </div>
                 </div>
                     <div class="col-md-2 text-right">
-                        <a href="{% url 'atlas:events' object.id %}" type="button" class="btn btn-outline-info">Журнал ТОиР <span class="badge bg-info">{{ object.event_not_done }}</span></a>
+                        <a href="{% url 'atlas:events' object.id %}" type="button" class="btn btn-outline-info">Журнал ТОиР
+                            {% if object.event_not_done != 0 %}
+                                <span class="badge bg-info">{{ object.event_not_done }}</span>
+                            {% endif %}
+                            </a>
                     </div>
                 </div>
                 <hr>
@@ -65,6 +69,13 @@
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Название</th>
+                                <th>Последния записать</th>
+                                <th></th>
+                            </tr>
+                            </thead>
                             <tbody>
                             {% for sensor in sensors_list %}
                                 <tr>
@@ -85,10 +96,10 @@
                         <table class="table table-hover">
                             <thead>
                             <tr>
-                                <td>Датичик</td>
-                                <td>Ошибка</td>
-                                <td>Дата - Время</td>
-                                <td></td>
+                                <th>Датичик</th>
+                                <th>Ошибка</th>
+                                <th>Дата - Время</th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>

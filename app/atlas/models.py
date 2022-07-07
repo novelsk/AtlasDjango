@@ -135,7 +135,7 @@ class ObjectEvent(models.Model):
     date_of_creation = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата создания')
     date_of_service_planned = models.DateTimeField(default=timezone.now, blank=True,
                                                    verbose_name='Запланировано')
-    operating_time = models.DurationField(null=True, blank=True, verbose_name='Наработка, час')
+    operating_time = models.FloatField(null=True, blank=True, verbose_name='Наработка, час')
     plan = models.CharField(max_length=300, blank=False, verbose_name='План работ')
     date_of_service_completed = models.DateTimeField(null=True, blank=True, db_index=True, verbose_name='Выполненно')
     comment = models.CharField(max_length=300, blank=True, verbose_name='Комментарий проведеных работ')

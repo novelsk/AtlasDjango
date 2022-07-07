@@ -3,6 +3,7 @@
 {% block title %}base_form.html{% endblock %}
 {% block stylesheet %}
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'datetimepicker-master/build/jquery.datetimepicker.min.css' %}">
 {% endblock %}
 
 
@@ -70,4 +71,6 @@
 {% endblock %}
 {% block script %}
     <script src="{% static 'main/main.js' %}"></script>
+    <script src="{% static 'datetimepicker-master/build/jquery.datetimepicker.full.min.js' %}"></script>
+    <script src="{% static 'main/timeChoice.js' %}"></script>
 {% endblock %}
