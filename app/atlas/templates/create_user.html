@@ -1,0 +1,13 @@
+{% extends 'base_form.html' %}
+{% load static %}
+{% block title %}Создать пользователя{% endblock %}
+{% block nav %}
+    <div class="page-header-title">
+        <h5 class="m-b-10">ADMIN</h5>
+    </div>
+    <ul class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'atlas:index' %}">Главная</a></li>
+        <li class="breadcrumb-item">Создать пользователя</li>
+    </ul>
+{% endblock %}
+{% block form_label %}Создать пользователя{% endblock %}

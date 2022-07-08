@@ -159,7 +159,8 @@ RABBIT_EXCHANGE = 'test_exchange'
 RABBIT_QUEUE = 'FirstStep'
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-SERVER_EMAIL = 'atlas@website.ru'
+EMAIL_FILE_PATH = 'tmp/app-messages'
+SERVER_EMAIL = 'atlas-admins@website.ru'
 ADMIN = [
     ('Test', 'some@website.ru')
 ]

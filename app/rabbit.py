@@ -22,7 +22,7 @@ def on_message(chan, method_frame, header_frame, body):
     # LOGGER.info('Userdata: %s, message body: %s', userdata, body)
 
     # json представление
-    input_info = loads(str(body.decode('utf-8')).replace(',', ',').replace('AiMean:', 'AiMean\":'))
+    input_info = loads(str(body.decode('utf-8')).replace(',', ', '))
     # обработка времени
     dt, tm = input_info['Date'].split()
     temp = ' '.join(['-'.join(str(dt).split('.')[::-1]), tm])

@@ -2,6 +2,8 @@ from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
+from django.db.models.signals import post_save
+from .signals import SensorDataWarning
 
 
 class Company(models.Model):
@@ -183,3 +185,7 @@ class UserAccessGroups(models.Model):
     class Meta:
         verbose_name = 'Группа доступа'
         verbose_name_plural = 'Группы доступа'
+
+
+# signals
+# post_save.connect(SensorDataWarning.sensor_data_warning, sender=SensorData)

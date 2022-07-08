@@ -17,6 +17,7 @@ urlpatterns = [
     path('accounts/login/', views.AtlasLoginView.as_view(), name='login'),
     path('accounts/login', views.AtlasLoginView.as_view(), name='login'),
     path('accounts/logout', views.AtlasLogoutView.as_view(), name='logout'),
+    path('accounts/create', views.create_user, name='create_user'),
     path('accounts/user', views.account, name='account'),
     path('', views.index, name='index'),
 ]

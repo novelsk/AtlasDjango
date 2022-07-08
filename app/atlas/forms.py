@@ -1,9 +1,7 @@
 from django.utils import timezone
-
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from django.forms.widgets import PasswordInput, TextInput, Select, DateTimeInput, HiddenInput, CheckboxInput,\
-    TimeInput
+from django.forms.widgets import PasswordInput, TextInput, Select, DateTimeInput, HiddenInput, CheckboxInput
 from .models import AtlasUser, SensorMLSettings, ObjectEvent, Object
 
 
@@ -21,6 +19,14 @@ class UserForm(forms.ModelForm):
         model = AtlasUser
         fields = ('last_name', 'first_name', 'middle_name', 'organization', 'division', 'post', 'email',
                   'notifications')
+
+
+class CreateUserForm(forms.ModelForm):
+    error_css_class = 'is-invalid'
+
+    class Meta:
+        model = AtlasUser
+        fields = ('username', 'password')
 
 
 class MLForm(forms.ModelForm):

@@ -5,8 +5,8 @@ from django.db.models import QuerySet
 from django.http import JsonResponse, QueryDict
 from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
-from .forms import LoginForm, UserForm, MLForm, ObjectEventForm, ObjectEventFormEdit
-from .models import SensorData, SensorError, Sensor, Object, Company, SensorMLSettings, ObjectEvent
+from .forms import LoginForm, UserForm, MLForm, ObjectEventForm, ObjectEventFormEdit, CreateUserForm
+from .models import SensorData, SensorError, Sensor, Object, Company, SensorMLSettings, ObjectEvent, AtlasUser
 from .logical import user_access_sensor, user_company_view
 from .mail import on_error
 
@@ -82,6 +82,25 @@ def account(request):
         form = UserForm(instance=request.user, initial={'organization': user_company_view(request)})
         context = {'form': form}
         return render(request, 'account.html', context)
+
+
+def create_user(request):
+    if request.user.is_staff:
+        context = {}
+        if request.method == 'POST':
+            form = CreateUserForm(request.POST)
+            context['form'] = form
+            if form.is_valid():
+                AtlasUser.objects.create_user(username=form.cleaned_data['username'],
+                                              password=form.cleaned_data['password'])
+                context['success'] = True
+            return render(request, 'create_user.html', context)
+        else:
+            form = CreateUserForm()
+            context['form'] = form
+            return render(request, 'create_user.html', context)
+    else:
+        return redirect('atlas:index')
 
 
 @login_required

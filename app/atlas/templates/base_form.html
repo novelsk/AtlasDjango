@@ -41,12 +41,13 @@
                                 {% else %}
                                 <div class="input-group mb-2">
                                     <label class="col-sm-5 col-form-label">{{ field.label }}</label>
-                                    <div class="col">{{ field }}</div>
+                                    <div class="col">{{ field }}
                                     {% if field.errors %}
                                         {% for error in field.errors %}
-                                        <p class="alert alert-success" role="alert">{{ error }}</p>
+                                            <p class="alert alert-success" role="alert">{{ error }}</p>
                                         {% endfor %}
                                     {% endif %}
+                                    </div>
                                 </div>
                                 {% endif %}
                             {% endfor %}
