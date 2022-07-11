@@ -33,31 +33,26 @@
             <div class="card-body">
                 <div class="row row justify-content-between">
                     <div class="col-md-8">
-                    <div class="row row-cols-auto">
-                        <div class="col">
-                        <p class="lead">Период</p>
-                    </div>
-                        <div class="col">
-                        <div class="btn-group" id="board-buttons" role="group">
-                            <button type="button" class="btn btn-outline-primary" data-count="60">1 час</button>
-                            <button type="button" class="btn btn-outline-primary" data-count="240">4 часа</button>
-                            <button type="button" class="btn btn-outline-primary" data-count="600">10 часов</button>
+                        <div class="row row-cols-auto">
+                            <div class="col">
+                                <p class="lead">Период</p>
+                            </div>
+                            <div class="col">
+                                <div class="btn-group" id="board-buttons" role="group">
+                                    <button type="button" class="btn btn-outline-primary" data-count="60">1 час</button>
+                                    <button type="button" class="btn btn-outline-primary" data-count="240">4 часа
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" data-count="600">10 часов
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="input-group" id="custom_points">
+                                    <label><input type="text" class="form-control" placeholder="Кол-во точек"></label>
+                                    <button class="btn btn-primary"><i class="feather icon-check"></i></button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                        <div class="col">
-                        <div class="input-group" id="custom_points">
-                            <label><input type="text" class="form-control" placeholder="Кол-во точек"></label>
-                            <button class="btn btn-primary"><i class="feather icon-check"></i></button>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-                    <div class="col-md-2 text-right">
-                        <a href="{% url 'atlas:events' object.id %}" type="button" class="btn btn-outline-info">Журнал ТОиР
-                            {% if object.event_not_done != 0 %}
-                                <span class="badge bg-info">{{ object.event_not_done }}</span>
-                            {% endif %}
-                            </a>
                     </div>
                 </div>
                 <hr>
@@ -71,17 +66,41 @@
                         <table class="table table-hover">
                             <thead>
                             <tr>
+                                <th>№</th>
                                 <th>Название</th>
-                                <th>Последния записать</th>
+                                <th>Настройки ML</th>
+                                <th>ST ML</th>
+                                <th>Последняя запись</th>
                                 <th></th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for sensor in sensors_list %}
                                 <tr>
-                                    <td>{{ sensor.name }}</td>
+                                    <td>{{ sensor.id_sensor_repr }}</td>
+                                    <td><a href="{% url 'atlas:sensor' object_id=object.id sensor_id=sensor.id %}" class="btn btn-link">{{ sensor.name }}</a></td>
+                                    <td>
+                                        <div class="col">
+                                            {% if sensor.event_sensor.first.setting_ll != 0 and sensor.event_sensor.first.setting_ll is not null %}
+                                                <span class="text-success mb-1">LL</span>{% else %}<span class="text-muted mb-1">LL</span>{% endif %}
+                                            {% if sensor.event_sensor.first.setting_l != 0 and sensor.event_sensor.first.setting_l is not null  %}
+                                                <span class="text-success mb-1">L</span>{% else %}<span class="text-muted mb-1">L</span>{% endif %}
+                                            {% if sensor.event_sensor.first.setting_h != 0 and sensor.event_sensor.first.setting_h is not null  %}
+                                                <span class="text-success mb-1">H</span>{% else %}<span class="text-muted mb-1">H</span>{% endif %}
+                                            {% if sensor.event_sensor.first.setting_hh != 0 and sensor.event_sensor.first.setting_hh is not null  %}
+                                                <span class="text-success mb-1">HH</span>{% else %}<span class="text-muted mb-1">HH</span>{% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="col">
+                                            {% if sensor.data_sensor.last.stat_min != sensor.data_sensor.last.stat_max %}
+                                                <span class="text-success mb-1">ST</span>{% else %}<span class="text-danger mb-1">ST</span>{% endif %}
+                                            {% if sensor.data_sensor.last.ml_min != sensor.data_sensor.last.ml_max %}
+                                                <span class="text-success mb-1">ML</span>{% else %}<span class="text-danger mb-1">ML</span>{% endif %}
+                                        </div>
+                                    </td>
                                     <td>{{ sensor.data_sensor.last.date }}</td>
-                                    <td><a href="{% url 'atlas:sensor' object_id=object.id sensor_id=sensor.id %}" class="btn btn-outline-info">Подробнее</a></td>
+                                    <td><a href="{% url 'atlas:settings_ml' sensor_id=sensor.id %}" class="btn btn-secondary"><i data-feather="settings"></i></a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -89,9 +108,18 @@
                     </div>
                 </div>
             </div>
-        <h5>Журнал ошибок</h5><hr>
+        <h5>Журналы</h5><hr>
             <div class="card">
                 <div class="card-body">
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'atlas:events' object.id %}" type="button" class="btn btn-outline-info">Журнал ТОиР
+                            {% if object.event_not_done != 0 %}
+                                <span class="badge bg-info">{{ object.event_not_done }}</span>
+                            {% endif %}
+                        </a>
+                        <a href="{% url 'atlas:event_new' object.id %}" class="btn btn-outline-info">+</a>
+                    </div>
+                    <hr>
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>

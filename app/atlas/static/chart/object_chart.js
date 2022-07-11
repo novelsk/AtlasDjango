@@ -31,8 +31,10 @@ let mainChart = new Chart(ctx, {
         datasets: [],
     },
     options: {
-        legend: {
-            display: false,
+        plugins: {
+            legend: {
+                display: true,
+            }
         }
     }
 });

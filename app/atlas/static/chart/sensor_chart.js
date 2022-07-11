@@ -17,6 +17,7 @@ const points = custom_points.children[0].firstChild;
 const accept_points_button = custom_points.children[1];
 accept_points_button.addEventListener('click', function () {
     draw_chart(points.value);
+    ctx.setAttribute('data-count', points.value);
 });
 
 
@@ -35,13 +36,13 @@ const dataColors = {
     'mode': '#8ccb5e',
 }
 const dataLabels = {
-    'ai_max': 'максимальное отклонение измерения',
-    'ai_min': 'минимальное отклонение измерения',
-    'ai_mean': 'измерение датчика',
-    'stat_min': 'ST(в.ур-нь)',
-    'stat_max': 'ST(н.ур-нь)',
-    'ml_min': 'ML(в.ур-нь)',
-    'ml_max': 'ML(н.ур-нь)',
+    'ai_max': 'Измерение (H)',
+    'ai_min': 'Измерение (L)',
+    'ai_mean': 'Измерения',
+    'stat_min': 'ST(L)',
+    'stat_max': 'ST(H)',
+    'ml_min': 'ML(L)',
+    'ml_max': 'ML(H)',
     'mode': 'режим работы',
 }
 let datasetCount = 0;

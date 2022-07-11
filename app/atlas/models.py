@@ -7,7 +7,7 @@ from .signals import SensorDataWarning
 
 
 class Company(models.Model):
-    name = models.CharField(max_length=40, verbose_name='Название', unique=True)
+    name = models.CharField(max_length=50, verbose_name='Название', unique=True)
     info = models.CharField(blank=True, max_length=100, verbose_name='Информация')
 
     def __str__(self):
@@ -22,7 +22,7 @@ class Company(models.Model):
 class Object(models.Model):
     id_company = models.ForeignKey(Company, on_delete=models.PROTECT, related_name='object_company',
                                    verbose_name='Компания')
-    name = models.CharField(max_length=40, verbose_name='Название')
+    name = models.CharField(max_length=50, verbose_name='Название')
     info = models.CharField(blank=True, max_length=100, verbose_name='Информация')
     image = models.ImageField(blank=True, verbose_name='Cхема')
 
@@ -42,10 +42,45 @@ class Object(models.Model):
         ordering = ['name']
 
 
+class ObjectEvent(models.Model):
+    class Statuses(models.TextChoices):
+        PLAN = 'p', 'Запланирована'
+        WORK = 'w', 'В работе'
+        COMPLETE = 'c', 'Завершена'
+
+    status_json = {
+        'p': 'Запланирован',
+        'w': 'В работе',
+        'c': 'Завершен',
+    }
+
+    id_object = models.ForeignKey(Object, on_delete=models.CASCADE, related_name='event_object', verbose_name='Датчик')
+    status = models.CharField(max_length=1, choices=Statuses.choices, default=Statuses.PLAN, verbose_name='Статус')
+    date_of_creation = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата создания')
+    date_of_service_planned = models.DateTimeField(default=timezone.now, blank=True,
+                                                   verbose_name='Запланировано')
+    operating_time = models.FloatField(null=True, blank=True, verbose_name='Наработка, час')
+    plan = models.CharField(max_length=300, blank=False, verbose_name='План работ')
+    date_of_service_completed = models.DateTimeField(null=True, blank=True, db_index=True, verbose_name='Выполненно')
+    comment = models.CharField(max_length=300, blank=True, verbose_name='Комментарий проведеных работ')
+
+    def not_done(self):
+        if timezone.now() > self.date_of_service_planned and self.status != 'c':
+            return True
+        return False
+
+    def __str__(self):
+        return self.status_json[self.status]
+
+    class Meta:
+        verbose_name = 'Операция'
+        verbose_name_plural = 'Операции'
+
+
 class Sensor(models.Model):
     id_object = models.ForeignKey(Object, on_delete=models.PROTECT, related_name='sensor_object', verbose_name='Объект')
     id_sensor_repr = models.IntegerField(blank=True, db_index=True, null=True, verbose_name='Номер датчика в объекте')
-    name = models.CharField(max_length=40, verbose_name='Название')
+    name = models.CharField(max_length=50, verbose_name='Название')
     info = models.CharField(blank=True, max_length=100, verbose_name='Информация')
     image = models.ImageField(blank=True, verbose_name='Cхема')
 
@@ -60,6 +95,8 @@ class Sensor(models.Model):
 
 class SensorError(models.Model):
     id_sensor = models.ForeignKey(Sensor, on_delete=models.PROTECT, related_name='error_sensor', verbose_name='Датчик')
+    id_event = models.ForeignKey(ObjectEvent, on_delete=models.CASCADE, related_name='error_event',
+                                 null=True, blank=True, verbose_name='Ошибка')
     error = models.IntegerField(blank=True, db_index=True)
     error_start_date = models.DateTimeField(blank=True, verbose_name='Дата начала ошибки')
     error_end_date = models.DateTimeField(null=True, verbose_name='Дата окончания ошибки')
@@ -118,41 +155,6 @@ class SensorMLSettings(models.Model):
     class Meta:
         verbose_name = 'Настройка ML'
         verbose_name_plural = 'Настройки ML'
-
-
-class ObjectEvent(models.Model):
-    class Statuses(models.TextChoices):
-        PLAN = 'p', 'Запланирована'
-        WORK = 'w', 'В работе'
-        COMPLETE = 'c', 'Завершена'
-
-    status_json = {
-        'p': 'Запланирован',
-        'w': 'В работе',
-        'c': 'Завершен',
-    }
-
-    id_object = models.ForeignKey(Object, on_delete=models.CASCADE, related_name='event_object', verbose_name='Датчик')
-    status = models.CharField(max_length=1, choices=Statuses.choices, default=Statuses.PLAN, verbose_name='Статус')
-    date_of_creation = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата создания')
-    date_of_service_planned = models.DateTimeField(default=timezone.now, blank=True,
-                                                   verbose_name='Запланировано')
-    operating_time = models.FloatField(null=True, blank=True, verbose_name='Наработка, час')
-    plan = models.CharField(max_length=300, blank=False, verbose_name='План работ')
-    date_of_service_completed = models.DateTimeField(null=True, blank=True, db_index=True, verbose_name='Выполненно')
-    comment = models.CharField(max_length=300, blank=True, verbose_name='Комментарий проведеных работ')
-
-    def not_done(self):
-        if timezone.now() > self.date_of_service_planned and self.status != 'c':
-            return True
-        return False
-
-    def __str__(self):
-        return self.status_json[self.status]
-
-    class Meta:
-        verbose_name = 'Операция'
-        verbose_name_plural = 'Операции'
 
 
 class AtlasUser(AbstractUser):

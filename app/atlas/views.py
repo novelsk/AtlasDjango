@@ -40,7 +40,7 @@ def object_sensors(request, pk):
     context['object'] = object_item
     sensors = Sensor.objects.filter(id_object=object_item).order_by('id_sensor_repr')
     context['sensors_list'] = list(sensors)
-    errors = SensorError.objects.filter(id_sensor__id_object=object_item).order_by('error_start_date')
+    errors = SensorError.objects.filter(id_sensor__id_object=object_item).order_by('-error_start_date')
     context['errors_list'] = list(errors)
     return render(request, 'object.html', context)
 
@@ -52,7 +52,7 @@ def sensor_chart(request, object_id, sensor_id):
     context['object'] = object_item
     sensor = Sensor.objects.get(pk=sensor_id)
     context['sensor'] = sensor
-    errors = SensorError.objects.filter(id_sensor=sensor).order_by('error_start_date')
+    errors = SensorError.objects.filter(id_sensor=sensor).order_by('-error_start_date')
     context['errors_list'] = list(errors)
     context['errors'] = errors.count()
     return render(request, 'chart.html', context)
@@ -63,7 +63,7 @@ def object_events(request, object_id):
     context = {}
     object_item = Object.objects.get(pk=object_id)
     context['object'] = object_item
-    events = ObjectEvent.objects.filter(id_object=object_item).order_by('status')
+    events = ObjectEvent.objects.filter(id_object=object_item).order_by('-status')
     context['events_list'] = list(events)
     return render(request, 'event.html', context)
 
