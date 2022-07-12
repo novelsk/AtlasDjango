@@ -19,8 +19,10 @@ from django.conf import settings
 from django.contrib.staticfiles.views import serve
 from django.views.decorators.cache import never_cache
 from django.conf.urls.static import static
+from .views import rabbit_start
 
 urlpatterns = [
+    path('rabbit/start', rabbit_start),
     path('admin', admin.site.urls),
     path('', include('atlas.urls')),
 ]

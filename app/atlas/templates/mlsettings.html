@@ -16,3 +16,31 @@
     </ul>
 {% endblock %}
 {% block form_label %}Настройки{% endblock %}
+{% block near_form %}
+    <div class="card">
+        <div class="card-body">
+            <button type="button" class="btn btn-primary">Переобучить систему</button>
+            <br>
+            <br>
+            <button type="button" class="btn btn-primary" onclick="resetAnalytic()">Сброс наработки аналитики</button>
+            <br>
+            <br>
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label for="exampleCheck1"><Разрешить работу аналитики</label>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script src="{% static 'main/main.js' %}"></script>
+    <script>
+    function resetAnalytic() {
+        jQuery.get(
+            window.location.origin + "/api/settings/reset-analytic",
+            {'sensor': {{ sensor.id }} },
+            function () { alert( "success" ); }
+        );
+    }
+    </script>
+{% endblock %}

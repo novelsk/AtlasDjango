@@ -83,7 +83,7 @@
                                     <table class="table table-hover">
                                         <thead>
                                         <tr>
-                                            <th>№</th>
+                                            <th>№ ошибки</th>
                                             <th>Дата и время</th>
                                             <th>Режим работы системы</th>
                                             <th></th>
@@ -92,7 +92,7 @@
                                         <tbody>
                                         {% for error_item in errors_list %}
                                             <tr>
-                                                <td>{{ error_item.id_sensor }}</td>
+                                                <td>{{ error_item.error }}</td>
                                                 <td>{{ error_item.error_start_date }}</td>
                                                 <td>{{ error_item.data_error.last.mode }}</td>
                                                 <td><a href="" class="btn btn-outline-info">Квитировать</a></td>

@@ -12,13 +12,6 @@ from .mail import on_error
 
 
 @login_required
-def test(request):
-    temp = Object.objects.all()
-    context = {'obj': list(temp)}
-    return render(request, 'test.html', context)
-
-
-@login_required
 def index(request):
     return render(request, 'index.html')
 

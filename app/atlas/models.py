@@ -94,8 +94,8 @@ class Sensor(models.Model):
 
 
 class SensorError(models.Model):
-    id_sensor = models.ForeignKey(Sensor, on_delete=models.PROTECT, related_name='error_sensor', verbose_name='Датчик')
-    id_event = models.ForeignKey(ObjectEvent, on_delete=models.CASCADE, related_name='error_event',
+    id_sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE, related_name='error_sensor', verbose_name='Датчик')
+    id_event = models.ForeignKey(ObjectEvent, on_delete=models.PROTECT, related_name='error_event',
                                  null=True, blank=True, verbose_name='Ошибка')
     error = models.IntegerField(blank=True, db_index=True)
     error_start_date = models.DateTimeField(blank=True, verbose_name='Дата начала ошибки')
@@ -190,4 +190,5 @@ class UserAccessGroups(models.Model):
 
 
 # signals
+# Избежать ошибку self: создать объект класс сигнала и вызвать метод объекта а не класса
 # post_save.connect(SensorDataWarning.sensor_data_warning, sender=SensorData)

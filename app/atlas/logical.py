@@ -27,7 +27,7 @@ def user_company_view(request):
         if companys.count() > 1:
             out_text = ''
             for company in companys:
-                company = company  # type: Company
+                # company = company  # type: Company
                 out_text += company.name + ', '
             return out_text.rstrip(', ')[:50]
         return companys.first().name
@@ -57,3 +57,30 @@ def user_access_sensor(request, sensor_id):
             if i.write:
                 return True
     return False
+
+
+def base_alerts(request):
+    """
+    Возвращает список уведомлений
+    """
+    company_query = user_company_query(request)
+    alerts = []
+    for company in company_query:
+        for object_item in company.object_company.all():
+            # object_item = object_item  # type: Object
+            if object_item.event_not_done():
+                alerts.append({
+                    'style': 'alert-warning',
+                    'head': object_item.name,
+                    'body': 'Просроченные мероприятия по объекту: ' + str(object_item.event_not_done()),
+                    'href': f'/object/{object_item.id}/events',
+                    })
+            for sensor in object_item.sensor_object.all():
+                if sensor.error_sensor.count():
+                    alerts.append({
+                        'style': 'alert-info',
+                        'head': sensor.name,
+                        'body': 'Ошибок датчика: ' + str(sensor.error_sensor.count()),
+                        'href': f'/object/{object_item.id}/{sensor.id}',
+                    })
+    return alerts

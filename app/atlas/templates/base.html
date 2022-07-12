@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{% static 'assets/fonts/feather.css' %}">
     <link rel="stylesheet" href="{% static 'assets/fonts/fontawesome.css' %}">
     <link rel="stylesheet" href="{% static 'assets/fonts/material.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" id="main-style-link">
     {% block stylesheet %}
     {% endblock %}
 </head>
@@ -80,6 +80,9 @@
 						    <ul class="pc-submenu" style="">
 							    <a href="{% url 'atlas:create_user' %}" class="pc-link"><span class="pc-micon"><i class="material-icons-two-tone">person_add</i></span><span class="pc-mtext">Создать пользователя</span></a>
 						    </ul>
+                            <ul class="pc-submenu" style="">
+							    <a href="/rabbit/start" class="pc-link"><span class="pc-micon"><i class="material-icons-two-tone">done</i></span><span class="pc-mtext">Запустить rabbit</span></a>
+						    </ul>
 					    </li>
                     {% endif %}
 					<li class="pc-item pc-caption">
@@ -121,9 +124,24 @@
 {#							</form>#}
 {#						</div>#}
 {#					</li>#}
+                    <li class="dropdown pc-h-item">
+						<a class="pc-head-link dropdown-toggle arrow-none mr-0" data-toggle="dropdown">
+                            <i data-feather="bell"></i>
+						</a>
+						<div class="dropdown-menu dropdown-menu-right pc-h-dropdown">
+                        {% for alert in alerts %}
+                            <a href="{{ alert.href }}" class="dropdown-item">
+                                <div class="alert {{ alert.style }}">
+                                    <h5 class="alert-heading">{{ alert.head }}</h5>
+                                    <p>{{ alert.body }}</p>
+                                </div>
+                            </a>
+                        {% endfor %}
+						</div>
+					</li>
                     {% if user.is_authenticated %}
 					<li class="dropdown pc-h-item">
-						<a class="pc-head-link dropdown-toggle arrow-none mr-0" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+						<a class="pc-head-link dropdown-toggle arrow-none mr-0" data-toggle="dropdown" role="button" aria-haspopup="false" aria-expanded="false">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                             <br>
                             <span class="ml-2">

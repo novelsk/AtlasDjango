@@ -25,15 +25,19 @@ const dataColorsOld = ['#b84d4d', '#8f4db8', '#4f4db8', '#4d7fb8', '#4da4b8',
     '#4db891', '#4db86b', '#96b84d', '#b8a64d', '#b8864d', '#bd6d3e']
 
 const dataColors = {
-    'ai_max': '#808080',
-    'ai_min': '#808080',
+    'ai_max': 'rgba(119, 136, 153, 0.5)',
+    'ai_min': 'rgba(119, 136, 153, 0.5)',
     'ai_mean': '#4d7fb8',
-    'stat_min': '#b8a64d',
-    'stat_max': '#b8a64d',
-    'ml_min': '#b84d4d',
-    'ml_max': '#b84d4d',
+    'stat_min': 'rgba(205, 164, 52, 0.3)',
+    'stat_max': 'rgba(205, 164, 52, 0.3)',
+    'ml_min': 'rgba(207, 84, 81, 0.3)',
+    'ml_max': 'rgba(207, 84, 81, 0.3)',
     'status': '#96b84d',
     'mode': '#8ccb5e',
+    'sp_ll': '#4d7fb8',
+    'sp_l': '#4da4b8',
+    'sp_h': '#4da4b8',
+    'sp_hh': '#4d7fb8',
 }
 const dataLabels = {
     'ai_max': 'Измерение (H)',
@@ -44,6 +48,24 @@ const dataLabels = {
     'ml_min': 'ML(L)',
     'ml_max': 'ML(H)',
     'mode': 'режим работы',
+    'sp_ll': 'SP(LL)',
+    'sp_l': 'SP(L)',
+    'sp_h': 'SP(H)',
+    'sp_hh': 'SP(HH)',
+}
+const dataDash = {
+    'ai_max': [],
+    'ai_min': [],
+    'ai_mean': [],
+    'stat_min': [],
+    'stat_max': [],
+    'ml_min': [],
+    'ml_max': [],
+    'mode': [],
+    'sp_ll': [6, 2],
+    'sp_l': [6, 2],
+    'sp_h': [6, 2],
+    'sp_hh': [6, 2],
 }
 let datasetCount = 0;
 let datasetState = [];
@@ -73,10 +95,11 @@ function draw_chart(count = '') {
                     label: dataLabels[dataKey],
                     data: data[dataKey],
                     lineTension: 0,
-                    backgroundColor: 'transparent',
+                    backgroundColor: 'rgba(62, 95, 138, 0.1)',
                     borderColor: dataColors[dataKey],
                     borderWidth: 2,
                     pointRadius: 0,
+                    borderDash: dataDash[dataKey],
                 }
             mainChart.setDatasetVisibility(num_col, !datasetState[num_col]);
             num_col++;

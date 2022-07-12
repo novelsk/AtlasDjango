@@ -13,7 +13,7 @@ class LoginForm(AuthenticationForm):
 class UserForm(forms.ModelForm):
     organization = forms.CharField(widget=TextInput, disabled=True, required=False, label='Организация')
     notifications = forms.BooleanField(widget=CheckboxInput(attrs={'class': 'form-check-input'}),
-                                       required=False, label='Присылать уведомления')
+                                       required=False, label='Присылать уведомления на почту')
 
     class Meta:
         model = AtlasUser
@@ -36,6 +36,16 @@ class MLForm(forms.ModelForm):
         model = SensorMLSettings
         fields = ('info', 'setting_type', 'setting_ll', 'setting_l', 'setting_h', 'setting_hh', 'point', 'tm_prd',
                   'setting_param_1', 'setting_param_2', 'setting_param_3', 'setting_param_4')
+        labels = {
+            'setting_ll': 'Нижний аварийный уровень (LL)',
+            'setting_l': 'Нижний предупредительный уровень (L)',
+            'setting_h': 'Верхний предупредительный уровень (H)',
+            'setting_hh': 'Верхний аварийный уровень (HH)',
+            'point': 'Размер обучающей выборки, мин',
+            'tm_prd': 'Размер рабочей выборки, мин',
+            'setting_param_1': 'Погрешность режима ST',
+            'setting_param_2': 'Погрешность режима ML'
+        }
 
 
 class ObjectEventForm(forms.ModelForm):

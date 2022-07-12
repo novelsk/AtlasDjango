@@ -1,6 +1,6 @@
 from django.db.models import QuerySet
 from .models import Object
-from .logical import user_company_query
+from .logical import user_company_query, base_alerts
 
 
 # https://docs.djangoproject.com/en/1.10/_modules/django/template/context/
@@ -11,7 +11,8 @@ def base(request):
         if company_query is not None:
             for i in company_query:
                 objects = objects.union(i.object_company.all())
-        context = {'base_object_list': list(objects), 'objects_count': objects.count()}
+        context = {'base_object_list': list(objects), 'objects_count': objects.count(),
+                   'alerts': list(base_alerts(request))}
         return context
     else:
         return {}
