@@ -35,7 +35,7 @@
                     <div class="col-md-8">
                         <div class="row row-cols-auto">
                             <div class="col">
-                                <p class="lead">Период</p>
+                                <button type="button" class="btn btn-outline-primary disabled"><i data-feather="clock"></i></button>
                             </div>
                             <div class="col">
                                 <div class="btn-group" id="board-buttons" role="group">
@@ -100,7 +100,7 @@
                                         </div>
                                     </td>
                                     <td>{{ sensor.data_sensor.last.date }}</td>
-                                    <td><a href="{% url 'atlas:settings_ml' sensor_id=sensor.id %}" class="btn btn-secondary"><i data-feather="settings"></i></a></td>
+                                    <td><a href="{% url 'atlas:settings_ml' sensor_id=sensor.id %}" class="btn btn-primary"><i data-feather="settings"></i></a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -112,12 +112,12 @@
             <div class="card">
                 <div class="card-body">
                     <div class="btn-group" role="group">
-                        <a href="{% url 'atlas:events' object.id %}" type="button" class="btn btn-outline-info">Журнал ТОиР
-                            {% if object.event_not_done != 0 %}
-                                <span class="badge bg-info">{{ object.event_not_done }}</span>
+                        <a href="{% url 'atlas:events' object.id %}" type="button" class="btn btn-outline-primary">Журнал ТОиР
+                            {% if object.count_event_not_done != 0 %}
+                                <span class="badge bg-primary">{{ object.count_event_not_done }}</span>
                             {% endif %}
                         </a>
-                        <a href="{% url 'atlas:event_new' object.id %}" class="btn btn-outline-info">+</a>
+                        <a href="{% url 'atlas:event_new' object.id %}" class="btn btn-outline-primary">+</a>
                     </div>
                     <hr>
                     <div class="table-responsive">
@@ -136,7 +136,7 @@
                                     <td>{{ error_item.id_sensor }}</td>
                                     <td>{{ error_item.error }}</td>
                                     <td>{{ error_item.error_start_date }}</td>
-                                    <td><a href="" class="btn btn-outline-info">Квитировать</a></td>
+                                    <td><a href="" class="btn btn-outline-primary"><i data-feather="check-circle"></i></a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>

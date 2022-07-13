@@ -34,17 +34,23 @@
                             <table class="table table-hover">
                                 <thead>
                                 <tr>
-                                    <th>Название объекта</th>
                                     <th>Состояние</th>
+                                    <th>Название объекта</th>
                                     <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {% for object in base_object_list %}
                                     <tr>
+                                        <td class="col-sm-1">
+                                            {% if object.count_sensors_alerts %}
+                                                <button type="button" class="btn  btn-outline-warning disabled"><i data-feather="alert-circle"></i></button>
+                                            {% else %}
+                                                <button type="button" class="btn  btn-outline-success disabled"><i data-feather="check"></i></button>
+                                            {% endif %}
+                                        </td>
                                         <td><a href="{% url 'atlas:object' object.id %}"
                                                class="btn btn-link">{{ object.name }}</a></td>
-                                        <td><span class="badge alert-success">GOOD</span></td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>

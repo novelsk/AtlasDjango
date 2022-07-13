@@ -1,5 +1,5 @@
 from django.db.models import QuerySet
-from .models import Object
+from .models import Object, AtlasUser
 from .logical import user_company_query, base_alerts
 
 
@@ -11,7 +11,8 @@ def base(request):
         if company_query is not None:
             for i in company_query:
                 objects = objects.union(i.object_company.all())
-        context = {'base_object_list': list(objects), 'objects_count': objects.count(),
+        context = {'base_object_list': list(objects),
+                   'objects_count': objects.count(),
                    'alerts': list(base_alerts(request))}
         return context
     else:

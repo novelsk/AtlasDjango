@@ -1,5 +1,4 @@
 const ctx = document.getElementById("chart");
-const table = document.getElementById("tableBody");
 const chart_buttons = Array.from(document.getElementById("board-buttons").children);
 chart_buttons.forEach((item) => {
     item.addEventListener('click', function () {
@@ -20,9 +19,6 @@ accept_points_button.addEventListener('click', function () {
     ctx.setAttribute('data-count', points.value);
 });
 
-
-const dataColorsOld = ['#b84d4d', '#8f4db8', '#4f4db8', '#4d7fb8', '#4da4b8',
-    '#4db891', '#4db86b', '#96b84d', '#b8a64d', '#b8864d', '#bd6d3e']
 
 const dataColors = {
     'ai_max': 'rgba(119, 136, 153, 0.5)',
@@ -100,6 +96,9 @@ function draw_chart(count = '') {
                     borderWidth: 2,
                     pointRadius: 0,
                     borderDash: dataDash[dataKey],
+                    // segment: {
+                    //     borderColor: ctx => custom(ctx),
+                    // },
                 }
             mainChart.setDatasetVisibility(num_col, !datasetState[num_col]);
             num_col++;
@@ -114,7 +113,6 @@ jQuery(document).ready(function () {
     draw_chart(ctx.getAttribute( 'data-count'));
 });
 
-
-let timerId = setInterval(function () {
+setInterval(function () {
     draw_chart(ctx.getAttribute( 'data-count'));
 }, 60000);

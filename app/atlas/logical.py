@@ -68,11 +68,11 @@ def base_alerts(request):
     for company in company_query:
         for object_item in company.object_company.all():
             # object_item = object_item  # type: Object
-            if object_item.event_not_done():
+            if object_item.count_event_not_done():
                 alerts.append({
                     'style': 'alert-warning',
                     'head': object_item.name,
-                    'body': 'Просроченные мероприятия по объекту: ' + str(object_item.event_not_done()),
+                    'body': 'Просроченные мероприятия по объекту: ' + str(object_item.count_event_not_done()),
                     'href': f'/object/{object_item.id}/events',
                     })
             for sensor in object_item.sensor_object.all():

@@ -68,7 +68,6 @@ jQuery(document).ready(function () {
     draw_chart(ctx.getAttribute( 'data-count'));
 });
 
-
-let timerId = setInterval(function () {
+setInterval(function () {
     draw_chart(ctx.getAttribute( 'data-count'));
 }, 60000);

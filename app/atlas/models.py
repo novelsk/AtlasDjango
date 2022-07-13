@@ -26,11 +26,17 @@ class Object(models.Model):
     info = models.CharField(blank=True, max_length=100, verbose_name='Информация')
     image = models.ImageField(blank=True, verbose_name='Cхема')
 
-    def event_not_done(self):
+    def count_event_not_done(self):
         count = 0
         for event in self.event_object.all():
             if timezone.now() > event.date_of_service_planned and event.status != 'c':
                 count += 1
+        return count
+
+    def count_sensors_alerts(self):
+        count = 0
+        for sensor in self.sensor_object.all():
+            count += sensor.error_sensor.filter().count()
         return count
 
     def __str__(self):
@@ -163,6 +169,9 @@ class AtlasUser(AbstractUser):
     division = models.CharField(max_length=50, verbose_name='Подразделение', null=True, blank=True)
     post = models.CharField(max_length=50, verbose_name='Должность', null=True, blank=True)
     notifications = models.BooleanField(verbose_name='Уведомления', default=False, blank=True)
+
+    def initials(self):
+        return self.first_name[:1] + self.last_name[:1]
 
     class Meta(AbstractUser.Meta):
         pass

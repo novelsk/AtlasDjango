@@ -37,7 +37,7 @@
                             <div class="col-md-8">
                                 <div class="row row-cols-auto">
                                     <div class="col">
-                                        <p class="lead">Период</p>
+                                        <button type="button" class="btn btn-outline-primary disabled"><i data-feather="clock"></i></button>
                                     </div>
                                     <div class="col">
                                         <div class="btn-group" id="board-buttons" role="group">
@@ -55,7 +55,7 @@
                                 </div>
                             </div>
                             <div class="col-md-1 text-right">
-                                <a href="{% url 'atlas:settings_ml' sensor_id=sensor.id %}" class="btn btn-secondary">
+                                <a href="{% url 'atlas:settings_ml' sensor_id=sensor.id %}" class="btn btn-primary">
                                     <i data-feather="settings"></i></a>
                             </div>
                         </div>
@@ -95,7 +95,7 @@
                                                 <td>{{ error_item.error }}</td>
                                                 <td>{{ error_item.error_start_date }}</td>
                                                 <td>{{ error_item.data_error.last.mode }}</td>
-                                                <td><a href="" class="btn btn-outline-info">Квитировать</a></td>
+                                                <td><a href="" class="btn btn-outline-primary"><i data-feather="check-circle"></i></a></td>
                                             </tr>
                                         {% endfor %}
                                         </tbody>

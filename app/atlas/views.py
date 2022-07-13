@@ -48,7 +48,7 @@ def sensor_chart(request, object_id, sensor_id):
     errors = SensorError.objects.filter(id_sensor=sensor).order_by('-error_start_date')
     context['errors_list'] = list(errors)
     context['errors'] = errors.count()
-    return render(request, 'chart.html', context)
+    return render(request, 'sensor.html', context)
 
 
 @login_required
