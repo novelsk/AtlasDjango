@@ -35,7 +35,7 @@ class MLForm(forms.ModelForm):
     class Meta:
         model = SensorMLSettings
         fields = ('info', 'setting_type', 'setting_ll', 'setting_l', 'setting_h', 'setting_hh', 'point', 'tm_prd',
-                  'setting_param_1', 'setting_param_2', 'setting_param_3', 'setting_param_4')
+                  'setting_param_1', 'setting_param_2', 'setting_param_3')
         labels = {
             'setting_ll': 'Нижний аварийный уровень (LL)',
             'setting_l': 'Нижний предупредительный уровень (L)',
@@ -44,7 +44,8 @@ class MLForm(forms.ModelForm):
             'point': 'Размер обучающей выборки, мин',
             'tm_prd': 'Размер рабочей выборки, мин',
             'setting_param_1': 'Погрешность режима ST',
-            'setting_param_2': 'Погрешность режима ML'
+            'setting_param_2': 'Погрешность режима ML',
+            'setting_param_3': 'Период выхода из строя, дней'
         }
 
 

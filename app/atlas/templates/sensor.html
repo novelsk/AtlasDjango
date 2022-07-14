@@ -55,7 +55,7 @@
                                 </div>
                             </div>
                             <div class="col-md-1 text-right">
-                                <a href="{% url 'atlas:settings_ml' sensor_id=sensor.id %}" class="btn btn-primary">
+                                <a href="{% url 'atlas:settings_sensor' sensor_id=sensor.id %}" class="btn btn-primary">
                                     <i data-feather="settings"></i></a>
                             </div>
                         </div>
@@ -64,57 +64,61 @@
                     </div>
                 </div>
             </div>
+        <h5>Последние инциденты</h5><hr>
             <div class="col-sm-12">
-                <div class="card">
-                    <div class="">
-                        {% if errors == 0 %}
-                            <div class="card">
-                            <div class="card-body">
-                                <h4>Ошибок нет</h4>
-                            </div>
+                {% if errors == 0 %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h4>Ошибок нет</h4>
                         </div>
-                        {% else %}
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>Последние инциденты</h4>
-                            </div>
-                            <div class="card-body table-border-style">
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                        <tr>
-                                            <th>№ ошибки</th>
-                                            <th>Дата и время</th>
-                                            <th>Режим работы системы</th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for error_item in errors_list %}
-                                            <tr>
-                                                <td>{{ error_item.error }}</td>
-                                                <td>{{ error_item.error_start_date }}</td>
-                                                <td>{{ error_item.data_error.last.mode }}</td>
-                                                <td><a href="" class="btn btn-outline-primary"><i data-feather="check-circle"></i></a></td>
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
                     </div>
-                </div>
+                {% else %}
+                    <div class="card">
+                        <div class="card-header">
+                            <a href="{% url 'atlas:archive' sensor.id %}" type="button" class="btn btn-outline-primary">Архив ошибок</a>
+                            <button type="button" class="btn btn-outline-primary">Квитировать все</button>
+                        </div>
+                        <div class="card-body table-border-style">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>№ ошибки</th>
+                                        <th>Значение</th>
+                                        <th>Дата и время</th>
+                                        <th>Режим работы системы</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="table-errors">
+                                    {% for error_item in errors_list %}
+                                        <tr data-id="{{ error_item.id }}">
+                                            <td>{{ error_item.error }}</td>
+                                            <td>{{ error_item.data_error.last.ai_mean }}</td>
+                                            <td>{{ error_item.error_start_date }}</td>
+                                            <td>{{ error_item.data_error.last.mode }}</td>
+                                            <td>
+                                                <button onclick="confirm_error({{ error_item.id }})"
+                                                        class="btn btn-outline-primary">
+                                                    <i data-feather="check-circle"></i></button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
-        <!-- [ sample-page ] end -->
-    </div>
         <!-- [ Main Content ] end -->
+    </div>
 </div>
 
 {% endblock %}
 {% block script %}
+    <script src="{% static 'main/main.js' %}"></script>
     <script src="{% static 'chart/dist/chart.js' %}"></script>
     <script src="{% static 'chart/sensor_chart.js' %}"></script>
 {% endblock %}

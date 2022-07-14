@@ -49,14 +49,14 @@
                                     <tr>
                                         <td class="col-sm-1">
                                             {% if object.count_sensors_alerts %}
-                                                <div class="alert alert-warning text-center" role="alert"><i data-feather="alert-circle"></i></div>
+                                                <button type="button" class="btn  btn-outline-warning disabled"><i data-feather="alert-circle"></i></button>
                                             {% else %}
-                                                <div class="alert alert-success text-center" role="alert"><i data-feather="check"></i></div>
+                                                <button type="button" class="btn  btn-outline-success disabled"><i data-feather="check"></i></button>
                                             {% endif %}
                                         </td>
                                         <td>{{ object.id_company }}</td>
-                                        <td>{{ object.name }}</td>
-                                        <td><a href="{% url 'atlas:object' object.id %}" class="btn btn-outline-primary"><i data-feather="corner-right-down"></i></a></td>
+                                        <td><a href="{% url 'atlas:object' object.id %}"
+                                               class="btn btn-link">{{ object.name }}</a></td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>

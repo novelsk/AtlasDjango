@@ -45,7 +45,7 @@ def user_access_company(request, company):
         return None
 
 
-def user_access_sensor(request, sensor_id):
+def user_access_sensor_write(request, sensor_id):
     """
     Проверяет наличие доступа к изменению настроек датчика
     """
@@ -56,6 +56,17 @@ def user_access_sensor(request, sensor_id):
             # i = i  # type: UserAccessGroups
             if i.write:
                 return True
+    return False
+
+
+def user_access_sensor_read(request, sensor_id):
+    """
+    Проверяет наличие доступа к датчику
+    """
+    company = Sensor.objects.get(pk=sensor_id).id_object.id_company
+    groups = user_access_company(request, company)
+    if groups is not None:
+        return True
     return False
 
 

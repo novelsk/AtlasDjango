@@ -76,7 +76,7 @@ class ObjectEvent(models.Model):
         return False
 
     def __str__(self):
-        return self.status_json[self.status]
+        return self.status_json[self.status] + ' ' + self.date_of_service_planned.time().__str__()
 
     class Meta:
         verbose_name = 'Операция'
@@ -107,6 +107,7 @@ class SensorError(models.Model):
     error_start_date = models.DateTimeField(blank=True, verbose_name='Дата начала ошибки')
     error_end_date = models.DateTimeField(null=True, verbose_name='Дата окончания ошибки')
     info = models.CharField(null=True, max_length=100, verbose_name='Описание')
+    confirmed = models.BooleanField(default=False, verbose_name='Подтвержденная')
 
     def __str__(self):
         return self.id_sensor.name
@@ -121,14 +122,18 @@ class SensorData(models.Model):
     id_error_log = models.ForeignKey(SensorError, on_delete=models.SET_NULL, null=True, db_index=True, blank=True,
                                      related_name='data_error', verbose_name='Журнал ошибки')
     date = models.DateTimeField(blank=True, db_index=True, verbose_name='Дата обработки сигнала')
-    mode = models.FloatField()
-    ai_max = models.FloatField()
-    ai_min = models.FloatField()
-    ai_mean = models.FloatField()
-    stat_min = models.FloatField()
-    stat_max = models.FloatField()
-    ml_min = models.FloatField()
-    ml_max = models.FloatField()
+    mode = models.FloatField(null=True)
+    ai_max = models.FloatField(null=True)
+    ai_min = models.FloatField(null=True)
+    ai_mean = models.FloatField(null=True)
+    stat_min = models.FloatField(null=True)
+    stat_max = models.FloatField(null=True)
+    ml_min = models.FloatField(null=True)
+    ml_max = models.FloatField(null=True)
+    setting_ll = models.FloatField(null=True)
+    setting_l = models.FloatField(null=True)
+    setting_h = models.FloatField(null=True)
+    setting_hh = models.FloatField(null=True)
     status = models.IntegerField(blank=True, db_index=True, verbose_name='Статус')
 
     def __str__(self):

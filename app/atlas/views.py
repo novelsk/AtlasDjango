@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
 from .forms import LoginForm, UserForm, MLForm, ObjectEventForm, ObjectEventFormEdit, CreateUserForm
 from .models import SensorData, SensorError, Sensor, Object, Company, SensorMLSettings, ObjectEvent, AtlasUser
-from .logical import user_access_sensor, user_company_view
+from .logical import user_access_sensor_write, user_access_sensor_read, user_company_view
 from .mail import on_error
 
 
@@ -33,8 +33,10 @@ def object_sensors(request, pk):
     context['object'] = object_item
     sensors = Sensor.objects.filter(id_object=object_item).order_by('id_sensor_repr')
     context['sensors_list'] = list(sensors)
-    errors = SensorError.objects.filter(id_sensor__id_object=object_item).order_by('-error_start_date')
+    errors = SensorError.objects.filter(id_sensor__id_object=object_item,
+                                        confirmed=False).order_by('-error_start_date')
     context['errors_list'] = list(errors)
+    context['errors'] = errors.count()
     return render(request, 'object.html', context)
 
 
@@ -45,10 +47,30 @@ def sensor_chart(request, object_id, sensor_id):
     context['object'] = object_item
     sensor = Sensor.objects.get(pk=sensor_id)
     context['sensor'] = sensor
-    errors = SensorError.objects.filter(id_sensor=sensor).order_by('-error_start_date')
+    errors = SensorError.objects.filter(id_sensor=sensor, confirmed=False).order_by('-error_start_date')
     context['errors_list'] = list(errors)
     context['errors'] = errors.count()
     return render(request, 'sensor.html', context)
+
+
+@login_required
+def archive_object(request, object_id):
+    context = {}
+    object_item = Object.objects.get(id=object_id)
+    context['object'] = object_item
+    errors = SensorError.objects.filter(id_sensor__id_object=object_item).order_by('-error_start_date')[:40]
+    context['errors_list'] = list(errors)
+    return render(request, 'object_errors_arch.html', context)
+
+
+@login_required
+def archive(request, sensor_id):
+    context = {}
+    sensor = Sensor.objects.get(id=sensor_id)
+    context['sensor'] = sensor
+    errors = SensorError.objects.filter(id_sensor=sensor).order_by('-error_start_date')[:40]
+    context['errors_list'] = list(errors)
+    return render(request, 'sensor_errors_arch.html', context)
 
 
 @login_required
@@ -97,11 +119,11 @@ def create_user(request):
 
 
 @login_required
-def settings_ml(request, sensor_id):
+def settings_sensor(request, sensor_id):
     context = {}
     sensor = Sensor.objects.get(pk=sensor_id)
     context['sensor'] = sensor
-    if not user_access_sensor(request, sensor_id):
+    if not user_access_sensor_write(request, sensor_id):
         return redirect('atlas:sensor', sensor.id_object.id, sensor.id)
 
     # ошибка бесконечного создания настроек
@@ -116,11 +138,11 @@ def settings_ml(request, sensor_id):
             form.save()
             form.clean()
             context['success'] = True
-        return render(request, 'mlsettings.html', context)
+        return render(request, 'sensor_settings.html', context)
     else:
         form = MLForm(instance=settings)
         context['form'] = form
-        return render(request, 'mlsettings.html', context)
+        return render(request, 'sensor_settings.html', context)
 
 
 @login_required
@@ -192,7 +214,7 @@ def sensors_data(request):
                 stat_max=data.get('stat_max'), ml_min=data.get('ml_min'),
                 ml_max=data.get('ml_max'), status=data.get('status'),
             )
-            previous_data = SensorData.objects.last()
+            previous_data = SensorData.objects.last()  # type: SensorData
             error = int(data.get('error'))
 
             '''
@@ -212,6 +234,7 @@ def sensors_data(request):
             if error == 0:
                 if previous_data.id_error_log is not None:
                     previous_data.id_error_log.error_end_date = previous_data.date
+                    previous_data.id_error_log.save()
             else:
                 error_mail = True
                 if previous_data.id_error_log is None:
@@ -271,3 +294,13 @@ def api_object_chart(request, object_id):
     context['labels'] = list(map(lambda x: str(x.astimezone().time()), labels))
     context['labels'].reverse()
     return JsonResponse(context, safe=False)
+
+
+@api_view(['GET'])
+def api_confirm_error(request):
+    error_log = SensorError.objects.get(id=int(request.GET.get('error_log_id')))
+    if user_access_sensor_read(request, error_log.id_sensor.id):
+        error_log.confirmed = True
+        error_log.save()
+        return JsonResponse({'': True}, safe=False)
+    return JsonResponse({'': False}, safe=False)
