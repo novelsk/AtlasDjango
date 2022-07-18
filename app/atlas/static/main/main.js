@@ -1,7 +1,10 @@
-let elements = document.querySelectorAll('input');
-for (let elem of elements) {
+for (let elem of document.querySelectorAll('input')) {
     if (elem.type !== 'checkbox') { jQuery(elem).addClass('form-control'); }
 }
+for (let elem of document.querySelectorAll('select')) {
+    jQuery(elem).addClass('form-control');
+}
+
 function confirm_error(error_log_id, button) {
     jQuery.get(window.location.origin + "/api/confirm_error", {'error_log_id': error_log_id },
         function (data) { if (data['']) {jQuery(button).addClass('disabled');} }

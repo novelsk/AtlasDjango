@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
-from .signals import SensorDataWarning
+from .signals import SensorDataSignals
 
 
 class Company(models.Model):
@@ -29,14 +29,14 @@ class Object(models.Model):
     def count_event_not_done(self):
         count = 0
         for event in self.event_object.all():
-            if timezone.now() > event.date_of_service_planned and event.status != 'c':
+            if event.not_done():
                 count += 1
         return count
 
     def count_sensors_alerts(self):
         count = 0
         for sensor in self.sensor_object.all():
-            count += sensor.error_sensor.filter().count()
+            count += sensor.error_sensor.filter(confirmed=False).count()
         return count
 
     def __str__(self):
@@ -89,6 +89,9 @@ class Sensor(models.Model):
     name = models.CharField(max_length=50, verbose_name='Название')
     info = models.CharField(blank=True, max_length=100, verbose_name='Информация')
     image = models.ImageField(blank=True, verbose_name='Cхема')
+
+    def count_alerts(self):
+        return self.error_sensor.filter(confirmed=False).count()
 
     def __str__(self):
         return self.name
@@ -205,4 +208,5 @@ class UserAccessGroups(models.Model):
 
 # signals
 # Избежать ошибку self: создать объект класс сигнала и вызвать метод объекта а не класса
-# post_save.connect(SensorDataWarning.sensor_data_warning, sender=SensorData)
+sensor_data_signal = SensorDataSignals
+post_save.connect(sensor_data_signal.time_warning, sender=SensorData)

@@ -33,7 +33,7 @@
 {#                <h5>Аналитика</h5><hr>#}
                 <div class="card">
                     <div class="card-body">
-                        <div class="row row justify-content-between">
+                        <div class="row justify-content-between">
                             <div class="col-md-8">
                                 <div class="row row-cols-auto">
                                     <div class="col">
@@ -52,6 +52,10 @@
                                             <button class="btn btn-primary"><i class="feather icon-check"></i></button>
                                         </div>
                                     </div>
+                                    <div class="col" id="change-type">
+                                        <button type="button" class="btn btn-outline-primary chart-control"><i data-feather="bar-chart-2"></i></button>
+                                        <button type="button" class="btn btn-outline-primary chart-control"><i data-feather="trending-up"></i></button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-1 text-right">
@@ -60,7 +64,8 @@
                             </div>
                         </div>
                         <hr>
-                        <canvas id="chart" data-count="60" style="display: block; width: 875px; height: 369px;"></canvas>
+                        <canvas id="chart" class="chart-control" data-count="60" style="display: block; width: 875px; height: 369px;"></canvas>
+                        <canvas id="histogram" class="chart-control" data-count="60" style="display: block; width: 875px; height: 369px;"></canvas>
                     </div>
                 </div>
             </div>

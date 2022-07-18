@@ -1,0 +1,15 @@
+{% extends 'base_form.html' %}
+{% load static %}
+{% block title %}Настройки объекта{% endblock %}
+{% block nav %}
+    <div class="page-header-title">
+        <h5 class="m-b-10">Объект</h5>
+    </div>
+    <ul class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'atlas:index' %}">Главная</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'atlas:company' object.id_company.id %}">{{ object.id_company }}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'atlas:object' object.id %}">{{ object }}</a></li>
+        <li class="breadcrumb-item">Настройки</li>
+    </ul>
+{% endblock %}
+{% block form_label %}Настройки{% endblock %}

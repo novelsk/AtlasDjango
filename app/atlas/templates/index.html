@@ -38,16 +38,16 @@
                             <table class="table table-hover">
                                 <thead>
                                 <tr>
-                                    <td>Состояние</td>
-                                    <td>Название компании</td>
-                                    <td>Название объекта</td>
-                                    <td></td>
+                                    <th>Состояние</th>
+                                    <th>Название компании</th>
+                                    <th>Название объекта</th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {% for object in base_object_list %}
                                     <tr>
-                                        <td class="col-sm-1">
+                                        <td>
                                             {% if object.count_sensors_alerts %}
                                                 <button type="button" class="btn  btn-outline-warning disabled"><i data-feather="alert-circle"></i></button>
                                             {% else %}
@@ -55,8 +55,8 @@
                                             {% endif %}
                                         </td>
                                         <td>{{ object.id_company }}</td>
-                                        <td><a href="{% url 'atlas:object' object.id %}"
-                                               class="btn btn-link">{{ object.name }}</a></td>
+                                        <td><a href="{% url 'atlas:object' object.id %}" class="btn btn-link">{{ object.name }}</a></td>
+                                        <td><a href="{% url 'atlas:object_settings' object.id %}" class="btn btn-primary"><i data-feather="settings"></i></a></td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>

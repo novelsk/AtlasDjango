@@ -1,9 +1,25 @@
-const ctx = document.getElementById("chart");
+const charts_controls = Array.from(document.getElementsByClassName('chart-control'));
+charts_controls[1].hidden = true;
+charts_controls[3].hidden = true;
+charts_controls[0].addEventListener('click', function () {
+    charts_controls[0].hidden = true;
+    charts_controls[1].hidden = false;
+    charts_controls[2].hidden = true;
+    charts_controls[3].hidden = false;
+});
+charts_controls[1].addEventListener('click', function () {
+    charts_controls[0].hidden = false;
+    charts_controls[1].hidden = true;
+    charts_controls[2].hidden = false;
+    charts_controls[3].hidden = true;
+});
+
+
 const chart_buttons = Array.from(document.getElementById("board-buttons").children);
 chart_buttons.forEach((item) => {
     item.addEventListener('click', function () {
         draw_chart(item.getAttribute('data-count'));
-        ctx.setAttribute('data-count', item.getAttribute( 'data-count'));
+        charts_controls[2].setAttribute('data-count', item.getAttribute( 'data-count'));
         chart_buttons.forEach((temp) => {
             jQuery(temp).removeClass('disabled');
         });
@@ -12,11 +28,10 @@ chart_buttons.forEach((item) => {
 });
 
 const custom_points = document.getElementById("custom_points");
-const points = custom_points.children[0].firstChild;
-const accept_points_button = custom_points.children[1];
-accept_points_button.addEventListener('click', function () {
+const points = custom_points.firstElementChild.firstChild;
+custom_points.lastElementChild.addEventListener('click', function () {
     draw_chart(points.value);
-    ctx.setAttribute('data-count', points.value);
+    charts_controls[2].setAttribute('data-count', points.value);
 });
 
 
@@ -65,15 +80,33 @@ const dataDash = {
 }
 let datasetCount = 0;
 let datasetState = [];
-let mainChart = new Chart(ctx, {
+let mainChart = new Chart(charts_controls[2], {
     type: 'line',
     data: {
         labels: [],
         datasets: [],
     },
     options: {
-        legend: {
-            display: false,
+        plugins: {
+            legend: {
+                display: true,
+            }
+        }
+    }
+});
+
+
+let histogram = new Chart(charts_controls[3], {
+    type: 'bar',
+    data: {
+        labels: [],
+        datasets: [],
+    },
+    options: {
+        plugins: {
+            legend: {
+                display: true,
+            }
         }
     }
 });
@@ -84,6 +117,7 @@ function draw_chart(count = '') {
     for (let i = 0; i < datasetCount; i++) {datasetState[i] = mainChart.getDatasetMeta(i).hidden;}
     jQuery.get(request, {'count': count}, function (data) {
         mainChart.data.labels = data['date'];
+        histogram.data.labels = data['date'];
         delete data['date'];
         let num_col = 0;
         for (const dataKey in data) {
@@ -103,6 +137,17 @@ function draw_chart(count = '') {
             mainChart.setDatasetVisibility(num_col, !datasetState[num_col]);
             num_col++;
         }
+        histogram.data.datasets[0] = {
+            label: dataLabels['ai_mean'],
+            data: data['ai_mean'],
+            backgroundColor: dataColors['ai_mean'],
+        }
+        histogram.data.datasets[1] = {
+            label: dataLabels['mode'],
+            data: data['mode'],
+            backgroundColor: dataColors['mode'],
+        }
+        histogram.update('none');
         mainChart.update('none');
         datasetCount = num_col;
     });
@@ -110,9 +155,9 @@ function draw_chart(count = '') {
 
 
 jQuery(document).ready(function () {
-    draw_chart(ctx.getAttribute( 'data-count'));
+    draw_chart(charts_controls[2].getAttribute( 'data-count'));
 });
 
 setInterval(function () {
-    draw_chart(ctx.getAttribute( 'data-count'));
+    draw_chart(charts_controls[2].getAttribute( 'data-count'));
 }, 60000);

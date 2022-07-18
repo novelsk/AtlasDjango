@@ -73,3 +73,10 @@ class ObjectEventForm(forms.ModelForm):
 class ObjectEventFormEdit(ObjectEventForm):
     comment = forms.CharField(min_length=5, max_length=300, widget=TextInput(attrs={'class': 'form-control'}),
                               required=True, label='Комментарий')
+
+
+class ObjectEditForm(forms.ModelForm):
+
+    class Meta:
+        model = Object
+        fields = '__all__'

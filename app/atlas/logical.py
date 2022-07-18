@@ -1,6 +1,6 @@
 from django.db.models import QuerySet
 
-from .models import AtlasUser, Company, UserAccessGroups, Sensor
+from .models import AtlasUser, Company, UserAccessGroups, Sensor, Object
 
 
 def user_company_query(request):
@@ -45,18 +45,33 @@ def user_access_company(request, company):
         return None
 
 
+def can_write(groups):
+    """
+    Проверяет возможность записи из списка групп
+    """
+    if groups is not None:
+        for i in groups:
+            if i.write:
+                return True
+    return False
+
+
+def user_access_object_write(request, object_id):
+    """
+    Проверяет наличие доступа к изменению настроек объекта
+    """
+    company = Object.objects.get(pk=object_id).id_company
+    groups = user_access_company(request, company)
+    return can_write(groups)
+
+
 def user_access_sensor_write(request, sensor_id):
     """
     Проверяет наличие доступа к изменению настроек датчика
     """
     company = Sensor.objects.get(pk=sensor_id).id_object.id_company
     groups = user_access_company(request, company)
-    if groups is not None:
-        for i in groups:
-            # i = i  # type: UserAccessGroups
-            if i.write:
-                return True
-    return False
+    return can_write(groups)
 
 
 def user_access_sensor_read(request, sensor_id):
@@ -87,7 +102,7 @@ def base_alerts(request):
                     'href': f'/object/{object_item.id}/events',
                     })
             for sensor in object_item.sensor_object.all():
-                if sensor.error_sensor.count():
+                if sensor.count_alerts():
                     alerts.append({
                         'style': 'alert-info',
                         'head': sensor.name,

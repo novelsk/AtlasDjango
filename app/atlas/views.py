@@ -5,9 +5,9 @@ from django.db.models import QuerySet
 from django.http import JsonResponse, QueryDict
 from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
-from .forms import LoginForm, UserForm, MLForm, ObjectEventForm, ObjectEventFormEdit, CreateUserForm
+from .forms import LoginForm, UserForm, MLForm, ObjectEventForm, ObjectEventFormEdit, CreateUserForm, ObjectEditForm
 from .models import SensorData, SensorError, Sensor, Object, Company, SensorMLSettings, ObjectEvent, AtlasUser
-from .logical import user_access_sensor_write, user_access_sensor_read, user_company_view
+from .logical import user_access_sensor_write, user_access_sensor_read, user_company_view, user_access_object_write
 from .mail import on_error
 
 
@@ -114,6 +114,26 @@ def create_user(request):
             form = CreateUserForm()
             context['form'] = form
             return render(request, 'create_user.html', context)
+    else:
+        return redirect('atlas:index')
+
+
+def object_settings(request, object_id):
+    if user_access_object_write(request, object_id):
+        context = {}
+        object_item = Object.objects.get(id=object_id)
+        context['object'] = object_item
+        if request.method == 'POST':
+            form = ObjectEditForm(request.POST, instance=object_item)
+            context['form'] = form
+            if form.is_valid():
+                form.save()
+                context['success'] = True
+            return render(request, 'object_settings.html', context)
+        else:
+            form = ObjectEditForm(instance=object_item)
+            context['form'] = form
+            return render(request, 'object_settings.html', context)
     else:
         return redirect('atlas:index')
 
@@ -267,7 +287,7 @@ def api_chart(request, object_id, sensor_id):
             'ai_mean': [], 'stat_min': [], 'stat_max': [],
             'ml_min': [], 'ml_max': [], 'date': []}
         for data in data_query:
-            # data = data  # type: SensorData
+            data = data  # type: SensorData
             context['ai_max'].append(data.ai_max)
             context['ai_min'].append(data.ai_min)
             context['ai_mean'].append(data.ai_mean)
