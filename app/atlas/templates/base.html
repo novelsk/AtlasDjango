@@ -81,7 +81,7 @@
 							    <a href="{% url 'atlas:create_user' %}" class="pc-link"><span class="pc-micon"><i class="material-icons-two-tone">person_add</i></span><span class="pc-mtext">Создать пользователя</span></a>
 						    </ul>
                             <ul class="pc-submenu" style="">
-							    <a href="/rabbit/start" class="pc-link"><span class="pc-micon"><i class="material-icons-two-tone">done</i></span><span class="pc-mtext">Запустить rabbit</span></a>
+							    <a href="{% url 'atlas:rabbit_start' %}" type="button" class="pc-link"><span class="pc-micon"><i class="material-icons-two-tone">done</i></span><span class="pc-mtext">Запустить rabbit</span></a>
 						    </ul>
 					    </li>
                     {% endif %}

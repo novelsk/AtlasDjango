@@ -13,3 +13,24 @@
     </ul>
 {% endblock %}
 {% block form_label %}Настройки{% endblock %}
+{% block enctype %}enctype="multipart/form-data"{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <label class="form-label" for="exampleFormControlTextarea1">Диагностические правила</label>
+                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                        </div>
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-outline-primary">+</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

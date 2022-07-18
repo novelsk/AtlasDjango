@@ -1,9 +1,14 @@
+from os.path import splitext
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from .signals import SensorDataSignals
+
+
+def get_image_name(instance, filename):
+    return f'{instance.id} - {instance.name}{splitext(filename)[1]}'
 
 
 class Company(models.Model):
@@ -22,9 +27,10 @@ class Company(models.Model):
 class Object(models.Model):
     id_company = models.ForeignKey(Company, on_delete=models.PROTECT, related_name='object_company',
                                    verbose_name='Компания')
+    id_object_repr = models.IntegerField(blank=True, db_index=True, null=True, verbose_name='Номер объекта для rabbit')
     name = models.CharField(max_length=50, verbose_name='Название')
     info = models.CharField(blank=True, max_length=100, verbose_name='Информация')
-    image = models.ImageField(blank=True, verbose_name='Cхема')
+    image = models.ImageField(blank=True, upload_to=get_image_name, verbose_name='Мнемосхема')
 
     def count_event_not_done(self):
         count = 0
@@ -208,5 +214,5 @@ class UserAccessGroups(models.Model):
 
 # signals
 # Избежать ошибку self: создать объект класс сигнала и вызвать метод объекта а не класса
-sensor_data_signal = SensorDataSignals
-post_save.connect(sensor_data_signal.time_warning, sender=SensorData)
+# sensor_data_signal = SensorDataSignals
+# post_save.connect(sensor_data_signal.time_warning, sender=SensorData)

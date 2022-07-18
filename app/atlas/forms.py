@@ -26,7 +26,7 @@ class CreateUserForm(forms.ModelForm):
 
     class Meta:
         model = AtlasUser
-        fields = ('username', 'password')
+        fields = ('username', 'password', 'email')
 
 
 class MLForm(forms.ModelForm):

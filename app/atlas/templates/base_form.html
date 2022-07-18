@@ -33,7 +33,7 @@
                         <h5>{% block form_label %}{% endblock %}</h5>
                     </div>
                     <div class="card-body col-md-10">
-                        <form method="post">
+                        <form method="post" {% block enctype %}{% endblock %}>
                             {% csrf_token %}
                             {% for field in form %}
                                 {% if field.is_hidden %}

@@ -5,9 +5,11 @@ from django.db.models import QuerySet
 from django.http import JsonResponse, QueryDict
 from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
+from .rabbit import main
 from .forms import LoginForm, UserForm, MLForm, ObjectEventForm, ObjectEventFormEdit, CreateUserForm, ObjectEditForm
 from .models import SensorData, SensorError, Sensor, Object, Company, SensorMLSettings, ObjectEvent, AtlasUser
 from .logical import user_access_sensor_write, user_access_sensor_read, user_company_view, user_access_object_write
+from .util import int_round
 from .mail import on_error
 
 
@@ -107,7 +109,8 @@ def create_user(request):
             context['form'] = form
             if form.is_valid():
                 AtlasUser.objects.create_user(username=form.cleaned_data['username'],
-                                              password=form.cleaned_data['password'])
+                                              password=form.cleaned_data['password'],
+                                              email=form.cleaned_data['email'])
                 context['success'] = True
             return render(request, 'create_user.html', context)
         else:
@@ -124,7 +127,7 @@ def object_settings(request, object_id):
         object_item = Object.objects.get(id=object_id)
         context['object'] = object_item
         if request.method == 'POST':
-            form = ObjectEditForm(request.POST, instance=object_item)
+            form = ObjectEditForm(request.POST, instance=object_item, files=request.FILES)
             context['form'] = form
             if form.is_valid():
                 form.save()
@@ -224,11 +227,12 @@ def sensors_data(request):
     context = {'': 'BAD'}
     if data.get('csrf') == 'a very secret key':
         context = {'': 'csrf checked'}
-        current_sensor = Sensor.objects.get(id_object_id=data.get('id_object'), id_sensor_repr=data.get('id_sensor'))
+        current_sensor = Sensor.objects.get(id_object__id_object_repr=data.get('id_object'),
+                                            id_sensor_repr=data.get('id_sensor'))
         if current_sensor is not None:
             context = {'': 'if current_sensor is not None'}
             sensor_data = SensorData.objects.create(
-                id_sensor=current_sensor, date=data.get('date'), mode=data.get('mode'),
+                id_sensor=current_sensor, date=data.get('date'), mode=int_round(data.get('mode')),
                 ai_max=data.get('ai_max'), ai_min=data.get('ai_min'),
                 ai_mean=data.get('ai_mean'), stat_min=data.get('stat_min'),
                 stat_max=data.get('stat_max'), ml_min=data.get('ml_min'),
@@ -324,3 +328,8 @@ def api_confirm_error(request):
         error_log.save()
         return JsonResponse({'': True}, safe=False)
     return JsonResponse({'': False}, safe=False)
+
+
+@login_required
+def rabbit_start(request):
+    main()

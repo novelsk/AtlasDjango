@@ -3,7 +3,7 @@ import pika
 from json import loads
 from asyncio import sleep
 from requests.api import post
-from website import settings
+from django.conf import settings
 from datetime import datetime
 
 
@@ -53,7 +53,3 @@ def main():
     except KeyboardInterrupt:
         connection.close()
         return 0
-
-
-if __name__ == '__main__':
-    main()
