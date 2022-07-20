@@ -16,6 +16,7 @@ urlpatterns = [
     path('object/<int:pk>', views.object_sensors, name='object'),
     path('api/confirm_error', views.api_confirm_error),
     path('api/chart/object/<int:object_id>/<int:sensor_id>', views.api_chart),
+    path('api/setter', views.api_object_setter),
     path('api/chart/object/<int:object_id>', views.api_object_chart),
     path('rabbit/start', views.rabbit_start, name='rabbit_start'),
     path('rabbit_data', views.sensors_data),

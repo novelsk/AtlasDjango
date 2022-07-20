@@ -80,6 +80,8 @@ const dataDash = {
 }
 let datasetCount = 0;
 let datasetState = [];
+
+
 let mainChart = new Chart(charts_controls[2], {
     type: 'line',
     data: {
@@ -105,7 +107,7 @@ let histogram = new Chart(charts_controls[3], {
     options: {
         plugins: {
             legend: {
-                display: true,
+                display: false,
             }
         }
     }
@@ -117,8 +119,12 @@ function draw_chart(count = '') {
     for (let i = 0; i < datasetCount; i++) {datasetState[i] = mainChart.getDatasetMeta(i).hidden;}
     jQuery.get(request, {'count': count}, function (data) {
         mainChart.data.labels = data['date'];
-        histogram.data.labels = data['date'];
-        delete data['date'];
+        histogram.data.labels = data['histo_labels'];
+        histogram.data.datasets[0] = {
+            data: data['histo_data'],
+            backgroundColor: dataColors['ai_mean'],
+        }
+        delete data['date']; delete data['histo_labels']; delete data['histo_data'];
         let num_col = 0;
         for (const dataKey in data) {
             mainChart.data.datasets[num_col] = {
@@ -136,16 +142,6 @@ function draw_chart(count = '') {
                 }
             mainChart.setDatasetVisibility(num_col, !datasetState[num_col]);
             num_col++;
-        }
-        histogram.data.datasets[0] = {
-            label: dataLabels['ai_mean'],
-            data: data['ai_mean'],
-            backgroundColor: dataColors['ai_mean'],
-        }
-        histogram.data.datasets[1] = {
-            label: dataLabels['mode'],
-            data: data['mode'],
-            backgroundColor: dataColors['mode'],
         }
         histogram.update('none');
         mainChart.update('none');

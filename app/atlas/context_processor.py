@@ -13,8 +13,14 @@ def base(request):
                 objects = objects.union(i.object_company.all())
         objects = objects.order_by('id_company')
         context = {'base_object_list': list(objects),
-                   'objects_count': objects.count(),
-                   'alerts': list(base_alerts(request))}
+                   'objects_count': objects.count(), }
+
+        alerts = list(base_alerts(request))
+        if len(alerts) == 0:
+            context['alerts_count'] = 0
+        else:
+            context['alerts'] = alerts
+
         return context
     else:
         return {}

@@ -1,3 +1,5 @@
+import datetime
+
 from django.db.models import QuerySet
 
 from .models import AtlasUser, Company, UserAccessGroups, Sensor, Object
@@ -103,10 +105,12 @@ def base_alerts(request):
                     })
             for sensor in object_item.sensor_object.all():
                 if sensor.count_alerts():
+                    temp = sensor.error_sensor.all().last().error_start_date  # type: datetime.datetime
                     alerts.append({
                         'style': 'alert-info',
-                        'head': sensor.name,
-                        'body': 'Ошибок датчика: ' + str(sensor.error_sensor.count()),
+                        'head': f'{object_item.name} - {sensor.name}',
+                        'body': f'Ошибок датчика: ' + str(sensor.error_sensor.count()),
+                        'after': f'Последняя запись: {temp.time()}',
                         'href': f'/object/{object_item.id}/{sensor.id}',
                     })
     return alerts

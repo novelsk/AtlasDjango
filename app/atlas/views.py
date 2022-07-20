@@ -9,7 +9,7 @@ from .rabbit import main
 from .forms import LoginForm, UserForm, MLForm, ObjectEventForm, ObjectEventFormEdit, CreateUserForm, ObjectEditForm
 from .models import SensorData, SensorError, Sensor, Object, Company, SensorMLSettings, ObjectEvent, AtlasUser
 from .logical import user_access_sensor_write, user_access_sensor_read, user_company_view, user_access_object_write
-from .util import int_round
+from .util import int_round, int_round_tenth
 from .mail import on_error
 
 
@@ -285,11 +285,13 @@ def sensors_data(request):
 def api_chart(request, object_id, sensor_id):
     if request.method == 'GET':
         sensor = Sensor.objects.get(id_object__pk=object_id, pk=sensor_id)
-        data_query = sensor.data_sensor.order_by('-date')[:int(request.GET.get('count')):-1]  # type: QuerySet
+        count = int(request.GET.get('count'))
+        data_query = sensor.data_sensor.order_by('-date')[:count:-1]  # type: QuerySet
         context = {
             'ai_max': [], 'ai_min': [], 'mode': [],
             'ai_mean': [], 'stat_min': [], 'stat_max': [],
-            'ml_min': [], 'ml_max': [], 'date': []}
+            'ml_min': [], 'ml_max': [], 'date': [],
+            'histo_data': [], 'histo_labels': []}
         for data in data_query:
             data = data  # type: SensorData
             context['ai_max'].append(data.ai_max)
@@ -301,6 +303,14 @@ def api_chart(request, object_id, sensor_id):
             context['ml_max'].append(data.ml_max)
             context['mode'].append(data.mode)
             context['date'].append(data.date.astimezone().time())
+        temp = list((sensor.data_sensor.order_by('-date')[:count]).values_list('ai_mean', flat=True))
+        temp.sort()
+        labels = {int_round_tenth(i): 0 for i in temp}
+        for i in temp:
+            labels[int_round_tenth(i)] += 1
+        for key in labels:
+            context['histo_data'].append(labels[key])
+            context['histo_labels'].append(key)
         return JsonResponse(context, safe=False)
 
 
@@ -317,6 +327,24 @@ def api_object_chart(request, object_id):
     labels = (sensors.first().data_sensor.order_by('-date')[:count]).values_list('date', flat=True)
     context['labels'] = list(map(lambda x: str(x.astimezone().time()), labels))
     context['labels'].reverse()
+    return JsonResponse(context, safe=False)
+
+
+@api_view(['GET'])
+def api_object_setter(request):
+    count = int(request.GET.get('count'))
+    sensor_x = Sensor.objects.get(id=int(request.GET.get('sensor_x')))
+    sensor_y = Sensor.objects.get(id=int(request.GET.get('sensor_y')))
+    ai_mean_x = list((sensor_x.data_sensor.order_by('-date')[:count]).values_list('ai_mean', flat=True))
+    ai_mean_y = list((sensor_y.data_sensor.order_by('-date')[:count]).values_list('ai_mean', flat=True))
+    out = []
+    for x, y in zip(ai_mean_x, ai_mean_y):
+        out.append({'x': x, 'y': y})
+    max_point = max(ai_mean_x) if max(ai_mean_y) < max(ai_mean_x) else max(ai_mean_y)
+    min_point = min(ai_mean_x) if min(ai_mean_y) > min(ai_mean_x) else min(ai_mean_y)
+    out.append({'x': max_point, 'y': max_point})
+    out.append({'x': min_point, 'y': min_point})
+    context = out
     return JsonResponse(context, safe=False)
 
 

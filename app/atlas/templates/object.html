@@ -52,6 +52,10 @@
                                     <button class="btn btn-primary"><i class="feather icon-check"></i></button>
                                 </div>
                             </div>
+                            <div class="col" id="change-type">
+                                <button type="button" class="btn btn-outline-primary chart-control"><i data-feather="more-horizontal"></i></button>
+                                <button type="button" class="btn btn-outline-primary chart-control"><i data-feather="trending-up"></i></button>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-1 text-right">
@@ -59,7 +63,10 @@
                     </div>
                 </div>
                 <hr>
-                <canvas id="chart" data-count="60" style="display: block; width: 875px; height: 369px;"></canvas>
+                <canvas class="chart-control" data-count="60" style="display: block; width: 875px; height: 369px;"></canvas>
+                <div id='chart-hide' class="col-md-6">
+                    <canvas class="chart-control" style="display: block; width: 369px; height: 369px;"></canvas>
+                </div>
             </div>
         </div>
         <h5>Датчики</h5><hr>
@@ -113,13 +120,13 @@
             </div>
         <h5>Последние инциденты</h5><hr>
             <div class="col-sm-12">
-                {% if errors == 0 %}
-                    <div class="card">
-                        <div class="card-body">
-                            <h4>Ошибок нет</h4>
-                        </div>
-                    </div>
-                {% else %}
+{#                {% if errors == 0 %}#}
+{#                    <div class="card">#}
+{#                        <div class="card-body">#}
+{#                            <h4>Ошибок нет</h4>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                {% else %}#}
                     <div class="card">
                         <div class="card-header">
                             <div class="btn-group" role="group">
@@ -166,7 +173,22 @@
                             </div>
                         </div>
                     </div>
-                {% endif %}
+{#                {% endif %}#}
+            </div>
+        <h5>Мнемосхема</h5><hr>
+            <div class="card">
+                <div class="card-header">
+                    {% for sensor in sensors_list %}
+                        <h6>{{ sensor.name }}: {{ sensor.data_sensor.last.ai_mean }}</h6>
+                    {% endfor %}
+                </div>
+                <div class="card-body">
+                    <div class="col-md-4">
+                        {% if object.image.name != '' %}
+                            <img class="img-fluid card-img-bottom" src="{{ object.image.url }}" alt="">
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
 		<!-- [ Main Content ] end -->

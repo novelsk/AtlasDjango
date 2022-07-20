@@ -76,7 +76,7 @@
 					</li>
                     {% if user.is_staff %}
                         <li class="pc-item pc-hasmenu">
-						    <a class="pc-link "><span class="pc-micon"><i class="material-icons-two-tone">admin_panel_settings</i></span><span class="pc-mtext">Admin Tools</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+						    <a class="pc-link "><span class="pc-micon"><i class="material-icons-two-tone">admin_panel_settings</i></span><span class="pc-mtext">Администрирование</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
 						    <ul class="pc-submenu" style="">
 							    <a href="{% url 'atlas:create_user' %}" class="pc-link"><span class="pc-micon"><i class="material-icons-two-tone">person_add</i></span><span class="pc-mtext">Создать пользователя</span></a>
 						    </ul>
@@ -124,6 +124,7 @@
 {#							</form>#}
 {#						</div>#}
 {#					</li>#}
+                {% if alerts_count != 0 %}
                     <li class="dropdown pc-h-item">
 						<a class="pc-head-link dropdown-toggle arrow-none mr-0" data-toggle="dropdown">
                             <i data-feather="bell"></i>
@@ -134,11 +135,13 @@
                                 <div class="alert {{ alert.style }}">
                                     <h5 class="alert-heading">{{ alert.head }}</h5>
                                     <p>{{ alert.body }}</p>
+                                    <p>{{ alert.after }}</p>
                                 </div>
                             </a>
                         {% endfor %}
 						</div>
 					</li>
+                {% endif %}
                     {% if user.is_authenticated %}
 					<li class="dropdown pc-h-item">
 						<a class="pc-head-link dropdown-toggle arrow-none mr-0" data-toggle="dropdown" role="button" aria-haspopup="false" aria-expanded="false">

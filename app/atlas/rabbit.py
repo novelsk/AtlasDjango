@@ -5,6 +5,7 @@ from asyncio import sleep
 from requests.api import post
 from django.conf import settings
 from datetime import datetime
+import pytz
 
 
 LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
@@ -19,16 +20,15 @@ def on_message(chan, method_frame, header_frame, body):
     # LOGGER.info('Delivery properties: %s, message metadata: %s', method_frame, header_frame)
     # LOGGER.info('Userdata: %s, message body: %s', userdata, body)
 
-    # json представление
     context = loads(str(body.decode('utf-8')))
-    # обработка времени
-    dt, tm, utc = context['date'].split()
-    temp = datetime.strptime(dt + ' ' + tm, '%d.%m.%Y %H:%M:%S')
+    dt, tm = context['date'].split()
+    date = datetime.strptime(dt + ' ' + tm, '%d.%m.%Y %H:%M:%S')
+    tz = pytz.timezone(context['tzinfo'])
+    context['date'] = date.astimezone(tz).isoformat()
     context['csrf'] = 'a very secret key'
-    context['date'] = temp.isoformat()
+    print(context)
     response = post(url=settings.DJANGO_RESPONSE_URL, data=context)
     LOGGER.info('Response status: {}, data: {}'.format(response.status_code, response.json()['']))
-    LOGGER.info(str(body.decode('utf-8')))
     chan.basic_ack(delivery_tag=method_frame.delivery_tag)
 
 

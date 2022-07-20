@@ -1,9 +1,25 @@
-const ctx = document.getElementById("chart");
+const charts_controls = Array.from(document.getElementsByClassName('chart-control'));
+const div_chart = document.getElementById('chart-hide');
+charts_controls[1].hidden = true;
+div_chart.hidden = true;
+charts_controls[0].addEventListener('click', function () {
+    charts_controls[0].hidden = true;
+    charts_controls[1].hidden = false;
+    charts_controls[2].hidden = true;
+    div_chart.hidden = false;
+});
+charts_controls[1].addEventListener('click', function () {
+    charts_controls[0].hidden = false;
+    charts_controls[1].hidden = true;
+    charts_controls[2].hidden = false;
+    div_chart.hidden = true;
+});
+
 const chart_buttons = Array.from(document.getElementById("board-buttons").children);
 chart_buttons.forEach((item) => {
     item.addEventListener('click', function () {
         draw_chart(item.getAttribute('data-count'));
-        ctx.setAttribute('data-count', item.getAttribute( 'data-count'));
+        charts_controls[2].setAttribute('data-count', item.getAttribute( 'data-count'));
         chart_buttons.forEach((temp) => {
             jQuery(temp).removeClass('disabled');
         });
@@ -16,7 +32,7 @@ const points = custom_points.children[0].firstChild;
 const accept_points_button = custom_points.children[1];
 accept_points_button.addEventListener('click', function () {
     draw_chart(points.value);
-    ctx.setAttribute('data-count', points.value);
+    charts_controls[2].setAttribute('data-count', points.value);
 });
 
 
@@ -24,7 +40,7 @@ const dataColorsOld = ['#b84d4d', '#8f4db8', '#4f4db8', '#4d7fb8', '#4da4b8',
     '#4db891', '#4db86b', '#96b84d', '#b8a64d', '#b8864d', '#bd6d3e']
 let datasetCount = 0;
 let datasetState = [];
-let mainChart = new Chart(ctx, {
+let mainChart = new Chart(charts_controls[2], {
     type: 'line',
     data: {
         labels: [],
@@ -34,6 +50,20 @@ let mainChart = new Chart(ctx, {
         plugins: {
             legend: {
                 display: true,
+            }
+        }
+    }
+});
+let scatterChart = new Chart(charts_controls[3], {
+    type: 'scatter',
+    data: {
+        labels: [],
+        datasets: [],
+    },
+    options: {
+        plugins: {
+            legend: {
+                display: false,
             }
         }
     }
@@ -61,13 +91,25 @@ function draw_chart(count = '') {
         mainChart.update('none');
         datasetCount = data['data'].length;
     });
+    request = window.location.origin + "/api/setter";
+    jQuery.get(request, {
+        'count': count,
+        'sensor_x': 3,
+        'sensor_y': 4
+        },
+        function (data) {
+            scatterChart.data.datasets[0] = {
+                data: data
+            }
+            scatterChart.update('none');
+        });
 }
 
 
 jQuery(document).ready(function () {
-    draw_chart(ctx.getAttribute( 'data-count'));
+    draw_chart(charts_controls[2].getAttribute( 'data-count'));
 });
 
 setInterval(function () {
-    draw_chart(ctx.getAttribute( 'data-count'));
+    draw_chart(charts_controls[2].getAttribute( 'data-count'));
 }, 60000);
