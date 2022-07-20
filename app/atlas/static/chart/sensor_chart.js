@@ -35,6 +35,21 @@ custom_points.lastElementChild.addEventListener('click', function () {
 });
 
 
+// const dataColors = {
+//     'ai_max': 'rgba(119, 136, 153, 0.5)',
+//     'ai_min': 'rgba(119, 136, 153, 0.5)',
+//     'ai_mean': '#4d7fb8',
+//     'stat_min': 'rgba(205, 164, 52, 0.3)',
+//     'stat_max': 'rgba(205, 164, 52, 0.3)',
+//     'ml_min': 'rgba(207, 84, 81, 0.3)',
+//     'ml_max': 'rgba(207, 84, 81, 0.3)',
+//     'status': '#96b84d',
+//     'mode': '#8ccb5e',
+//     'sp_ll': '#4d7fb8',
+//     'sp_l': '#4da4b8',
+//     'sp_h': '#4da4b8',
+//     'sp_hh': '#4d7fb8',
+// }
 const dataColors = {
     'ai_max': 'rgba(119, 136, 153, 0.5)',
     'ai_min': 'rgba(119, 136, 153, 0.5)',
@@ -118,7 +133,9 @@ function draw_chart(count = '') {
     let request = window.location.origin + "/api/chart" + window.location.pathname;
     for (let i = 0; i < datasetCount; i++) {datasetState[i] = mainChart.getDatasetMeta(i).hidden;}
     jQuery.get(request, {'count': count}, function (data) {
-        mainChart.data.labels = data['date'];
+        let dates = [];
+        for (const key in data['date']) { dates.push(data['date'][key].split(':').slice(0, 2).join(':')) }
+        mainChart.data.labels = dates;
         histogram.data.labels = data['histo_labels'];
         histogram.data.datasets[0] = {
             data: data['histo_data'],

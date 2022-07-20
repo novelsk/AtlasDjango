@@ -19,7 +19,7 @@ const chart_buttons = Array.from(document.getElementById("board-buttons").childr
 chart_buttons.forEach((item) => {
     item.addEventListener('click', function () {
         draw_chart(item.getAttribute('data-count'));
-        charts_controls[2].setAttribute('data-count', item.getAttribute( 'data-count'));
+        pointCount = item.getAttribute( 'data-count');
         chart_buttons.forEach((temp) => {
             jQuery(temp).removeClass('disabled');
         });
@@ -32,7 +32,7 @@ const points = custom_points.children[0].firstChild;
 const accept_points_button = custom_points.children[1];
 accept_points_button.addEventListener('click', function () {
     draw_chart(points.value);
-    charts_controls[2].setAttribute('data-count', points.value);
+    pointCount = points.value;
 });
 
 
@@ -40,6 +40,8 @@ const dataColorsOld = ['#b84d4d', '#8f4db8', '#4f4db8', '#4d7fb8', '#4da4b8',
     '#4db891', '#4db86b', '#96b84d', '#b8a64d', '#b8864d', '#bd6d3e']
 let datasetCount = 0;
 let datasetState = [];
+let histogramAxis = [null, null]
+let pointCount = 60;
 let mainChart = new Chart(charts_controls[2], {
     type: 'line',
     data: {
@@ -74,7 +76,9 @@ function draw_chart(count = '') {
     let request = window.location.origin + "/api/chart" + window.location.pathname;
     for (let i = 0; i < datasetCount; i++) {datasetState[i] = mainChart.getDatasetMeta(i).hidden;}
     jQuery.get(request, {'count': count}, function (data) {
-        mainChart.data.labels = data['labels'];
+        let dates = [];
+        for (const key in data['labels']) { dates.push(data['labels'][key].split(':').slice(0, 2).join(':')) }
+        mainChart.data.labels = dates;
         delete data['labels'];
         for (const i in data['data']) {
             mainChart.data.datasets[i] = {
@@ -92,10 +96,11 @@ function draw_chart(count = '') {
         datasetCount = data['data'].length;
     });
     request = window.location.origin + "/api/setter";
-    jQuery.get(request, {
+    if (histogramAxis[0] !== null && histogramAxis[1] !== null) {
+        jQuery.get(request, {
         'count': count,
-        'sensor_x': 3,
-        'sensor_y': 4
+        'sensor_x': histogramAxis[0],
+        'sensor_y': histogramAxis[1],
         },
         function (data) {
             scatterChart.data.datasets[0] = {
@@ -103,13 +108,25 @@ function draw_chart(count = '') {
             }
             scatterChart.update('none');
         });
+    }
 }
 
 
 jQuery(document).ready(function () {
-    draw_chart(charts_controls[2].getAttribute( 'data-count'));
+    draw_chart(pointCount);
 });
 
 setInterval(function () {
-    draw_chart(charts_controls[2].getAttribute( 'data-count'));
+    draw_chart(pointCount);
 }, 60000);
+
+
+function set_scale(button, axis) {
+    if (axis === 'x') {
+        histogramAxis[0] = button.getAttribute( 'data-sensor');
+    } else if (axis === 'y') {
+        histogramAxis[1] = button.getAttribute( 'data-sensor');
+    }
+    draw_chart(pointCount);
+    console.log(histogramAxis);
+}

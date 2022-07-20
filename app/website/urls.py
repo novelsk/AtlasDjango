@@ -18,6 +18,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.contrib.staticfiles.views import serve
 from django.views.decorators.cache import never_cache
+from django.views.static import serve as media_serve
 from django.conf.urls.static import static
 
 urlpatterns = [
@@ -28,3 +29,5 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns.append(path('stattic/<path:path>', never_cache(serve)))
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    urlpatterns.append(path('media/<path:path>', media_serve, {'document_root': settings.MEDIA_ROOT}))

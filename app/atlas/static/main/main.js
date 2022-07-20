@@ -7,7 +7,7 @@ for (let elem of document.querySelectorAll('select')) {
 
 function confirm_error(error_log_id, button) {
     jQuery.get(window.location.origin + "/api/confirm_error", {'error_log_id': error_log_id },
-        function (data) { if (data['']) {jQuery(button).addClass('disabled');} }
+        function (data) { if (data['']) { button.hidden = true; } }
     );
 }
 
@@ -16,7 +16,7 @@ function confirm_error_all() {
     for (const temp in table) {
         let line = table[temp];
         jQuery.get(window.location.origin + "/api/confirm_error", {'error_log_id': line.getAttribute('data-id') },
-            function (data) { if (data['']) {jQuery(line.lastElementChild.firstElementChild).addClass('disabled');} }
+            function (data) { if (data['']) {jQuery(line.lastElementChild.firstElementChild).hidden = true; } }
         );
     }
 }

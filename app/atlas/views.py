@@ -293,7 +293,7 @@ def api_chart(request, object_id, sensor_id):
             'ml_min': [], 'ml_max': [], 'date': [],
             'histo_data': [], 'histo_labels': []}
         for data in data_query:
-            data = data  # type: SensorData
+            # data = data  # type: SensorData
             context['ai_max'].append(data.ai_max)
             context['ai_min'].append(data.ai_min)
             context['ai_mean'].append(data.ai_mean)
