@@ -28,9 +28,9 @@
 
 		<div class="row">
 			<!-- [ card ] start -->
-        <h5>Показатели датчиков</h5><hr>
         <div class="card">
-            <ul class="nav nav-tabs">
+            <div class="card-header">
+                <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page">Тренд</a>
                 </li>
@@ -38,15 +38,19 @@
                     <a class="nav-link">Аналитика</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link">Арив событий</a>
+                    <a onclick="window.location.replace('{% url 'atlas:archive_object' object.id %}');" class="nav-link">Арив событий</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link">ТОиР</a>
+                    <a onclick="window.location.replace('{% url 'atlas:events' object.id %}');" class="nav-link">ТОиР</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link">Настройки</a>
+                    <a onclick="window.location.replace('{% url 'atlas:object_settings' object.id %}');" class="nav-link">Настройки</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link">Мнемосхема</a>
                 </li>
             </ul>
+            </div>
             <div class="card-body">
                 <div class="row justify-content-between">
                     <div class="col-md-8">
@@ -71,7 +75,7 @@
                                     <button class="btn btn-primary"><i class="feather icon-check"></i></button>
                                 </div>
                             </div>
-                            <div class="col" id="change-type">
+                            <div class="col">
                                 <button type="button" class="btn btn-outline-primary chart-control"><i data-feather="more-horizontal"></i></button>
                                 <button type="button" class="btn btn-outline-primary chart-control"><i data-feather="trending-up"></i></button>
                             </div>
@@ -89,23 +93,33 @@
                         <canvas class="chart-control" style="display: block; width: 369px; height: 369px;"></canvas>
                     </div>
                     <div class="col-md-3">
-                        <div class="btn-group mb-2 mr-2">
-							<button class="btn btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">X</button>
-							<div class="dropdown-menu" style="">
-                                {% for sensor in sensors_list %}
-								    <button data-sensor="{{ sensor.id }}" class="dropdown-item" onclick="set_scale(this, 'x')">{{ sensor.name }}</button>
-                                {% endfor %}
-							</div>
-						</div>
-                        <div class="btn-group mb-2 mr-2">
-							<button class="btn btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Y</button>
-							<div class="dropdown-menu" style="">
-                                {% for sensor in sensors_list %}
-								    <button data-sensor="{{ sensor.id }}" class="dropdown-item" onclick="set_scale(this, 'y')">{{ sensor.name }}</button>
-                                {% endfor %}
-							</div>
-						</div>
-                    </div>
+                            <div class="row">
+                                <div class="btn-group mb-2 mr-2">
+                                <button class="btn btn-outline-primary dropdown-toggle" type="button"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">X
+                                </button>
+                                <div class="dropdown-menu">
+                                    {% for sensor in sensors_list %}
+                                        <button data-sensor="{{ sensor.id }}" class="dropdown-item"
+                                                onclick="set_scale(this, 'x')">{{ sensor.name }}</button>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            </div>
+                            <div class="row">
+                                <div class="btn-group mb-2 mr-2">
+                                <button class="btn btn-outline-primary dropdown-toggle" type="button"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Y
+                                </button>
+                                <div class="dropdown-menu">
+                                    {% for sensor in sensors_list %}
+                                        <button data-sensor="{{ sensor.id }}" class="dropdown-item"
+                                                onclick="set_scale(this, 'y')">{{ sensor.name }}</button>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            </div>
+                        </div>
                 </div>
             </div>
         </div>
@@ -208,16 +222,18 @@
             </div>
         <h5>Мнемосхема</h5><hr>
             <div class="card">
-                <div class="card-header">
-                    {% for sensor in sensors_list %}
-                        <h6>{{ sensor.name }}: {{ sensor.data_sensor.last.ai_mean }}</h6>
-                    {% endfor %}
-                </div>
                 <div class="card-body">
-                    <div class="col-md-4">
-                        {% if object.image.name != '' %}
-                            <img class="img-fluid card-img-bottom" src="{{ object.image.url }}" alt="">
-                        {% endif %}
+                    <div class="row">
+                        {% for sensor in sensors_list %}
+                            <h6>{{ sensor.name }}: {{ sensor.data_sensor.last.ai_mean }}</h6>
+                        {% endfor %}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            {% if object.image.name != '' %}
+                                <img class="img-fluid card-img-bottom" src="{{ object.image.url }}" alt="">
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -231,5 +247,5 @@
     <script src="{% static 'main/main.js' %}"></script>
     <script src="{% static 'chart/dist/chart.js' %}"></script>
     <script src="{% static 'chart/object_chart.js' %}"></script>
-    <script src="{% static 'main/object.js' %}"></script>
+    <script src="{% static 'main/navbar.js' %}"></script>
 {% endblock %}

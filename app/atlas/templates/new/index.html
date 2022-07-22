@@ -1,0 +1,52 @@
+{% extends 'new/base_object.html' %}
+{% load static %}
+{% block title %}Главная{% endblock %}
+
+{% block navbar %}
+    <div class="page-header-title">
+        <h5 class="m-b-10">Домашняя</h5>
+    </div>
+    <ul class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'atlas:new:index' %}">Главная</a></li>
+    </ul>
+{% endblock %}
+
+
+{% block card %}
+    {% if objects_count == 0 %}
+        <h5>У вас нет доступа ни к одной компании</h5>
+        <div class="clearfix"></div>
+        <h6>Обратитесь к администратору</h6>
+    {% else %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Состояние</th>
+                    <th>Компания</th>
+                    <th>Объект</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for object in base_object_list %}
+                    <tr>
+                        <td>
+                            {% if object.count_sensors_alerts %}
+                                <p class="text-danger mb-1"><i data-feather="alert-circle"></i></p>
+                            {% else %}
+                                <p class="text-success mb-1"><i data-feather="check"></i></p>
+                            {% endif %}
+                        </td>
+                        <td>{{ object.id_company }}</td>
+                        <td><a href="{% url 'atlas:new:trend' %}?object_id={{ object.id }}"
+                               class="btn btn-link">{{ object.name }}</a></td>
+                        <td><a href="{% url 'atlas:object_settings' object.id %}" style="color: black"><i
+                                data-feather="settings"></i></a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,6 +1,7 @@
 import datetime
 
 from django.db.models import QuerySet
+from django.shortcuts import get_object_or_404
 
 from .models import AtlasUser, Company, UserAccessGroups, Sensor, Object
 
@@ -67,6 +68,15 @@ def user_access_object_write(request, object_id):
     return can_write(groups)
 
 
+def user_access_object_write_new(request):
+    """
+    Проверяет наличие доступа к изменению настроек объекта
+    """
+    company = get_object_or_404(Object, pk=int(request.GET.get('object_id'))).id_company
+    groups = user_access_company(request, company)
+    return can_write(groups)
+
+
 def user_access_sensor_write(request, sensor_id):
     """
     Проверяет наличие доступа к изменению настроек датчика
@@ -114,3 +124,15 @@ def base_alerts(request):
                         'href': f'/object/{object_item.id}/{sensor.id}',
                     })
     return alerts
+
+
+def get_objects_and_sensors(request):
+    """
+    Контекст с объектом и датчиками
+    """
+    context = {}
+    object_item = get_object_or_404(Object, pk=int(request.GET.get('object_id')))
+    context['object'] = object_item
+    sensors = Sensor.objects.filter(id_object=object_item).order_by('id_sensor_repr')
+    context['sensors_list'] = list(sensors)
+    return context

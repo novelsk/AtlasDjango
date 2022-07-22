@@ -1,9 +1,11 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 app_name = 'atlas'
 
 urlpatterns = [
+    path('new', include('atlas.new_urls'), name='new'),
+    path('test/<int:object_id>', views.test, name='test'),
     path('company/<int:pk>', views.company_objects, name='company'),
     path('events/edit/<int:event_id>', views.event_edit, name='event_edit'),
     path('sensor/archive/<int:sensor_id>', views.archive, name='archive'),

@@ -13,6 +13,16 @@ from .util import int_round, int_round_tenth
 from .mail import on_error
 
 
+def test(request, object_id):
+    context = {}
+    object_item = Object.objects.get(pk=object_id)
+    context['object'] = object_item
+    sensors_list = Sensor.objects.all()
+    context['sensors_list'] = sensors_list
+    return render(request, '2index.html', context)
+
+
+# old
 @login_required
 def index(request):
     return render(request, 'index.html')

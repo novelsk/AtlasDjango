@@ -1,0 +1,84 @@
+{% extends 'new/base_object.html' %}
+{% load static %}
+{% block title %}{{ object.name }} - Тренд{% endblock %}
+
+
+{% block card %}
+
+    <div class="row justify-content-between">
+        <div class="col-md-8">
+            <div class="row row-cols-auto">
+                <div class="col">
+                    <div class="btn-group mb-2 mr-2">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button"
+                                data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false"><i data-feather="clock"></i>
+                        </button>
+                        <div class="dropdown-menu" id="board-buttons" style="">
+                            <button class="dropdown-item" data-count="60">1 час</button>
+                            <button class="dropdown-item" data-count="240">4 часа</button>
+                            <button class="dropdown-item" data-count="720">12 часов</button>
+                            <button class="dropdown-item" data-count="1440">1 день</button>
+                            <button class="dropdown-item" data-count="4320">3 дня</button>
+                            <button class="dropdown-item" data-count="10080">1 неделя</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="input-group" id="custom_points">
+                        <label><input type="text" class="form-control"
+                                      placeholder="Кол-во точек"></label>
+                        <button class="btn btn-primary"><i class="feather icon-check"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1 text-right">
+            <button type="button" class="btn btn-outline-primary chart-control"><i
+                    data-feather="more-horizontal"></i></button>
+            <button type="button" class="btn btn-outline-primary chart-control"><i
+                    data-feather="trending-up"></i></button>
+        </div>
+    </div>
+    <hr>
+    <canvas class="chart-control" data-count="60"
+            style="display: block; width: 875px; height: 369px;"></canvas>
+    <div id='chart-hide' class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-5">
+            <canvas class="chart-control" style="display: block; width: 369px; height: 369px;"></canvas>
+        </div>
+        <div class="col-md-3">
+            <div class="row">
+                <div class="btn-group mb-2 mr-2">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">X
+                    </button>
+                    <div class="dropdown-menu">
+                        {% for sensor in sensors_list %}
+                            <button data-sensor="{{ sensor.id }}" class="dropdown-item"
+                                    onclick="set_scale(this, 'x')">{{ sensor.name }}</button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="btn-group mb-2 mr-2">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Y
+                    </button>
+                    <div class="dropdown-menu">
+                        {% for sensor in sensors_list %}
+                            <button data-sensor="{{ sensor.id }}" class="dropdown-item"
+                                    onclick="set_scale(this, 'y')">{{ sensor.name }}</button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script src="{% static 'chart/dist/chart.js' %}"></script>
+    <script src="{% static 'main/object_chart.js' %}"></script>
+{% endblock %}

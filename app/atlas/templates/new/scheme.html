@@ -1,0 +1,20 @@
+{% extends 'new/base_object.html' %}
+{% load static %}
+{% block title %}{{ object.name }} - Мнемосхема{% endblock %}
+
+
+{% block card %}
+    <div class="row">
+        {% for sensor in sensors_list %}
+            <h6>{{ sensor.name }}: {{ sensor.data_sensor.last.ai_mean }}</h6>
+        {% endfor %}
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            {% if object.image.name != '' %}
+                <img class="img-fluid card-img-bottom" src="{{ object.image.url }}" alt="">
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+

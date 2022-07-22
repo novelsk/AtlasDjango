@@ -72,16 +72,23 @@ let scatterChart = new Chart(charts_controls[3], {
 });
 
 
-function draw_chart(count = '') {
-    let request = window.location.origin + "/api/chart" + window.location.pathname;
+function draw_chart(count) {
+    let request = window.location.origin + "/new/api/object/chart"
+    let url = new URL(window.location.href);
+    let object_id = url.searchParams.get("object_id");
+
     for (let i = 0; i < datasetCount; i++) {datasetState[i] = mainChart.getDatasetMeta(i).hidden;}
-    jQuery.get(request, {'count': count}, function (data) {
-        let dates = [];
-        for (const key in data['labels']) { dates.push(data['labels'][key].split(':').slice(0, 2).join(':')) }
-        mainChart.data.labels = dates;
-        delete data['labels'];
-        for (const i in data['data']) {
-            mainChart.data.datasets[i] = {
+    jQuery.get(request,
+        {'count': count, 'object_id': object_id},
+        function (data) {
+            let dates = [];
+            for (const key in data['labels']) {
+                dates.push(data['labels'][key].split(':').slice(0, 2).join(':'))
+            }
+            mainChart.data.labels = dates;
+            delete data['labels'];
+            for (const i in data['data']) {
+                mainChart.data.datasets[i] = {
                     label: data['sensors'][i],
                     data: data['data'][i],
                     lineTension: 0,
@@ -90,8 +97,8 @@ function draw_chart(count = '') {
                     borderWidth: 2,
                     pointRadius: 0,
                 }
-            mainChart.setDatasetVisibility(i, !datasetState[i]);
-        }
+                mainChart.setDatasetVisibility(i, !datasetState[i]);
+            }
         mainChart.update('none');
         datasetCount = data['data'].length;
     });

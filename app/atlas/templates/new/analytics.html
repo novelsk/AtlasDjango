@@ -1,0 +1,59 @@
+{% extends 'new/base_object.html' %}
+{% load static %}
+{% block title %}{{ object.name }} - Аналитика{% endblock %}
+
+
+{% block card %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>№</th>
+                <th>Название</th>
+                <th>Настройки ML</th>
+                <th>ST ML</th>
+                <th>Последняя запись</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for sensor in sensors_list %}
+                <tr>
+                    <td>{{ sensor.id_sensor_repr }}</td>
+                    <td><a href="{% url 'atlas:sensor' object_id=object.id sensor_id=sensor.id %}"
+                           class="btn btn-link">{{ sensor.name }}</a></td>
+                    <td>
+                        <div class="col">
+                            {% if sensor.event_sensor.first.setting_ll != 0 and sensor.event_sensor.first.setting_ll is not null %}
+                                <span class="text-success mb-1">LL</span>{% else %}
+                                <span class="text-muted mb-1">LL</span>{% endif %}
+                            {% if sensor.event_sensor.first.setting_l != 0 and sensor.event_sensor.first.setting_l is not null %}
+                                <span class="text-success mb-1">L</span>{% else %}
+                                <span class="text-muted mb-1">L</span>{% endif %}
+                            {% if sensor.event_sensor.first.setting_h != 0 and sensor.event_sensor.first.setting_h is not null %}
+                                <span class="text-success mb-1">H</span>{% else %}
+                                <span class="text-muted mb-1">H</span>{% endif %}
+                            {% if sensor.event_sensor.first.setting_hh != 0 and sensor.event_sensor.first.setting_hh is not null %}
+                                <span class="text-success mb-1">HH</span>{% else %}
+                                <span class="text-muted mb-1">HH</span>{% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="col">
+                            {% if sensor.data_sensor.last.stat_min != sensor.data_sensor.last.stat_max %}
+                                <span class="text-success mb-1">ST</span>{% else %}
+                                <span class="text-danger mb-1">ST</span>{% endif %}
+                            {% if sensor.data_sensor.last.ml_min != sensor.data_sensor.last.ml_max %}
+                                <span class="text-success mb-1">ML</span>{% else %}
+                                <span class="text-danger mb-1">ML</span>{% endif %}
+                        </div>
+                    </td>
+                    <td>{{ sensor.data_sensor.last.date }}</td>
+                    <td><a href="{% url 'atlas:settings_sensor' sensor_id=sensor.id %}" style="color: black"><i
+                            data-feather="settings"></i></a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

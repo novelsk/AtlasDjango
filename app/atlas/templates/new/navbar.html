@@ -1,0 +1,15 @@
+<!--include navbar.js for animation-->
+<ul class="nav nav-pills nav-fill">
+    <a onclick="window.location.replace('{% url 'atlas:new:trend' %}?object_id={{ object.id }}');"
+       class="nav-link">Тренд</a>
+    <a onclick="window.location.replace('{% url 'atlas:new:analytics' %}?object_id={{ object.id }}');"
+       class="nav-link">Аналитика</a>
+    <a onclick="window.location.replace('{% url 'atlas:new:archive' %}?object_id={{ object.id }}');"
+       class="nav-link">Арив событий</a>
+    <a onclick="window.location.replace('{% url 'atlas:new:object_events' %}?object_id={{ object.id }}');"
+       class="nav-link">ТОиР</a>
+    <a onclick="window.location.replace('{% url 'atlas:new:object_settings' %}?object_id={{ object.id }}');"
+       class="nav-link">Настройки</a>
+    <a onclick="window.location.replace('{% url 'atlas:new:scheme' %}?object_id={{ object.id }}');"
+       class="nav-link">Мнемосхема</a>
+</ul>

@@ -5,69 +5,103 @@
 
 {% block content %}
 <!-- [ Main Content ] start -->
-<div class="pc-container">
-	<div class="pcoded-content">
-    <div class="page-header">
-            <div class="page-block">
-                <div class="row align-items-center">
-                    <div class="col-md-12">
-                        <div class="page-header-title">
-                            <h5 class="m-b-10">Аналитика</h5>
+    <div class="pc-container">
+        <div class="pcoded-content">
+            <div class="page-header">
+                <div class="page-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <div class="page-header-title">
+                                <h5 class="m-b-10">Аналитика</h5>
+                            </div>
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{% url 'atlas:index' %}">Главная</a></li>
+                                <li class="breadcrumb-item"><a
+                                        href="{% url 'atlas:company' object.id_company.id %}">{{ object.id_company }}</a>
+                                </li>
+                                <li class="breadcrumb-item"><a
+                                        href="{% url 'atlas:object' object.id %}">{{ object.name }}</a></li>
+                                <li class="breadcrumb-item">Журнал технического обслуживания</li>
+                            </ul>
                         </div>
-                        <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{% url 'atlas:index' %}">Главная</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'atlas:company' object.id_company.id %}">{{ object.id_company }}</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'atlas:object' object.id %}">{{ object.name }}</a></li>
-                            <li class="breadcrumb-item">Журнал технического обслуживания</li>
-                        </ul>
                     </div>
                 </div>
             </div>
-        </div>
 
-		<!-- [ Main Content ] start -->
+            <!-- [ Main Content ] start -->
 
-		<div class="row">
-			<!-- [ card ] start -->
-            <div class="col-sm-4">
-                <div class="card align-items-center">
-                    <h5 class="card-header">Новая запись</h5>
-                    <div class="card-body">
-                        <a href="{% url 'atlas:event_new' object.id %}" class="btn btn-outline-primary">Создать</a>
-                    </div>
+            <div class="row">
+                <!-- [ sample-page ] start -->
+                <div class="col-sm-12">
+                    <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link" onclick="window.location.replace('{% url 'atlas:object' object.id %}');" aria-current="page">Тренд</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link">Аналитика</a>
+                    </li>
+                    <li class="nav-item">
+                        <a onclick="window.location.replace('{% url 'atlas:archive_object' object.id %}');" class="nav-link">Арив событий</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active">ТОиР</a>
+                    </li>
+                    <li class="nav-item">
+                        <a onclick="window.location.replace('{% url 'atlas:object_settings' object.id %}');" class="nav-link">Настройки</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link">Мнемосхема</a>
+                    </li>
+                </ul>
                 </div>
-            </div>
-            <h5>Записи</h5>
-            <hr>
-            {% for event in events_list %}
-                <div class="col-md-6 col-xl-4">
-                    <div class="card {% if event.not_done  %}text-white bg-warning{% endif %}">
-                        <div class="card-header">{{ event }}</div>
-                        <div class="card-body">
-                            <p class="card-text">Дата создания<br>{{ event.date_of_creation }}</p>
-                            {% if event.status == 'c' %}
-                                <p class="card-text">Выполненно<br>{{ event.date_of_service_completed }}</p>
-                                <p class="card-text">Коментарий<br>{{ event.comment }}</p>
-                            {% elif event.status == 'p' %}
-                                <p class="card-text">Дата запланированных работ<br>{{ event.date_of_service_planned }}
-                                </p>
-                                <p class="card-text">План работ<br>{{ event.plan }}</p>
-                            {% elif event.status == 'w' %}
-                                <p class="card-text">В работе<br>{{ event.date_of_service_planned }}</p>
-                                <p class="card-text">План работ<br>{{ event.plan }}</p>
-                            {% endif %}
-                            <div class="row">
-                                <a href="{% url 'atlas:event_edit' event.id %}"
-                                   class="btn {% if event.not_done %}btn-shadow btn-outline-light{% else %}btn-outline-primary{% endif %}">Открыть</a>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                        <div class="card align-items-center">
+                            <h5 class="card-header">Новая запись</h5>
+                            <div class="card-body">
+                                <a href="{% url 'atlas:event_new' object.id %}"
+                                   class="btn btn-outline-primary">Создать</a>
                             </div>
                         </div>
                     </div>
+                    </div>
+                    <div class="row">
+                        {% for event in events_list %}
+                            <div class="col-md-6 col-xl-4">
+                                <div class="card {% if event.not_done %}text-white bg-warning{% endif %}">
+                                    <div class="card-header">{{ event }}</div>
+                                    <div class="card-body">
+                                        <p class="card-text">Дата создания<br>{{ event.date_of_creation }}</p>
+                                        {% if event.status == 'c' %}
+                                            <p class="card-text">Выполненно<br>{{ event.date_of_service_completed }}</p>
+                                            <p class="card-text">Коментарий<br>{{ event.comment }}</p>
+                                        {% elif event.status == 'p' %}
+                                            <p class="card-text">Дата запланированных
+                                                работ<br>{{ event.date_of_service_planned }}
+                                            </p>
+                                            <p class="card-text">План работ<br>{{ event.plan }}</p>
+                                        {% elif event.status == 'w' %}
+                                            <p class="card-text">В работе<br>{{ event.date_of_service_planned }}</p>
+                                            <p class="card-text">План работ<br>{{ event.plan }}</p>
+                                        {% endif %}
+                                        <div class="row">
+                                            <a href="{% url 'atlas:event_edit' event.id %}"
+                                               class="btn {% if event.not_done %}btn-shadow btn-outline-light{% else %}btn-outline-primary{% endif %}">Открыть</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
-            {% endfor %}
-			<!-- [ card ] end -->
-		</div>
-		<!-- [ Main Content ] end -->
-	</div>
-</div>
+            </div>
+                </div>
+            </div>
+            <!-- [ Main Content ] end -->
+        </div>
+    </div>
 
 {% endblock %}

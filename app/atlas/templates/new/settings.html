@@ -1,0 +1,69 @@
+{% extends 'new/base_object.html' %}
+{% load static %}
+{% block title %}{{ object.name }} - Настройки{% endblock %}
+{% block stylesheet %}
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'datetimepicker-master/build/jquery.datetimepicker.min.css' %}">
+{% endblock %}
+
+{% block col_md %}col-md-6{% endblock %}
+
+{% block card %}
+    <div class="row">
+        <div class="col-md-12">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in form %}
+                    {% if field.is_hidden %}
+                        {{ field }}
+                    {% else %}
+                        <div class="input-group mb-2">
+                            <label class="col-sm-5 col-form-label">{{ field.label }}</label>
+                            <div class="col">{{ field }}
+                                {% if field.errors %}
+                                    {% for error in field.errors %}
+                                        <p class="alert alert-success" role="alert">{{ error }}</p>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                {% if success %}
+                    <p class="alert alert-success" role="alert">Данные успешно обновленны</p>
+                {% elif form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                        <p class="alert alert-success" role="alert">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+                <p class="float-md-right"><input type="submit" value="Сохранить" class="btn btn-primary"></p>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <form>
+                <div class="form-group">
+                    <label class="form-label" for="inputState">Режим рабоыт системы</label>
+                    <select id="inputState" class="form-control">
+                        <option selected="">Пользовательский</option>
+                        <option>Показатели</option>
+                        <option>Технологиский процесс</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="exampleFormControlTextarea1">Диагностические правила</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                </div>
+                <div class="text-right">
+                    <button type="submit" class="btn btn-outline-primary">+</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script src="{% static 'main/main.js' %}"></script>
+    <script src="{% static 'datetimepicker-master/build/jquery.datetimepicker.full.min.js' %}"></script>
+    <script src="{% static 'main/timeChoice.js' %}"></script>
+{% endblock %}
