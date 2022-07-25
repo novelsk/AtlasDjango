@@ -4,8 +4,7 @@ from . import views
 app_name = 'atlas'
 
 urlpatterns = [
-    path('new', include('atlas.new_urls'), name='new'),
-    path('test/<int:object_id>', views.test, name='test'),
+    path('new/', include('atlas.new_urls'), name='new'),
     path('company/<int:pk>', views.company_objects, name='company'),
     path('events/edit/<int:event_id>', views.event_edit, name='event_edit'),
     path('sensor/archive/<int:sensor_id>', views.archive, name='archive'),
@@ -20,8 +19,7 @@ urlpatterns = [
     path('api/chart/object/<int:object_id>/<int:sensor_id>', views.api_chart),
     path('api/setter', views.api_object_setter),
     path('api/chart/object/<int:object_id>', views.api_object_chart),
-    path('rabbit/start', views.rabbit_start, name='rabbit_start'),
-    path('rabbit_data', views.sensors_data),
+    path('rabbit/data', views.sensors_data),
     path('accounts/login/', views.AtlasLoginView.as_view(), name='login'),
     path('accounts/login', views.AtlasLoginView.as_view(), name='login'),
     path('accounts/logout', views.AtlasLogoutView.as_view(), name='logout'),

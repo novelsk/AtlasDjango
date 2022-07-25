@@ -2,7 +2,6 @@ import logging
 import pika
 import pytz
 from json import loads
-from asyncio import sleep
 from requests.api import post
 from website import settings
 from datetime import datetime
@@ -34,7 +33,6 @@ def on_message(chan, method_frame, header_frame, body):
 
 def main():
     """Main method."""
-    sleep(10)
     parameters = pika.URLParameters(settings.RABBIT_REQUEST_URL)
     connection = pika.BlockingConnection(parameters)
 
@@ -49,10 +47,10 @@ def main():
     channel.basic_consume(settings.RABBIT_QUEUE, on_message_callback=on_message)
     try:
         channel.start_consuming()
-        return 1
     except KeyboardInterrupt:
         connection.close()
-        return 0
+    except Exception:
+        main()
 
 
 if __name__ == '__main__':

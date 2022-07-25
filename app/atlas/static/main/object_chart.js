@@ -18,21 +18,14 @@ charts_controls[1].addEventListener('click', function () {
 const chart_buttons = Array.from(document.getElementById("board-buttons").children);
 chart_buttons.forEach((item) => {
     item.addEventListener('click', function () {
-        draw_chart(item.getAttribute('data-count'));
         pointCount = item.getAttribute( 'data-count');
+        draw_chart(pointCount);
         chart_buttons.forEach((temp) => {
             jQuery(temp).removeClass('disabled');
         });
         jQuery(item).addClass('disabled');
+        item.parentNode.parentNode.firstElementChild.innerHTML = item.innerHTML;
     });
-});
-
-const custom_points = document.getElementById("custom_points");
-const points = custom_points.children[0].firstChild;
-const accept_points_button = custom_points.children[1];
-accept_points_button.addEventListener('click', function () {
-    draw_chart(points.value);
-    pointCount = points.value;
 });
 
 

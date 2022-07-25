@@ -1,0 +1,39 @@
+{% extends 'new/base_sensor.html' %}
+{% load static %}
+{% block title %}{{ sensot.name }} - Тренд{% endblock %}
+
+
+{% block card %}
+
+    <div class="row justify-content-between">
+        <div class="col-md-8">
+            <div class="row row-cols-auto">
+                <div class="col">
+                    <div class="btn-group mb-2 mr-2">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false"><i data-feather="clock"></i></button>
+                        <div class="dropdown-menu" id="board-buttons" style="">
+                            <button class="dropdown-item" data-count="60">1 час</button>
+                            <button class="dropdown-item" data-count="240">4 часа</button>
+                            <button class="dropdown-item" data-count="720">12 часов</button>
+                            <button class="dropdown-item" data-count="1440">1 день</button>
+                            <button class="dropdown-item" data-count="4320">3 дня</button>
+                            <button class="dropdown-item" data-count="10080">1 неделя</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1 text-right">
+            <button type="button" class="btn btn-outline-primary chart-control"><i data-feather="bar-chart-2"></i></button>
+            <button type="button" class="btn btn-outline-primary chart-control"><i data-feather="trending-up"></i></button>
+        </div>
+    </div>
+    <hr>
+    <canvas id="chart" class="chart-control" data-count="60" style="display: block; width: 875px; height: 369px;"></canvas>
+    <canvas id="histogram" class="chart-control" data-count="60" style="display: block; width: 875px; height: 369px;"></canvas>
+{% endblock %}
+{% block script %}
+    <script src="{% static 'chart/dist/chart.js' %}"></script>
+    <script src="{% static 'main/sensor_chart.js' %}"></script>
+{% endblock %}

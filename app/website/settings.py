@@ -26,9 +26,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-v=fcw8hctkj=k1hcv@ejz%lg_g=_6rsz(ly8^s$^=axr**qqn='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if os.environ.get('DJANGO_DEBUG') == 'false':
+    DEBUG = False
+else:
+    DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
+ALLOWED_HOSTS = ['77.222.54.167', '*.yandexcloud.net', 'localhost', '127.0.0.1', '[::1]', '0.0.0.0']
 
 
 # Application definition
@@ -85,9 +88,9 @@ WSGI_APPLICATION = 'website.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'db01',
-        'USER': 'admin',
-        'PASSWORD': 'atlas',
+        'NAME': os.environ.get('POSTGRES_DB'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
         'HOST': 'db',
         'PORT': '5432',
     }
@@ -128,7 +131,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+if os.environ.get('DJANGO_DEBUG') == 'True':
+    STATIC_URL = 'static/'
+else:
+    STATIC_URL = 'https://storage.yandexcloud.net/atlas-static/static/'
+
 STATIC_ROOT = 'atlas/static'
 
 MEDIA_URL = 'media/'
@@ -153,10 +160,10 @@ CACHES = {
     }
 }
 
-DJANGO_RESPONSE_URL = 'http://localhost:8000/rabbit_data'
-RABBIT_REQUEST_URL = 'amqp://user:atlasrabbit@77.222.54.167:5672/%2F'
+DJANGO_RESPONSE_URL = 'http://0.0.0.0:8000/rabbit/data'
+RABBIT_REQUEST_URL = os.environ.get('RABBIT_REQUEST_URL')
 RABBIT_EXCHANGE = 'test_exchange'
-RABBIT_QUEUE = 'FirstStep'
+RABBIT_QUEUE = os.environ.get('RABBIT_QUEUE')
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = 'tmp/app-messages'

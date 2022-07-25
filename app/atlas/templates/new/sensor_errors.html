@@ -1,0 +1,67 @@
+{% extends 'new/base_sensor.html' %}
+{% load static %}
+{% block title %}{{ sensot.name }} - Архив событий{% endblock %}
+
+
+{% block card %}
+    <div class="col-sm-12">
+        {% if not errors_list %}
+            <h4>Новых ошибок нет</h4>
+        {% else %}
+            <a href="{% url 'atlas:archive' sensor.id %}" type="button" class="btn btn-outline-primary">Архив ошибок</a>
+            <button type="button" class="btn btn-outline-primary" onclick="confirm_errors_all()">Квитировать все</button>
+            <hr>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>№ ошибки</th>
+                        <th>Значение</th>
+                        <th>Дата и время</th>
+                        <th>Режим работы системы</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="table-errors">
+                    {% for error_item in errors_list %}
+                        <tr data-id="{{ error_item.id }}">
+                            <td>{{ error_item.error }}</td>
+                            <td>{{ error_item.data_error.last.ai_mean }}</td>
+                            <td>{{ error_item.error_start_date }}</td>
+                            <td>{{ error_item.data_error.last.mode }}</td>
+                            <td>
+                                <a onclick="confirm_error({{ error_item.id }}, this)"
+                                   class="text-primary mb-1"><i data-feather="check-circle"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+    function confirm_error(error_log_id, button) {
+        jQuery.get(window.location.origin + "/api/confirm_error", {'error_log_id': error_log_id },
+            function (data) { if (data['']) { button.parentNode.parentNode.hidden = true; } }
+        );
+    }
+    function confirm_errors_all() {
+        let url = new URL(window.location.href);
+
+        jQuery.get(window.location.origin + "/new/api/sensor/confirm_errors_all",
+            {'sensor_id': url.searchParams.get("sensor_id") },
+            function (data) {
+                if (data['']) {
+                    let table = Array.from(document.getElementById('table-errors').children);
+                    table.forEach((item) => {item.hidden = true});
+                } else {
+                    alert('Ошибка');
+                }
+            }
+        );
+    }
+    </script>
+{% endblock %}

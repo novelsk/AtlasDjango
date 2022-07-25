@@ -1,0 +1,60 @@
+{% extends 'new/base_sensor.html' %}
+{% load static %}
+{% block title %}{{ sensot.name }} - Настройки ML{% endblock %}
+
+
+{% block card %}
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in form %}
+                    {% if field.is_hidden %}
+                        {{ field }}
+                    {% else %}
+                        <div class="input-group mb-2">
+                            <label class="col-sm-5 col-form-label">{{ field.label }}</label>
+                            <div class="col">{{ field }}
+                                {% if field.errors %}
+                                    {% for error in field.errors %}
+                                        <p class="alert alert-success" role="alert">{{ error }}</p>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                {% if success %}
+                    <p class="alert alert-success" role="alert">Данные успешно обновленны</p>
+                {% elif form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                        <p class="alert alert-success" role="alert">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+                <p class="float-md-right"><input type="submit" value="Сохранить" class="btn btn-primary"></p>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label for="exampleCheck1">Разрешить работу аналитики</label>
+            </div>
+            <button type="button" class="btn btn-primary">Переобучить систему</button>
+            <br>
+            <br>
+            <button type="button" class="btn btn-primary" onclick="resetAnalytic()">Сброс наработки аналитики</button>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script src="{% static 'main/new_main.js' %}"></script>
+    <script>
+    function resetAnalytic() {
+        jQuery.get(
+            window.location.origin + "/api/settings/reset-analytic",
+            {'sensor': {{ sensor.id }} },
+            function () { alert( "Успешно" ); }
+        );
+    }
+    </script>
+{% endblock %}

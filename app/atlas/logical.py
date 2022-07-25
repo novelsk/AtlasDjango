@@ -86,6 +86,15 @@ def user_access_sensor_write(request, sensor_id):
     return can_write(groups)
 
 
+def user_access_sensor_write_new(request):
+    """
+    Проверяет наличие доступа к изменению настроек датчика
+    """
+    company = get_object_or_404(Sensor, pk=int(request.GET.get('sensor_id'))).id_object.id_company
+    groups = user_access_company(request, company)
+    return can_write(groups)
+
+
 def user_access_sensor_read(request, sensor_id):
     """
     Проверяет наличие доступа к датчику
@@ -135,4 +144,14 @@ def get_objects_and_sensors(request):
     context['object'] = object_item
     sensors = Sensor.objects.filter(id_object=object_item).order_by('id_sensor_repr')
     context['sensors_list'] = list(sensors)
+    return context
+
+
+def get_sensor(request):
+    """
+     Контекст датчика
+    """
+    context = {}
+    sensor = get_object_or_404(Sensor, pk=int(request.GET.get('sensor_id')))
+    context['sensor'] = sensor
     return context

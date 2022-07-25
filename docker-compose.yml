@@ -9,10 +9,8 @@ services:
       - ./db:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: atlas
-      POSTGRES_DB: db01
+    env_file:
+      - ./.dev.env
     networks:
        - main_bridge
 
@@ -27,29 +25,10 @@ services:
       - ./app:/usr/src/app/
     ports:
       - "8000:8000"
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: atlas
-      POSTGRES_DB: db01
+    env_file:
+      - ./.dev.env
     networks:
       - main_bridge
-
-
-#  rabbitmq:
-#    image: rabbitmq:3.10-management-alpine
-#    container_name: rabbitmq
-#    hostname: atlas
-#    ports:
-#        - "5672:5672"
-#        - "15672:15672"
-#    environment:
-#      RABBITMQ_DEFAULT_USER: user
-#      RABBITMQ_DEFAULT_PASS: atlasrabbit
-#    volumes:
-#      - ./rabbit/data/:/var/lib/rabbitmq/
-#      - ./rabbit/log/:/var/log/rabbitmq
-#    links:
-#      - web
 
 
 networks:

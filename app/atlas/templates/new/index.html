@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %}Главная{% endblock %}
 
-{% block navbar %}
+{% block breadcump %}
     <div class="page-header-title">
         <h5 class="m-b-10">Домашняя</h5>
     </div>
@@ -10,6 +10,7 @@
         <li class="breadcrumb-item"><a href="{% url 'atlas:new:index' %}">Главная</a></li>
     </ul>
 {% endblock %}
+{% block navbar %}{% endblock %}
 
 
 {% block card %}

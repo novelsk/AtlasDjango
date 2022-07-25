@@ -20,7 +20,7 @@
             {% for sensor in sensors_list %}
                 <tr>
                     <td>{{ sensor.id_sensor_repr }}</td>
-                    <td><a href="{% url 'atlas:sensor' object_id=object.id sensor_id=sensor.id %}"
+                    <td><a href="{% url 'atlas:new:sensor_trend' %}?sensor_id={{ sensor.id }}"
                            class="btn btn-link">{{ sensor.name }}</a></td>
                     <td>
                         <div class="col">

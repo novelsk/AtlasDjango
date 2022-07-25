@@ -1,11 +1,13 @@
 from django.contrib.auth.decorators import login_required
+from django.db.models import QuerySet
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404
 from rest_framework.decorators import api_view
 
-from .forms import ObjectEditForm
-from .logical import get_objects_and_sensors, user_access_object_write_new
-from .models import Sensor, SensorError, Object, ObjectEvent
+from .forms import ObjectEditForm, MLForm
+from .logical import get_objects_and_sensors, user_access_object_write_new, user_access_sensor_write_new, get_sensor
+from .models import Sensor, SensorError, Object, ObjectEvent, SensorMLSettings
+from .util import int_round_tenth
 
 
 @login_required
@@ -14,28 +16,28 @@ def index(request):
 
 
 @login_required
-def trend(request):
-    return render(request, 'new/trend.html', get_objects_and_sensors(request))
+def object_trend(request):
+    return render(request, 'new/object_trend.html', get_objects_and_sensors(request))
 
 
 @login_required
-def analytics(request):
-    return render(request, 'new/analytics.html', get_objects_and_sensors(request))
+def object_analytics(request):
+    return render(request, 'new/object_analytics.html', get_objects_and_sensors(request))
 
 
 @login_required
-def scheme(request):
-    return render(request, 'new/scheme.html', get_objects_and_sensors(request))
+def object_scheme(request):
+    return render(request, 'new/object_scheme.html', get_objects_and_sensors(request))
 
 
 @login_required
-def archive(request):
+def object_archive(request):
     context = {}
     object_item = get_object_or_404(Object, pk=int(request.GET.get('object_id')))
     context['object'] = object_item
     errors = SensorError.objects.filter(id_sensor__id_object=object_item).order_by('-error_start_date')[:40]
     context['errors_list'] = list(errors)
-    return render(request, 'new/archive.html', context)
+    return render(request, 'new/object_archive.html', context)
 
 
 @login_required
@@ -45,7 +47,7 @@ def object_events(request):
     context['object'] = object_item
     events = ObjectEvent.objects.filter(id_object=object_item).order_by('-status')
     context['events_list'] = list(events)
-    return render(request, 'new/event.html', context)
+    return render(request, 'new/object_event.html', context)
 
 
 def object_settings(request):
@@ -59,13 +61,50 @@ def object_settings(request):
             if form.is_valid():
                 form.save()
                 context['success'] = True
-            return render(request, 'new/settings.html', context)
+            return render(request, 'new/object_settings.html', context)
         else:
             form = ObjectEditForm(instance=object_item)
             context['form'] = form
-            return render(request, 'new/settings.html', context)
+            return render(request, 'new/object_settings.html', context)
+    return render(request, 'new/object_trend.html', get_objects_and_sensors(request))
+
+
+@login_required
+def sensor_trend(request):
+    return render(request, 'new/sensor_trend.html', get_sensor(request))
+
+
+@login_required
+def sensor_errors(request):
+    context = {}
+    sensor = get_object_or_404(Sensor, pk=int(request.GET.get('sensor_id')))
+    context['sensor'] = sensor
+    errors = SensorError.objects.filter(id_sensor=sensor, confirmed=False).order_by('-error_start_date')
+    context['errors_list'] = list(errors)
+    return render(request, 'new/sensor_errors.html', context)
+
+
+@login_required
+def sensor_settings(request):
+    context = {}
+    sensor = get_object_or_404(Sensor, pk=int(request.GET.get('sensor_id')))
+    context['sensor'] = sensor
+
+    if not user_access_sensor_write_new(request):
+        return render(request, 'new/sensor_trend.html', get_sensor(request))
+
+    settings = SensorMLSettings.objects.get_or_create(id_sensor=sensor)[0]
+    if request.method == 'POST':
+        form = MLForm(request.POST, instance=settings)
+        context['form'] = form
+        if form.is_valid():
+            form.save()
+            context['success'] = True
+        return render(request, 'new/sensor_settings.html', context)
     else:
-        return redirect('atlas:new:index')
+        form = MLForm(instance=settings)
+        context['form'] = form
+        return render(request, 'new/sensor_settings.html', context)
 
 
 # api
@@ -83,4 +122,47 @@ def api_object_chart(request):
     labels = (sensors.first().data_sensor.order_by('-date')[:count]).values_list('date', flat=True)
     context['labels'] = list(map(lambda x: str(x.astimezone().time()), labels))
     context['labels'].reverse()
+    return JsonResponse(context, safe=False)
+
+
+@api_view(['GET'])
+@login_required
+def api_sensor_chart(request):
+    if request.method == 'GET':
+        sensor = Sensor.objects.get(pk=int(request.GET.get('sensor_id')))
+        count = int(request.GET.get('count'))
+
+        test_slice = sensor.data_sensor.order_by('-date')[:count]
+        context = {
+            'ai_max': list(reversed(test_slice.values_list('ai_max', flat=True))),
+            'ai_min': list(reversed(test_slice.values_list('ai_min', flat=True))),
+            'mode': list(reversed(test_slice.values_list('mode', flat=True))),
+            'ai_mean': list(reversed(test_slice.values_list('ai_mean', flat=True))),
+            'stat_min': list(reversed(test_slice.values_list('stat_min', flat=True))),
+            'stat_max': list(reversed(test_slice.values_list('stat_max', flat=True))),
+            'ml_min': list(reversed(test_slice.values_list('ml_min', flat=True))),
+            'ml_max': list(reversed(test_slice.values_list('ml_max', flat=True))),
+            'date': [i.astimezone().time() for i in reversed(test_slice.values_list('date', flat=True))],
+            'histo_data': None,
+            'histo_labels': None
+        }
+
+        temp = list((sensor.data_sensor.order_by('-date')[:count]).values_list('ai_mean', flat=True))
+        temp.sort()
+        labels = {int_round_tenth(i): 0 for i in temp}
+        for i in temp:
+            labels[int_round_tenth(i)] += 1
+        context['histo_labels'] = [i for i in labels]
+        context['histo_data'] = [labels[key] for key in labels]
+        return JsonResponse(context, safe=False)
+
+
+
+@login_required
+def api_sensor_confirm_errors_all(request):
+    errors = SensorError.objects.filter(id_sensor__id=int(request.GET.get('sensor_id')), confirmed=False)
+    for error in errors:
+        error.confirmed = True
+        error.save()
+    context = {'': True}
     return JsonResponse(context, safe=False)

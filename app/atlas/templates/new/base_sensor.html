@@ -1,10 +1,10 @@
 {% extends 'new/base.html' %}
 {% load static %}
-{% block title %}{{ object.name }}{% endblock %}
+{% block title %}{{ sensor.name }}{% endblock %}
 
 {% block navbar_left %}
     <ul class="list-unstyled">
-        <li class="pc-h-item"><h4>{{ object.name }}</h4></li>
+        <li class="pc-h-item"><h4>{{ sensor.name }}</h4></li>
     </ul>
 {% endblock %}
 
@@ -19,18 +19,19 @@
                     <div class="col-md-6">
                         {% block breadcump %}
                             <div class="page-header-title">
-                                <h5 class="m-b-10">Страница объекта</h5>
+                                <h5 class="m-b-10">Страница датчика</h5>
                             </div>
                             <ul class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{% url 'atlas:new:index' %}">Главная</a></li>
-                                <li class="breadcrumb-item"><a href="{% url 'atlas:company' object.id_company.id %}">{{ object.id_company }}</a></li>
-                                <li class="breadcrumb-item">{{ object.name }}</li>
+                                <li class="breadcrumb-item"><a href="{% url 'atlas:company' sensor.id_object.id_company.id %}">{{ sensor.id_object.id_company }}</a></li>
+                                <li class="breadcrumb-item"><a href="{% url 'atlas:new:trend' %}?object_id={{ sensor.id_object.id }}">{{ sensor.id_object.name }}</a></li>
+                                <li class="breadcrumb-item">{{ sensor.name }}</li>
                             </ul>
                         {% endblock %}
                     </div>
                     <div class="col-md-6">
                         {% block navbar %}
-                            {% include 'new/object_navbar.html' %}
+                            {% include 'new/sensor_navbar.html' %}
                         {% endblock %}
                     </div>
                 </div>

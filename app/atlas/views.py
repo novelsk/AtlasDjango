@@ -5,21 +5,11 @@ from django.db.models import QuerySet
 from django.http import JsonResponse, QueryDict
 from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
-from .rabbit import main
 from .forms import LoginForm, UserForm, MLForm, ObjectEventForm, ObjectEventFormEdit, CreateUserForm, ObjectEditForm
 from .models import SensorData, SensorError, Sensor, Object, Company, SensorMLSettings, ObjectEvent, AtlasUser
 from .logical import user_access_sensor_write, user_access_sensor_read, user_company_view, user_access_object_write
 from .util import int_round, int_round_tenth
 from .mail import on_error
-
-
-def test(request, object_id):
-    context = {}
-    object_item = Object.objects.get(pk=object_id)
-    context['object'] = object_item
-    sensors_list = Sensor.objects.all()
-    context['sensors_list'] = sensors_list
-    return render(request, '2index.html', context)
 
 
 # old
@@ -366,8 +356,3 @@ def api_confirm_error(request):
         error_log.save()
         return JsonResponse({'': True}, safe=False)
     return JsonResponse({'': False}, safe=False)
-
-
-@login_required
-def rabbit_start(request):
-    main()
