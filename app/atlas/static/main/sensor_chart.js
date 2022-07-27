@@ -109,13 +109,11 @@ let histogram = new Chart(charts_controls[3], {
 
 function draw_chart(count = '') {
     let request = window.location.origin + "/new/api/sensor/chart"
-    let url = new URL(window.location.href);
-    let sensor_id = url.searchParams.get("sensor_id");
-
+    const urlParams = new URLSearchParams(window.location.search);
 
     for (let i = 0; i < datasetCount; i++) {datasetState[i] = mainChart.getDatasetMeta(i).hidden;}
     jQuery.get(request,
-        {'count': count, 'sensor_id': sensor_id},
+        {'count': count, 'sensor_id': urlParams.get('sensor_id')},
         function (data) {
         let dates = [];
         for (const key in data['date']) { dates.push(data['date'][key].split(':').slice(0, 2).join(':')) }

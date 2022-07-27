@@ -6,11 +6,11 @@
 {% block card %}
     <div class="row">
         <div class="col-sm-4">
-            <div class="card align-items-center bg-primary ">
-                <h5 class="card-header text-white">Новая запись</h5>
+            <div class="card align-items-center bg-light-primary">
+                <h5 class="card-header">Новая запись</h5>
                 <div class="card-body">
                     <a href="{% url 'atlas:event_new' object.id %}"
-                       class="btn btn-outline-light">Создать</a>
+                       class="btn btn-outline-primary">Создать</a>
                 </div>
             </div>
         </div>
@@ -18,9 +18,9 @@
     <div class="row">
         {% for event in events_list %}
             <div class="col-md-6 col-xl-4">
-                <div class="card {% if event.not_done %}text-white bg-warning{% endif %}
-                                 {% if event.status == 'c' %}bg-success{% endif %}
-                                 {% if event.status == 'w' and not event.not_done%}bg-primary{% endif %}">
+                <div class="card text-dark {% if event.not_done %}bg-light-warning{% endif %}
+                                 {% if event.status == 'c' %}bg-light-success{% endif %}
+                                 {% if event.status == 'w' and not event.not_done%}bg-light-primary{% endif %}">
                     <div class="card-header">{{ event }}</div>
                     <div class="card-body">
                         <p class="card-text">Дата создания<br>{{ event.date_of_creation }}</p>
@@ -38,7 +38,7 @@
                         {% endif %}
                         <div class="row">
                             <a href="{% url 'atlas:event_edit' event.id %}"
-                               class="btn {% if event.not_done %}btn-shadow btn-outline-light{% else %}btn-outline-light{% endif %}">Открыть</a>
+                               class="btn {% if event.not_done %}btn-shadow btn-outline-warning{% else %}btn-outline-success{% endif %}">Открыть</a>
                         </div>
                     </div>
                 </div>

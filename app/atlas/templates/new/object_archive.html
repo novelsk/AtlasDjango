@@ -7,19 +7,28 @@
         <table class="table table-hover">
             <thead>
             <tr>
+                <th>Датчик</th>
+                <th>Дата и время</th>
                 <th>№ ошибки</th>
                 <th>Значение</th>
-                <th>Дата и время</th>
                 <th>Режим работы системы</th>
+                <th>Подтверждение</th>
             </tr>
             </thead>
             <tbody>
             {% for error_item in errors_list %}
                 <tr>
+                    <td>{{ error_item }}</td>
+                    <td>{{ error_item.error_start_date }}</td>
                     <td>{{ error_item.error }}</td>
                     <td>{{ error_item.data_error.last.ai_mean }}</td>
-                    <td>{{ error_item.error_start_date }}</td>
                     <td>{{ error_item.data_error.last.mode }}</td>
+                    <td>{% if not error_item.confirmed  %}
+                        <a onclick="confirm_error({{ error_item.id }}, this)"
+                           class="text-primary mb-1 confirm-button"><i data-feather="check-circle"></i></a>
+                    {% else %}
+                        {{ error_item.date_of_confirmation }}
+                    {% endif %}</td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -27,6 +36,6 @@
     </div>
 {% endblock %}
 
-{#{% block script %}#}
-{#    <script src="{% static 'main/main.js' %}"></script>#}
-{#{% endblock %}#}
+{% block script %}
+    <script src="{% static 'main/new_main.js' %}"></script>
+{% endblock %}

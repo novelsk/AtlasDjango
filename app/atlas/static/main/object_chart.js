@@ -66,13 +66,12 @@ let scatterChart = new Chart(charts_controls[3], {
 
 
 function draw_chart(count) {
-    let request = window.location.origin + "/new/api/object/chart"
-    let url = new URL(window.location.href);
-    let object_id = url.searchParams.get("object_id");
+    let request = window.location.origin + "/new/api/object/chart";
+    const urlParams = new URLSearchParams(window.location.search);
 
     for (let i = 0; i < datasetCount; i++) {datasetState[i] = mainChart.getDatasetMeta(i).hidden;}
     jQuery.get(request,
-        {'count': count, 'object_id': object_id},
+        {'count': count, 'object_id': urlParams.get('object_id')},
         function (data) {
             let dates = [];
             for (const key in data['labels']) {
@@ -104,7 +103,9 @@ function draw_chart(count) {
         },
         function (data) {
             scatterChart.data.datasets[0] = {
-                data: data
+                data: data,
+                backgroundColor: 'rgba(114, 103, 239, 0.2)',
+                borderColor: 'transparent',
             }
             scatterChart.update('none');
         });

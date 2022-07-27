@@ -45,6 +45,9 @@ class Object(models.Model):
             count += sensor.error_sensor.filter(confirmed=False).count()
         return count
 
+    def notification_count(self):
+        return self.count_sensors_alerts() + self.count_event_not_done()
+
     def __str__(self):
         return self.name
 
@@ -116,6 +119,7 @@ class SensorError(models.Model):
     error_start_date = models.DateTimeField(blank=True, verbose_name='Дата начала ошибки')
     error_end_date = models.DateTimeField(null=True, verbose_name='Дата окончания ошибки')
     info = models.CharField(null=True, max_length=100, verbose_name='Описание')
+    date_of_confirmation = models.DateTimeField(null=True, verbose_name='Дата подтверждения')
     confirmed = models.BooleanField(default=False, verbose_name='Подтвержденная')
 
     def __str__(self):

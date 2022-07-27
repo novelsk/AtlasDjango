@@ -2,10 +2,12 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import QuerySet
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
 from rest_framework.decorators import api_view
 
 from .forms import ObjectEditForm, MLForm
-from .logical import get_objects_and_sensors, user_access_object_write_new, user_access_sensor_write_new, get_sensor
+from .logical import get_objects_and_sensors, user_access_object_write_new, user_access_sensor_write_new, get_sensor, \
+    user_access_sensor_read_new
 from .models import Sensor, SensorError, Object, ObjectEvent, SensorMLSettings
 from .util import int_round_tenth
 
@@ -16,6 +18,12 @@ def index(request):
 
 
 @login_required
+def company(request):
+    """Контекст шаблона заполняется из context_processor.py"""
+    return render(request, 'new/company.html')
+
+
+@login_required
 def object_trend(request):
     return render(request, 'new/object_trend.html', get_objects_and_sensors(request))
 
@@ -23,6 +31,11 @@ def object_trend(request):
 @login_required
 def object_analytics(request):
     return render(request, 'new/object_analytics.html', get_objects_and_sensors(request))
+
+
+@login_required
+def object_sensors(request):
+    return render(request, 'new/object_sensors.html', get_objects_and_sensors(request))
 
 
 @login_required
@@ -157,12 +170,12 @@ def api_sensor_chart(request):
         return JsonResponse(context, safe=False)
 
 
-
 @login_required
 def api_sensor_confirm_errors_all(request):
     errors = SensorError.objects.filter(id_sensor__id=int(request.GET.get('sensor_id')), confirmed=False)
     for error in errors:
         error.confirmed = True
+        error.date_of_confirmation = timezone.now()
         error.save()
     context = {'': True}
     return JsonResponse(context, safe=False)

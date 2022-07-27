@@ -1,7 +1,7 @@
 <!--include navbar.js for animation-->
 <ul class="nav nav-pills nav-fill">
     <a onclick="window.location.replace('{% url 'atlas:new:sensor_trend' %}?sensor_id={{ sensor.id }}');"
-       class="nav-link">Тренд</a>
+       class="nav-link">Графики</a>
     <a onclick="window.location.replace('{% url 'atlas:new:sensor_errors' %}?sensor_id={{ sensor.id }}');"
        class="nav-link">Ошибки</a>
     <a onclick="window.location.replace('{% url 'atlas:new:sensor_settings'%}?sensor_id={{ sensor.id }}');"

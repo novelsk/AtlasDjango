@@ -62,51 +62,72 @@
                     <label>Меню</label>
                 </li>
                 <li class="pc-item">
-                    <a href="{% url 'atlas:new:index' %}" class="pc-link"><span class="pc-micon"><i
-                            class="material-icons-two-tone">dashboard</i></span><span
-                            class="pc-mtext">Домашняя</span></a>
+                    <a href="{% url 'atlas:new:index' %}" class="pc-link">
+                        <span class="pc-micon"><i class="material-icons-two-tone">dashboard</i></span>
+                        <span class="pc-mtext">Домашняя</span>
+                    </a>
                 </li>
                 <li class="pc-item pc-hasmenu">
-                    <a class="pc-link "><span class="pc-micon"><i data-feather="user"></i></span><span class="pc-mtext">Аккаунт</span><span
-                            class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                    <a class="pc-link "><span class="pc-micon"><i data-feather="user"></i></span>
+                        <span class="pc-mtext">Аккаунт</span>
+                        <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
+                    </a>
                     <ul class="pc-submenu" style="">
-                        <a href="{% url 'atlas:account' %}" class="pc-link"><span class="pc-micon"><i
-                                class="material-icons-two-tone">view_headline</i></span><span class="pc-mtext">Информацмя</span></a>
-                        <a href="{% url 'atlas:logout' %}" class="pc-link"><span class="pc-micon"><i
-                                data-feather="log-out"></i></span><span class="pc-mtext">Выйти</span></a>
+                        <a href="{% url 'atlas:account' %}" class="pc-link">
+                            <span class="pc-micon"><i class="material-icons-two-tone">view_headline</i></span>
+                            <span class="pc-mtext">Информацмя</span>
+                        </a>
+                        <a href="{% url 'atlas:logout' %}" class="pc-link">
+                            <span class="pc-micon"><i data-feather="log-out"></i></span>
+                            <span class="pc-mtext">Выйти</span>
+                        </a>
                     </ul>
                 </li>
                 {% if user.is_staff %}
                     <li class="pc-item pc-hasmenu">
-                        <a class="pc-link "><span class="pc-micon"><i class="material-icons-two-tone">admin_panel_settings</i></span><span
-                                class="pc-mtext">Администрирование</span><span class="pc-arrow"><i
-                                data-feather="chevron-right"></i></span></a>
+                        <a class="pc-link">
+                            <span class="pc-micon"><i class="material-icons-two-tone">admin_panel_settings</i></span>
+                            <span class="pc-mtext">Администрирование</span>
+                            <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
+                        </a>
                         <ul class="pc-submenu" style="">
-                            <a href="{% url 'atlas:create_user' %}" class="pc-link"><span class="pc-micon"><i
-                                    class="material-icons-two-tone">person_add</i></span><span class="pc-mtext">Создать пользователя</span></a>
+                            <a href="{% url 'atlas:create_user' %}" class="pc-link">
+                                <span class="pc-micon"><i class="material-icons-two-tone">person_add</i></span>
+                                <span class="pc-mtext">Создать пользователя</span>
+                            </a>
                         </ul>
                     </li>
                 {% endif %}
-                <li class="pc-item pc-caption">
-                    <label>Компании</label>
-                    <span>Доступные для вас компании</span>
-                </li>
                 {% regroup base_object_list by id_company as company_objects %}
                 {% for company, objects_list in company_objects %}
-                    <li class="pc-item pc-hasmenu">
-                        <a class="pc-link"><span class="pc-micon"><i class="material-icons-two-tone">business</i></span><span
-                                class="pc-mtext">{{ company }}</span><span class="pc-arrow"><i
-                                data-feather="chevron-right"></i></span></a>
-                        {% for object in objects_list %}
-                            <ul class="pc-submenu">
-                                <li class="pc-item"><a class="pc-link" href="{% url 'atlas:new:trend' %}?object_id={{ object.id }}">{{ object }}
-                                    {% if object.event_not_done != 0 %}
-                                        <span class="badge bg-secondary">{{ object.event_not_done }}</span>
-                                    {% endif %}
-                                </a></li>
-                            </ul>
-                        {% endfor %}
+                    <li class="pc-item pc-caption">
+                        <label>{{ company.name }}</label>
                     </li>
+                    {% for object in objects_list %}
+                        <li class="pc-item pc-hasmenu">
+                            <a class="pc-link">
+                                <span class="pc-mtext">{{ object }}</span>
+                                {% if object.notification_count %}
+                                    <span class="badge bg-secondary">{{ object.notification_count }}</span>
+                                {% endif %}
+                                <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
+                            </a>
+                            {% for sensor in object.sensor_object.all %}
+                                <ul class="pc-submenu">
+                                    <li class="pc-item">
+                                        <a class="pc-link"
+                                           href="{% url 'atlas:new:sensor_trend' %}?sensor_id={{ sensor.id }}">
+                                            {{ sensor.name }}
+                                            {% if sensor.count_alerts %}
+                                                <span class="badge bg-secondary">{{ sensor.count_alerts }}</span>
+                                            {% endif %}
+                                        </a>
+                                    </li>
+                                </ul>
+                            {% endfor %}
+                        </li>
+                    {% endfor %}
+                    <hr>
                 {% endfor %}
             </ul>
         </div>

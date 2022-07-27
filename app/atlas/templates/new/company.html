@@ -7,7 +7,8 @@
         <h5 class="m-b-10">Домашняя</h5>
     </div>
     <ul class="breadcrumb">
-        <li class="breadcrumb-item">Главная</li>
+        <li class="breadcrumb-item"><a href="{% url 'atlas:new:index' %}">Главная</a></li>
+        <li class="breadcrumb-item">{{ base_object_list.0.id_company.name }}</li>
     </ul>
 {% endblock %}
 {% block navbar %}{% endblock %}
@@ -24,7 +25,6 @@
                 <thead>
                 <tr>
                     <th class="text-center">Состояние</th>
-                    <th class="text-center">Компания</th>
                     <th class="text-center">Объект</th>
                     <th class="text-center">Кол-во датчиков</th>
                     <th></th>
@@ -40,7 +40,6 @@
                                 <p class="text-success mb-1"><i data-feather="check"></i></p>
                             {% endif %}
                         </td>
-                        <td class="text-center">{{ object.id_company }}</td>
                         <td class="text-center">{{ object.name }}</td>
                         <td class="text-center">{{ object.sensor_object.count }}</td>
                         <td><a href="{% url 'atlas:object_settings' object.id %}" style="color: black"><i

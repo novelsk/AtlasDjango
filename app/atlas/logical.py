@@ -59,6 +59,17 @@ def can_write(groups):
     return False
 
 
+def can_read(groups):
+    """
+    Проверяет возможность записи из списка групп
+    """
+    if groups is not None:
+        for i in groups:
+            if i.read:
+                return True
+    return False
+
+
 def user_access_object_write(request, object_id):
     """
     Проверяет наличие доступа к изменению настроек объекта
@@ -93,6 +104,15 @@ def user_access_sensor_write_new(request):
     company = get_object_or_404(Sensor, pk=int(request.GET.get('sensor_id'))).id_object.id_company
     groups = user_access_company(request, company)
     return can_write(groups)
+
+
+def user_access_sensor_read_new(request):
+    """
+    Проверяет наличие доступа к датчику
+    """
+    company = get_object_or_404(Sensor, pk=int(request.GET.get('sensor_id'))).id_object.id_company
+    groups = user_access_company(request, company)
+    return can_read(groups)
 
 
 def user_access_sensor_read(request, sensor_id):

@@ -10,11 +10,10 @@
         {% endfor %}
     </div>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-12">
             {% if object.image.name != '' %}
                 <img class="img-fluid card-img-bottom" src="{{ object.image.url }}" alt="">
             {% endif %}
         </div>
     </div>
 {% endblock %}
-

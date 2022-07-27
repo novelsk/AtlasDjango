@@ -1,0 +1,26 @@
+{% extends 'new/base_object.html' %}
+{% load static %}
+{% block title %}{{ object.name }} - Аналитика{% endblock %}
+
+
+{% block card %}
+    <div class="row">
+    {% for sensor in sensors_list %}
+            <div class="col-md-2">
+                <div class="card text-white{% if sensor.count_alerts %} bg-warning{% else %} bg-success{% endif %}"
+                    onclick="window.location.replace('{% url 'atlas:new:sensor_trend' %}?sensor_id={{ sensor.id }}');"
+                    onmouseover="this.classList = 'card text-white bg-primary';"
+                    onmouseout="this.classList = 'card text-white{% if sensor.count_alerts %} bg-warning{% else %} bg-success{% endif %}';">
+                    <div class="card-header text-center">
+                        {{ sensor.name }}
+                    </div>
+                    <div class="card-body text-center">
+                        Значение: {{ sensor.data_sensor.last.ai_mean }}<br>
+                        Время: {{ sensor.data_sensor.last.date.time }}
+                    </div>
+                </div>
+            </div>
+    {% endfor %}
+    </div>
+{% endblock %}
+

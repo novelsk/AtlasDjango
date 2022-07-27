@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import QuerySet
 from django.http import JsonResponse, QueryDict
 from django.shortcuts import render, redirect
+from django.utils import timezone
 from rest_framework.decorators import api_view
 from .forms import LoginForm, UserForm, MLForm, ObjectEventForm, ObjectEventFormEdit, CreateUserForm, ObjectEditForm
 from .models import SensorData, SensorError, Sensor, Object, Company, SensorMLSettings, ObjectEvent, AtlasUser
@@ -353,6 +354,7 @@ def api_confirm_error(request):
     error_log = SensorError.objects.get(id=int(request.GET.get('error_log_id')))
     if user_access_sensor_read(request, error_log.id_sensor.id):
         error_log.confirmed = True
+        error_log.date_of_confirmation = timezone.now()
         error_log.save()
         return JsonResponse({'': True}, safe=False)
     return JsonResponse({'': False}, safe=False)

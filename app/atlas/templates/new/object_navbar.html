@@ -1,15 +1,25 @@
 <!--include navbar.js for animation-->
 <ul class="nav nav-pills nav-fill">
-    <a onclick="window.location.replace('{% url 'atlas:new:trend' %}?object_id={{ object.id }}');"
-       class="nav-link">Тренд</a>
-    <a onclick="window.location.replace('{% url 'atlas:new:analytics' %}?object_id={{ object.id }}');"
+    <a onclick="window.location.replace('{% url 'atlas:new:object_sensors' %}?object_id={{ object.id }}');"
+       class="nav-link">Датчики</a>
+    <a onclick="window.location.replace('{% url 'atlas:new:object_trend' %}?object_id={{ object.id }}');"
+       class="nav-link">Графики</a>
+    <a onclick="window.location.replace('{% url 'atlas:new:object_scheme' %}?object_id={{ object.id }}');"
+       class="nav-link">Мнемосхема</a>
+    <a onclick="window.location.replace('{% url 'atlas:new:object_analytics' %}?object_id={{ object.id }}');"
        class="nav-link">Аналитика</a>
-    <a onclick="window.location.replace('{% url 'atlas:new:archive' %}?object_id={{ object.id }}');"
-       class="nav-link">Арив событий</a>
+    <a onclick="window.location.replace('{% url 'atlas:new:object_archive' %}?object_id={{ object.id }}');"
+       class="nav-link">Ошибки
+        {% if object.count_sensors_alerts %}
+            <span class="badge bg-light-primary">{{ object.count_sensors_alerts }}</span>
+        {% endif %}
+    </a>
     <a onclick="window.location.replace('{% url 'atlas:new:object_events' %}?object_id={{ object.id }}');"
-       class="nav-link">ТОиР</a>
+       class="nav-link">ТОиР
+        {% if object.count_event_not_done %}
+            <span class="badge bg-light-primary">{{ object.count_event_not_done }}</span>
+        {% endif %}
+    </a>
     <a onclick="window.location.replace('{% url 'atlas:new:object_settings' %}?object_id={{ object.id }}');"
        class="nav-link">Настройки</a>
-    <a onclick="window.location.replace('{% url 'atlas:new:scheme' %}?object_id={{ object.id }}');"
-       class="nav-link">Мнемосхема</a>
 </ul>
