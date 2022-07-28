@@ -17,6 +17,9 @@ function confirm_error(error_log_id, button) {
             if (data['']) {
                 button.hidden = true;
             }
+            else {
+                alert('Ошибка');
+            }
         }
     );
 }

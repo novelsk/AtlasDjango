@@ -2,6 +2,7 @@ import datetime
 
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 
 from .models import AtlasUser, Company, UserAccessGroups, Sensor, Object
 
@@ -140,7 +141,8 @@ def base_alerts(request):
                     'style': 'alert-warning',
                     'head': object_item.name,
                     'body': 'Просроченные мероприятия по объекту: ' + str(object_item.count_event_not_done()),
-                    'href': f'/object/{object_item.id}/events',
+                    'href': reverse('atlas:new:object_events'),
+                    'context': f'?object_id={object_item.id}'
                     })
             for sensor in object_item.sensor_object.all():
                 if sensor.count_alerts():
@@ -150,7 +152,8 @@ def base_alerts(request):
                         'head': f'{object_item.name} - {sensor.name}',
                         'body': f'Ошибок датчика: ' + str(sensor.error_sensor.count()),
                         'after': f'Последняя запись: {temp.time()}',
-                        'href': f'/object/{object_item.id}/{sensor.id}',
+                        'href': reverse('atlas:new:sensor_errors'),
+                        'context': f'?sensor_id={sensor.id}'
                     })
     return alerts
 

@@ -23,7 +23,7 @@
                             </div>
                             <ul class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{% url 'atlas:new:index' %}">Главная</a></li>
-                                <li class="breadcrumb-item"><a href="{% url 'atlas:new:company'%}">{{ sensor.id_object.id_company }}</a></li>
+                                <li class="breadcrumb-item"><a href="{% url 'atlas:new:company'%}?company_id={{ sensor.id_object.id_company.id }}">{{ sensor.id_object.id_company }}</a></li>
                                 <li class="breadcrumb-item"><a href="{% url 'atlas:new:object_trend' %}?object_id={{ sensor.id_object.id }}">{{ sensor.id_object.name }}</a></li>
                                 <li class="breadcrumb-item">{{ sensor.name }}</li>
                             </ul>

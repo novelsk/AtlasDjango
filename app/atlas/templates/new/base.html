@@ -73,7 +73,7 @@
                         <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
                     </a>
                     <ul class="pc-submenu" style="">
-                        <a href="{% url 'atlas:account' %}" class="pc-link">
+                        <a href="{% url 'atlas:new:account' %}" class="pc-link">
                             <span class="pc-micon"><i class="material-icons-two-tone">view_headline</i></span>
                             <span class="pc-mtext">Информацмя</span>
                         </a>
@@ -91,7 +91,7 @@
                             <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
                         </a>
                         <ul class="pc-submenu" style="">
-                            <a href="{% url 'atlas:create_user' %}" class="pc-link">
+                            <a href="{% url 'atlas:new:create_user' %}" class="pc-link">
                                 <span class="pc-micon"><i class="material-icons-two-tone">person_add</i></span>
                                 <span class="pc-mtext">Создать пользователя</span>
                             </a>
@@ -153,7 +153,7 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right pc-h-dropdown">
                             {% for alert in alerts %}
-                                <a href="{{ alert.href }}" class="dropdown-item">
+                                <a href="{{ alert.href }}{{ alert.context }}" class="dropdown-item">
                                     <div class="alert {{ alert.style }}">
                                         <h5 class="alert-heading">{{ alert.head }}</h5>
                                         <p>{{ alert.body }}</p>
@@ -171,7 +171,7 @@
                             {{ user.initials }}
                         </a>
                         <div class="dropdown-menu dropdown-menu-right pc-h-dropdown">
-                            <a href="{% url 'atlas:account' %}" class="dropdown-item">
+                            <a href="{% url 'atlas:new:account' %}" class="dropdown-item">
                                 <i data-feather="user"></i>
                                 <span>Аккаунт</span>
                             </a>

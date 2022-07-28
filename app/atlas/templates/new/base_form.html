@@ -1,37 +1,28 @@
-{% extends 'base.html' %}
+{% extends 'new/base.html' %}
 {% load static %}
-{% block title %}base_form.html{% endblock %}
-{% block stylesheet %}
-    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'datetimepicker-master/build/jquery.datetimepicker.min.css' %}">
-{% endblock %}
+{% block title %}base_form{% endblock %}
 
 
 {% block content %}
 <!-- [ Main Content ] start -->
 <div class="pc-container">
     <div class="pcoded-content">
-        <!-- [ breadcrumb ] start -->
         <div class="page-header">
             <div class="page-block">
                 <div class="row align-items-center">
-                    <div class="col-md-12">
-                        {% block nav %}
-
-                        {% endblock %}
+                    <div class="col-md-6">
+                        {% block breadcump %}{% endblock %}
+                    </div>
+                    <div class="col-md-6">
+                        {% block navbar %}{% endblock %}
                     </div>
                 </div>
             </div>
         </div>
-        <!-- [ breadcrumb ] end -->
-        <!-- [ Main Content ] start -->
+		<!-- [ Main Content ] start -->
         <div class="row">
-            <!-- [ sample-page ] start -->
             <div class="col-lg-6">
                 <div class="card align-items-center align-self-center">
-                    <div class="card-header">
-                        <h5>{% block form_label %}{% endblock %}</h5>
-                    </div>
                     <div class="card-body col-md-10">
                         <form method="post" {% block enctype %}{% endblock %}>
                             {% csrf_token %}
@@ -68,13 +59,12 @@
             </div>
         </div>
         {% block body %}{% endblock %}
-        <!-- [ Main Content ] end -->
-    </div>
+		<!-- [ Main Content ] end -->
+	</div>
 </div>
 
 {% endblock %}
-{% block script %}
-    <script src="{% static 'main/main.js' %}"></script>
-    <script src="{% static 'datetimepicker-master/build/jquery.datetimepicker.full.min.js' %}"></script>
-    <script src="{% static 'main/timeChoice.js' %}"></script>
+{% block base_script %}
+    <script src="{% static 'main/new_main.js' %}"></script>
+    {% block script %}{% endblock %}
 {% endblock %}

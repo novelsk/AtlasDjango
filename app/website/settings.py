@@ -167,8 +167,12 @@ RABBIT_QUEUE = os.environ.get('RABBIT_QUEUE')
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = 'tmp/app-messages'
-SERVER_EMAIL = 'atlas-admins@website.ru'
-ADMIN = [
-    ('Test', 'some@website.ru')
-]
-EMAIL_SUBJECT_PREFIX = 'ADMIN'
+# SERVER_EMAIL = 'novel@aperture-science.ru'
+# ADMINS = [
+#     ('Roman', 'romkaaer@mail.ru'),
+# ]
+# EMAIL_HOST = 'smtp.yandex.ru'
+# EMAIL_HOST_USER = 'novel@aperture-science.ru'
+# EMAIL_HOST_PASSWORD = ''
+# EMAIL_PORT = 465
+# EMAIL_USE_SSL = True

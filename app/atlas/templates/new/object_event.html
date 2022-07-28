@@ -9,7 +9,7 @@
             <div class="card align-items-center bg-light-primary">
                 <h5 class="card-header">Новая запись</h5>
                 <div class="card-body">
-                    <a href="{% url 'atlas:event_new' object.id %}"
+                    <a href="{% url 'atlas:new:object_events_new' %}?object_id={{ object.id }}"
                        class="btn btn-outline-primary">Создать</a>
                 </div>
             </div>
@@ -37,7 +37,7 @@
                             <p class="card-text">План работ<br>{{ event.plan }}</p>
                         {% endif %}
                         <div class="row">
-                            <a href="{% url 'atlas:event_edit' event.id %}"
+                            <a href="{% url 'atlas:new:object_event_edit' %}?event_id={{ event.id }}"
                                class="btn {% if event.not_done %}btn-shadow btn-outline-warning{% else %}btn-outline-success{% endif %}">Открыть</a>
                         </div>
                     </div>

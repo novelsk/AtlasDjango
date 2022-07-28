@@ -1,0 +1,16 @@
+{% extends 'new/base_form.html' %}
+{% load static %}
+{% block title %}Редактировать{% endblock %}
+{% block breadcump %}
+    <div class="page-header-title">
+        <h5 class="m-b-10">Журнал работ</h5>
+    </div>
+    <ul class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'atlas:new:index' %}">Главная</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'atlas:new:company'%}?company_id={{ event.id_object.id_company.id }}">{{ event.id_object.id_company }}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'atlas:new:object_trend' %}?object_id={{ event.id_object.id }}">{{ event.id_object.name }}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'atlas:new:object_events' %}?object_id={{ event.id_object.id }}">Журнал работ</a></li>
+        <li class="breadcrumb-item">Редактировать</li>
+    </ul>
+{% endblock %}
+{% block form_label %}Редактировать{% endblock %}

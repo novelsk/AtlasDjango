@@ -217,6 +217,5 @@ class UserAccessGroups(models.Model):
 
 
 # signals
-# Избежать ошибку self: создать объект класс сигнала и вызвать метод объекта а не класса
-# sensor_data_signal = SensorDataSignals
+# sensor_data_signal = SensorDataSignals()
 # post_save.connect(sensor_data_signal.time_warning, sender=SensorData)

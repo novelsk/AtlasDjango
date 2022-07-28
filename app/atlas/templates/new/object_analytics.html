@@ -49,7 +49,7 @@
                         </div>
                     </td>
                     <td>{{ sensor.data_sensor.last.date }}</td>
-                    <td><a href="{% url 'atlas:settings_sensor' sensor_id=sensor.id %}" style="color: black"><i
+                    <td><a href="{% url 'atlas:new:sensor_settings' %}?sensor_id={{ sensor.id }}" style="color: black"><i
                             data-feather="settings"></i></a></td>
                 </tr>
             {% endfor %}

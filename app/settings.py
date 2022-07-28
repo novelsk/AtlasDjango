@@ -164,10 +164,7 @@ RABBIT_REQUEST_URL = 'amqp://user:atlasrabbit@rabbitmq:5672/%2F'
 RABBIT_EXCHANGE = 'release'
 RABBIT_QUEUE = 'Clone'
 
-EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH = 'tmp/app-messages'
-SERVER_EMAIL = 'atlas-admins@website.ru'
 ADMIN = [
-    ('Test', 'some@website.ru')
+    ('Test1', 'some1@website.ru'),
+    ('Test2', 'some2@website.ru'),
 ]
-EMAIL_SUBJECT_PREFIX = 'ADMIN'

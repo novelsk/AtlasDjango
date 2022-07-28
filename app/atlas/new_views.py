@@ -1,14 +1,13 @@
 from django.contrib.auth.decorators import login_required
-from django.db.models import QuerySet
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from rest_framework.decorators import api_view
 
-from .forms import ObjectEditForm, MLForm
+from .forms import ObjectEditForm, MLForm, UserForm, CreateUserForm, ObjectEventForm, ObjectEventFormEdit
 from .logical import get_objects_and_sensors, user_access_object_write_new, user_access_sensor_write_new, get_sensor, \
-    user_access_sensor_read_new
-from .models import Sensor, SensorError, Object, ObjectEvent, SensorMLSettings
+    user_access_sensor_read_new, user_company_view
+from .models import Sensor, SensorError, Object, ObjectEvent, SensorMLSettings, AtlasUser, Company
 from .util import int_round_tenth
 
 
@@ -19,8 +18,12 @@ def index(request):
 
 @login_required
 def company(request):
-    """Контекст шаблона заполняется из context_processor.py"""
-    return render(request, 'new/company.html')
+    context = {}
+    company_item = get_object_or_404(Company, pk=int(request.GET.get('company_id')))
+    context['company'] = company_item
+    objects_list = company_item.object_company.order_by('pk')
+    context['objects_list'] = list(objects_list)
+    return render(request, 'new/company.html', context=context)
 
 
 @login_required
@@ -61,6 +64,43 @@ def object_events(request):
     events = ObjectEvent.objects.filter(id_object=object_item).order_by('-status')
     context['events_list'] = list(events)
     return render(request, 'new/object_event.html', context)
+
+
+@login_required
+def object_events_new(request):
+    context = {}
+    object_item = get_object_or_404(Object, pk=int(request.GET.get('object_id')))
+    context['object'] = object_item
+    if request.method == 'POST':
+        form = ObjectEventForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return object_events(request)
+        context['form'] = form
+        return render(request, 'new/object_event_new.html', context)
+    else:
+        form = ObjectEventForm(initial={'id_object': object_item})
+        context['form'] = form
+        return render(request, 'new/object_event_new.html', context)
+
+
+@login_required
+def object_event_edit(request,):
+    context = {}
+    event = ObjectEvent.objects.get(pk=request.GET.get('event_id'))
+    context['event'] = event
+
+    if request.method == 'POST':
+        form = ObjectEventFormEdit(request.POST, instance=event)
+        context['form'] = form
+        if form.is_valid():
+            form.save()
+            context['success'] = True
+        return render(request, 'new/object_event_edit.html', context)
+    else:
+        form = ObjectEventFormEdit(instance=event)
+        context['form'] = form
+        return render(request, 'new/object_event_edit.html', context)
 
 
 def object_settings(request):
@@ -120,6 +160,41 @@ def sensor_settings(request):
         return render(request, 'new/sensor_settings.html', context)
 
 
+@login_required
+def account(request):
+    if request.method == 'POST':
+        form = UserForm(request.POST, instance=request.user, initial={'organization': user_company_view(request)})
+        context = {'form': form}
+        if form.is_valid():
+            form.save()
+            context['success'] = True
+        return render(request, 'new/account.html', context)
+    else:
+        form = UserForm(instance=request.user, initial={'organization': user_company_view(request)})
+        context = {'form': form}
+        return render(request, 'new/account.html', context)
+
+
+def create_user(request):
+    if request.user.is_staff:
+        context = {}
+        if request.method == 'POST':
+            form = CreateUserForm(request.POST)
+            context['form'] = form
+            if form.is_valid():
+                AtlasUser.objects.create_user(username=form.cleaned_data['username'],
+                                              password=form.cleaned_data['password'],
+                                              email=form.cleaned_data['email'])
+                context['success'] = True
+            return render(request, 'new/create_user.html', context)
+        else:
+            form = CreateUserForm()
+            context['form'] = form
+            return render(request, 'new/create_user.html', context)
+    else:
+        return redirect('atlas:new:index')
+
+
 # api
 @api_view(['GET'])
 @login_required
@@ -172,10 +247,12 @@ def api_sensor_chart(request):
 
 @login_required
 def api_sensor_confirm_errors_all(request):
-    errors = SensorError.objects.filter(id_sensor__id=int(request.GET.get('sensor_id')), confirmed=False)
-    for error in errors:
-        error.confirmed = True
-        error.date_of_confirmation = timezone.now()
-        error.save()
-    context = {'': True}
-    return JsonResponse(context, safe=False)
+    if user_access_sensor_read_new(request):
+        errors = SensorError.objects.filter(id_sensor__id=int(request.GET.get('sensor_id')), confirmed=False)
+        for error in errors:
+            error.confirmed = True
+            error.date_of_confirmation = timezone.now()
+            error.save()
+        context = {'': True}
+        return JsonResponse(context, safe=False)
+    return JsonResponse({'': False}, safe=False)

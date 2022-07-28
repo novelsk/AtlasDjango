@@ -1,0 +1,15 @@
+{% extends 'new/base_form.html' %}
+{% load static %}
+{% block title %}Новая запись{% endblock %}
+{% block breadcump %}
+    <div class="page-header-title">
+        <h5 class="m-b-10">Журнал работ</h5>
+    </div>
+    <ul class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'atlas:new:index' %}">Главная</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'atlas:new:company'%}">{{ object.id_company }}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'atlas:new:object_trend' %}?object_id={{ object.id }}">{{ object.name }}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'atlas:new:object_events' %}?object_id={{ object.id }}">Журнал работ</a></li>
+        <li class="breadcrumb-item">Новая запись</li>
+    </ul>
+{% endblock %}

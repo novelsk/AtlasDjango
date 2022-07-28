@@ -1,0 +1,12 @@
+{% extends 'new/base_form.html' %}
+{% load static %}
+{% block title %}Аккаунт{% endblock %}
+{% block breadcump %}
+    <div class="page-header-title">
+        <h5 class="m-b-10">Аккаунт</h5>
+    </div>
+    <ul class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'atlas:new:index' %}">Главная</a></li>
+        <li class="breadcrumb-item">Аккаунт</li>
+    </ul>
+{% endblock %}

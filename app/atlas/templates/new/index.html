@@ -43,7 +43,7 @@
                         <td class="text-center">{{ object.id_company }}</td>
                         <td class="text-center">{{ object.name }}</td>
                         <td class="text-center">{{ object.sensor_object.count }}</td>
-                        <td><a href="{% url 'atlas:object_settings' object.id %}" style="color: black"><i
+                        <td><a href="{% url 'atlas:new:object_settings'%}?object={{ object.id }}" style="color: black"><i
                                 data-feather="settings"></i></a></td>
                     </tr>
                 {% endfor %}
