@@ -14,12 +14,8 @@ buttons.forEach((item) => {
 function confirm_error(error_log_id, button) {
     jQuery.get(window.location.origin + "/api/confirm_error", {'error_log_id': error_log_id},
         function (data) {
-            if (data['']) {
-                button.hidden = true;
-            }
-            else {
-                alert('Ошибка');
-            }
+            if (data['']) {button.hidden = true;}
+            else {alert('Ошибка');}
         }
     );
 }
@@ -32,12 +28,8 @@ function confirm_errors_all() {
         function (data) {
             if (data['']) {
                 let table = Array.from(document.getElementById('table-errors').children);
-                table.forEach((item) => {
-                    item.hidden = true
-                });
-            } else {
-                alert('Ошибка');
-            }
+                table.forEach((item) => {item.lastElementChild.innerHTML = ''});
+            } else {alert('Ошибка');}
         }
     );
 }

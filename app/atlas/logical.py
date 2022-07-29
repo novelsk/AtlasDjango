@@ -1,5 +1,6 @@
 import datetime
 
+from django.core.paginator import Paginator
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -178,3 +179,13 @@ def get_sensor(request):
     sensor = get_object_or_404(Sensor, pk=int(request.GET.get('sensor_id')))
     context['sensor'] = sensor
     return context
+
+
+def pages(request, errors):
+    paginator = Paginator(errors, 20)
+    if 'page' in request.GET:
+        page_num = request.GET['page']
+    else:
+        page_num = 1
+    page = paginator.get_page(page_num)
+    return {'page': page, 'errors_list': page.object_list}

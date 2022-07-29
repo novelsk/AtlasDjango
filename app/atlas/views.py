@@ -8,14 +8,15 @@ from .forms import LoginForm
 from .models import SensorData, SensorError, Sensor
 from .logical import user_access_sensor_read
 from .util import int_round
-from .mail import on_error, on_warning_last_data_upd
+from .mail import on_error
 
 
 @login_required
 def test(request):
-    # temp = Sensor.objects.first()
-    on_warning_last_data_upd('some')
-    return redirect('atlas:new:index')
+    temp = SensorError.objects.last()  # type: SensorError
+    data = temp.data_error.count()
+    context = {'': data}
+    return JsonResponse(context, safe=False)
 
 
 @login_required
@@ -47,6 +48,7 @@ def sensors_data(request):
                                             id_sensor_repr=data.get('id_sensor'))
         if current_sensor is not None:
             context = {'': 'if current_sensor is not None'}
+            previous_data = SensorData.objects.filter(id_sensor=current_sensor).last()  # type: SensorData
             sensor_data = SensorData.objects.create(
                 id_sensor=current_sensor, date=data.get('date'), mode=int_round(data.get('mode')),
                 ai_max=data.get('ai_max'), ai_min=data.get('ai_min'),
@@ -54,7 +56,6 @@ def sensors_data(request):
                 stat_max=data.get('stat_max'), ml_min=data.get('ml_min'),
                 ml_max=data.get('ml_max'), status=data.get('status'),
             )
-            previous_data = SensorData.objects.filter(id_sensor=current_sensor).first()  # type: SensorData
             error = int(data.get('error'))
 
             '''

@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view
 
 from .forms import ObjectEditForm, MLForm, UserForm, CreateUserForm, ObjectEventForm, ObjectEventFormEdit
 from .logical import get_objects_and_sensors, user_access_object_write_new, user_access_sensor_write_new, get_sensor, \
-    user_access_sensor_read_new, user_company_view
+    user_access_sensor_read_new, user_company_view, pages
 from .models import Sensor, SensorError, Object, ObjectEvent, SensorMLSettings, AtlasUser, Company
 from .util import int_round_tenth
 
@@ -51,8 +51,8 @@ def object_archive(request):
     context = {}
     object_item = get_object_or_404(Object, pk=int(request.GET.get('object_id')))
     context['object'] = object_item
-    errors = SensorError.objects.filter(id_sensor__id_object=object_item).order_by('-error_start_date')[:40]
-    context['errors_list'] = list(errors)
+    errors = SensorError.objects.filter(id_sensor__id_object=object_item).order_by('-error_start_date')
+    context |= pages(request, errors)
     return render(request, 'new/object_archive.html', context)
 
 
@@ -132,8 +132,8 @@ def sensor_errors(request):
     context = {}
     sensor = get_object_or_404(Sensor, pk=int(request.GET.get('sensor_id')))
     context['sensor'] = sensor
-    errors = SensorError.objects.filter(id_sensor=sensor, confirmed=False).order_by('-error_start_date')
-    context['errors_list'] = list(errors)
+    errors = SensorError.objects.filter(id_sensor=sensor).order_by('-error_start_date')
+    context |= pages(request, errors)
     return render(request, 'new/sensor_errors.html', context)
 
 

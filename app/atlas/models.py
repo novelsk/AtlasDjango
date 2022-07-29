@@ -123,7 +123,7 @@ class SensorError(models.Model):
     confirmed = models.BooleanField(default=False, verbose_name='Подтвержденная')
 
     def __str__(self):
-        return self.id_sensor.name
+        return str(self.pk) + ' ' + self.id_sensor.name
 
     class Meta:
         verbose_name = 'Ошибка'
