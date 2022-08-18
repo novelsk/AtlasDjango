@@ -1,0 +1,128 @@
+{% extends 'new/base_object.html' %}
+{% load static %}
+{% block title %}{{ object.name }} - Мнемосхема{% endblock %}
+
+
+{% block card %}
+    <div class="row">
+        {% for sensor in sensors_list %}
+            <h6>{{ sensor.name }}: {{ sensor.data_sensor.last.ai_mean }}</h6>
+        {% endfor %}
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            {% if object.image.name != '' %}
+                <div id="scheme-grid" style="background: url({{ object.image.url }}); background-size: 100% 100%;"></div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        const grid = document.getElementById('scheme-grid');
+        let cellsElems = [];
+        let sensorsInfo = null;
+        for (let i = 0; i < 12; i++) {
+            let row = document.createElement('div');
+            row.className = 'row';
+            row.style.height = '3.5rem';
+            for (let j = 0; j < 12; j++) {
+                let cell = document.createElement('div');
+                cell.className = 'col text-center';
+                cellsElems.push(cell);
+                row.appendChild(cell);
+            }
+            grid.appendChild(row);
+        }
+
+        for (let i = 0; i < cellsElems.length; i++) {
+            let item = cellsElems[i];
+
+            item.onmouseover = cellOnmouseover;
+            item.onmouseout = cellOnmouseout;
+            item.addEventListener('dragstart', dragStart);
+            item.addEventListener('dragover', dragOver);
+            item.addEventListener('drop', drop);
+            item.id = i;
+        }
+
+        function upd_cells() {
+            cellsElems.forEach((item) => {
+                let unPos = 0;
+                for (const dataKey in sensorsInfo) {
+                    let vol = sensorsInfo[dataKey][0];
+                    let pos = sensorsInfo[dataKey][1];
+                    if (pos === -1) {
+                        pos = unPos;
+                        unPos++;
+                    }
+                    cellsElems[pos].setAttribute('data-sensor-id', dataKey);
+                    cellsElems[pos].innerText = vol;
+                }
+                if (item.hasAttribute('data-sensor-id')) {
+                    item.draggable = true;
+                    item.style = 'background: rgba(255, 255, 255, 0.6)';
+                } else {
+                    item.removeAttribute('data-sensor-id');
+                    item.removeAttribute('draggable');
+                    item.removeAttribute('style');
+                    item.innerText = '';
+                }
+            });
+        }
+
+        function cellOnmouseover() {
+            this.style = 'background: rgba(114, 103, 239, 0.6)';
+        }
+
+        function cellOnmouseout() {
+            this.removeAttribute('style');
+            if (this.hasAttribute('data-sensor-id')) {
+                this.style = 'background: rgba(255, 255, 255, 0.6)';
+            }
+        }
+
+        function dragStart(evt) {
+            evt.dataTransfer.setData('id', this.id);
+            evt.dataTransfer.effectAllowed = 'move';
+        }
+
+        function dragOver(evt) {
+            evt.dataTransfer.dropEffect = 'move';
+            evt.preventDefault();
+        }
+
+        function drop(evt) {
+            const s = evt.dataTransfer.getData('id');
+            if (s && s !== this.id) {
+                let sensor_id = cellsElems[s].getAttribute('data-sensor-id');
+                cellsElems[s].removeAttribute('data-sensor-id');
+
+                this.setAttribute('data-sensor-id', sensor_id);
+                sensorsInfo[sensor_id][1] = this.id;
+                evt.preventDefault();
+                upd_cells();
+
+                let context = {};
+                let request = window.location.origin + "/new/api/scheme/save";
+                for (const key in sensorsInfo) { context[key] = sensorsInfo[key][1]; }
+                jQuery.get(request, context);
+            }
+        }
+
+        function api_grid_upd() {
+            let request = window.location.origin + "/new/api/scheme/grid";
+            const urlParams = new URLSearchParams(window.location.search);
+            jQuery.get(request, {'object_id': urlParams.get('object_id')},
+                function (data) {
+                    sensorsInfo = data;
+                    upd_cells();
+                }
+            );
+        }
+
+        jQuery(document).ready(api_grid_upd);
+        setInterval(api_grid_upd, 60000);
+    </script>
+{% endblock %}

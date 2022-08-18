@@ -8,15 +8,13 @@ from .forms import LoginForm
 from .models import SensorData, SensorError, Sensor
 from .logical import user_access_sensor_read
 from .util import int_round
-from .mail import on_error
+from .mail import on_error, on_warning_last_data_upd
 
 
 @login_required
 def test(request):
-    temp = SensorError.objects.last()  # type: SensorError
-    data = temp.data_error.count()
-    context = {'': data}
-    return JsonResponse(context, safe=False)
+    on_warning_last_data_upd('проверка почты')
+    return redirect('atlas:new:index')
 
 
 @login_required
@@ -81,6 +79,7 @@ def sensors_data(request):
                         id_sensor=current_sensor, error=error, error_start_date=sensor_data.date)
                     new_journal.save()
                     sensor_data.id_error_log = new_journal
+                    on_error(sensor_data)
                 elif previous_data.id_error_log.error == error:
                     sensor_data.id_error_log = previous_data.id_error_log
                 else:
@@ -89,10 +88,9 @@ def sensors_data(request):
                         id_sensor=current_sensor, error=error, error_start_date=sensor_data.date)
                     new_journal.save()
                     sensor_data.id_error_log = new_journal
+                    on_error(sensor_data)
             sensor_data.save()
             context[''] = 'GOOD'
-            if error:
-                on_error(sensor_data)
     return JsonResponse(context, safe=False)
 
 

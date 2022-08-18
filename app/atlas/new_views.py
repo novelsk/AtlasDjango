@@ -43,7 +43,7 @@ def object_sensors(request):
 
 @login_required
 def object_scheme(request):
-    return render(request, 'new/object_scheme.html', get_objects_and_sensors(request))
+    return render(request, 'new/object_scheme_grid.html', get_objects_and_sensors(request))
 
 
 @login_required
@@ -256,3 +256,22 @@ def api_sensor_confirm_errors_all(request):
         context = {'': True}
         return JsonResponse(context, safe=False)
     return JsonResponse({'': False}, safe=False)
+
+
+@login_required
+def api_scheme_grid(request):
+    context = {}
+    object_item = get_object_or_404(Object, pk=int(request.GET.get('object_id')))
+    for i in object_item.sensor_object.all():
+        context[i.pk] = [i.data_sensor.last().ai_mean, i.mnemonic_scheme_pos]
+    return JsonResponse(context, safe=False)
+
+
+@login_required
+def api_scheme_save(request):
+    context = request.GET
+    for i in context:
+        sensor_item = Sensor.objects.get(pk=int(i))
+        sensor_item.mnemonic_scheme_pos = int(context[i])
+        sensor_item.save()
+    return JsonResponse(context, safe=False)

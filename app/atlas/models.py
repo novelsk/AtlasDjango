@@ -31,6 +31,7 @@ class Object(models.Model):
     name = models.CharField(max_length=50, verbose_name='Название')
     info = models.CharField(blank=True, max_length=100, verbose_name='Информация')
     image = models.ImageField(blank=True, upload_to=get_image_name, verbose_name='Мнемосхема')
+    # grid_scale = models.IntegerField(blank=True, default=-1, verbose_name='Масштаб сетки схемы')
 
     def count_event_not_done(self):
         count = 0
@@ -98,6 +99,7 @@ class Sensor(models.Model):
     name = models.CharField(max_length=50, verbose_name='Название')
     info = models.CharField(blank=True, max_length=100, verbose_name='Информация')
     image = models.ImageField(blank=True, verbose_name='Cхема')
+    mnemonic_scheme_pos = models.IntegerField(blank=True, default=-1, verbose_name='Положение на мнемосхеме')
 
     def count_alerts(self):
         return self.error_sensor.filter(confirmed=False).count()

@@ -23,4 +23,6 @@ urlpatterns = [
     path('api/sensor/chart', new_views.api_sensor_chart),
     path('api/sensor/confirm_errors_all', new_views.api_sensor_confirm_errors_all),
     path('api/object/chart', new_views.api_object_chart),
+    path('api/scheme/grid', new_views.api_scheme_grid),
+    path('api/scheme/save', new_views.api_scheme_save),
 ]
