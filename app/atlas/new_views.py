@@ -263,7 +263,7 @@ def api_scheme_grid(request):
     context = {}
     object_item = get_object_or_404(Object, pk=int(request.GET.get('object_id')))
     for i in object_item.sensor_object.all():
-        context[i.pk] = [i.data_sensor.last().ai_mean, i.mnemonic_scheme_pos]
+        context[i.pk] = [i.data_sensor.last().ai_mean, i.mnemonic_scheme_pos, i.name]
     return JsonResponse(context, safe=False)
 
 
