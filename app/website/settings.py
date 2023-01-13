@@ -31,7 +31,7 @@ if os.environ.get('DJANGO_DEBUG') == 'false':
 else:
     DEBUG = True
 
-ALLOWED_HOSTS = ['77.222.54.167', '*.yandexcloud.net', 'localhost', '127.0.0.1', '[::1]', '0.0.0.0', 'example.com']
+ALLOWED_HOSTS = ['77.222.54.167', '*.yandexcloud.net', 'localhost', '127.0.0.1', '[::1]', '0.0.0.0']
 
 
 # Application definition
@@ -164,16 +164,3 @@ DJANGO_RESPONSE_URL = 'http://0.0.0.0:8000/rabbit/data'
 RABBIT_REQUEST_URL = os.environ.get('RABBIT_REQUEST_URL')
 RABBIT_EXCHANGE = 'test_exchange'
 RABBIT_QUEUE = os.environ.get('RABBIT_QUEUE')
-
-# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-# EMAIL_FILE_PATH = 'tmp/app-messages'
-SERVER_EMAIL = 'noreply@atlas-asutp.ru'
-ADMINS = [
-    ('Roman', 'romkaaer@mail.ru'),
-    ('Nikolay', 'Cloud@Atlas-asutp.ru')
-]
-EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_HOST_USER = 'noreply@atlas-asutp.ru'
-EMAIL_HOST_PASSWORD = '45e-L7C-ZS6-UMQ'
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
